@@ -5,32 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class Ghost implements GhostAI{
+public class Ghost extends Entity implements GhostAI{
 
-    // instance variables for the ghost's position, velocity, and image
-    private int x, y;
-    private int dx, dy;
-    private BufferedImage ghostImage;
-
-    // constructor to initialize the ghost's starting position and velocity
     public Ghost(int startingX, int startingY, int startingDX, int startingDY, String ghostPath) {
-        x = startingX;
-        y = startingY;
-        dx = startingDX;
-        dy = startingDY;
-        ghostImage = loadImage(ghostPath);
+        super(startingX, startingY, startingDX, startingDY, ghostPath);
+    }
 
-    }
-    private BufferedImage loadImage(String path) {
-        URL imagePath = getClass().getResource(path);
-        BufferedImage result = null;
-        try {
-            result = ImageIO.read(imagePath);
-        } catch (IOException e) {
-            System.err.println("Error in loading image.");
-        }
-        return result;
-    }
 
     // method to update the ghost's position based on its velocity
     public void move() {
@@ -40,7 +20,7 @@ public class Ghost implements GhostAI{
 
     // method to draw the ghost on the screen
     public void draw(Graphics g) {
-        g.drawImage(ghostImage, x, y, null);
+        g.drawImage(image, x, y, null);
     }
 
     // getter and setter methods for the ghost's position and velocity
@@ -49,7 +29,7 @@ public class Ghost implements GhostAI{
     public int getDX() { return dx; }
     public int getDY() { return dy; }
     public BufferedImage getGhostImage() {
-        return ghostImage;
+        return image;
     }
     public void setX(int newX) { x = newX; }
     public void setY(int newY) { y = newY; }

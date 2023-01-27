@@ -5,36 +5,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class Pacman {
+public class Pacman extends Entity{
 
     // instance variables for Pacman's position, velocity, and image
-    private int x, y;
-    private int dx, dy;
-    private BufferedImage pacmanImage;
     private int score;
     private int lives;
 
     // constructor to initialize Pacman's starting position and velocity
     public Pacman(int startingX, int startingY, int startingDX, int startingDY, String PacmanPath) {
-        x = startingX;
-        y = startingY;
-        dx = startingDX;
-        dy = startingDY;
-        score = 0;
-        lives = 3;
-        pacmanImage = loadImage(PacmanPath);
+        super(startingX, startingY, startingDX, startingDY, PacmanPath);
     }
 
-    private BufferedImage loadImage(String path) {
-        URL imagePath = getClass().getResource(path);
-        BufferedImage result = null;
-        try {
-            result = ImageIO.read(imagePath);
-        } catch (IOException e) {
-            System.err.println("Error in loading image.");
-        }
-        return result;
-    }
 
     // method to update Pacman's position based on its velocity
     public void move() {
@@ -44,16 +25,19 @@ public class Pacman {
 
     // method to draw Pacman on the screen
     public void draw(Graphics g) {
-        g.drawImage(pacmanImage, x, y, null);
+        g.drawImage(image, x, y, null);
     }
 
     // method to check collision with ghosts
     public boolean checkCollision(Ghost g) {
-        if (x + pacmanImage.getWidth() > g.getX() && x < g.getX() + g.getGhostImage().getWidth()
-                && y + pacmanImage.getHeight() > g.getY() && y < g.getY() + g.getGhostImage().getHeight()) {
+        if (x + image.getWidth() > g.getX() && x < g.getX() + g.getGhostImage().getWidth()
+                && y + image.getHeight() > g.getY() && y < g.getY() + g.getGhostImage().getHeight()) {
             return true;
         }
         return false;
+    }
+    public boolean checkWallCollision(int[][] map) {
+
     }
 
     // Getters and setters for Pacman's position, velocity and score.
@@ -69,8 +53,10 @@ public class Pacman {
     public void setScore(int newScore){score = newScore;}
     public void setLives(int newLives){lives = newLives;}
     public int getLives(){return lives;}
+    public void incX(int num) { x+=num; }
+    public void incY(int num) { y+=num; }
 
     public BufferedImage getPacmanImage(){
-        return pacmanImage;
+        return image;
     }
 }
