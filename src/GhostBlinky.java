@@ -6,6 +6,7 @@ public class GhostBlinky extends Ghost {
 
     @Override
     public void Chase(Pacman p) {
+
         // Implement Blinky's chase AI here
         // Blinky will target pacman's current position
         int pacmanX = p.getX();

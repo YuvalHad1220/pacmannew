@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 /*
 TODO LIST:
 
@@ -14,10 +15,10 @@ TODO LIST:
  */
 
 public class ScreenMain extends JFrame {
-    public RXCardLayout cardLayout;
+    public CardLayout cardLayout;
 
     public ScreenMain() {
-        cardLayout = new RXCardLayout();
+        cardLayout = new CardLayout();
         setLayout(cardLayout);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("My Pacman Game");

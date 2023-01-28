@@ -22,9 +22,13 @@ public class PanelGame extends PacmanJPanel {
         this.ghosts = new Ghost[]{
                 new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png"),
                 new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png"),
-                new GhostInky(14, 15, 0, 0, "imgs/ghost_inky.png"),
-                new GhostPinky(12, 15, 0, 0, "imgs/ghost_pinky.png")
+                new GhostInky(12, 15, 0, 0, "imgs/ghost_inky.png"),
+                new GhostPinky(14, 15, 0, 0, "imgs/ghost_pinky.png")
         };
+
+        //setting blinky
+        ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
+
         this.mainFrame = mainFrame;
         mapPanel = new PanelMap(scale, pacman, ghosts, map);
         dataPanel = new JPanel();
@@ -56,12 +60,32 @@ public class PanelGame extends PacmanJPanel {
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                System.out.println(e);
             }
 
-            @Override
             public void keyPressed(KeyEvent e) {
-
+                int keyCode = e.getKeyCode();
+                switch(keyCode) {
+                    case KeyEvent.VK_W:
+                    case KeyEvent.VK_UP:
+                        pacman.setDY(-1);
+                        pacman.setDX(0);
+                        break;
+                    case KeyEvent.VK_A:
+                    case KeyEvent.VK_LEFT:
+                        pacman.setDX(-1);
+                        pacman.setDY(0);
+                        break;
+                    case KeyEvent.VK_S:
+                    case KeyEvent.VK_DOWN:
+                        pacman.setDY(1);
+                        pacman.setDX(0);
+                        break;
+                    case KeyEvent.VK_D:
+                    case KeyEvent.VK_RIGHT:
+                        pacman.setDX(1);
+                        pacman.setDY(0);
+                        break;
+                }
             }
 
             @Override

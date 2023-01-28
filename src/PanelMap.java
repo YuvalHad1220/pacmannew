@@ -26,6 +26,11 @@ public class PanelMap extends JPanel {
 
         PacmanThread pc_thread = new PacmanThread(this, pacman);
         pc_thread.start();
+        GhostThread[] gt_threads = new GhostThread[4];
+        for (int i = 0; i < gt_threads.length; i++){
+            gt_threads[i] = new GhostThread(this, ghosts[i], pacman);
+            gt_threads[i].start();
+        }
         Timer timer = new Timer(100, e -> this.repaint());
         timer.start();
     }

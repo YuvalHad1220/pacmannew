@@ -8,6 +8,9 @@ public class GhostInky extends Ghost {
         super(startingX, startingY, startingDX, startingDY, ghostPath);
     }
 
+    public void setBlinky(Ghost blinky){
+        this.blinky = blinky;
+    }
 
 
     @Override

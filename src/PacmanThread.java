@@ -9,10 +9,8 @@ public class PacmanThread extends Thread {
     public void run() {
 
         while (true) {
-//            if (!pacman.checkWallCollision(mapPanel.getMap().getMap())){
-//                pacman.incX(pacman.getDX());
-//                pacman.incY(pacman.getDY());
-//            }
+                pacman.incX(pacman.getDX());
+                pacman.incY(pacman.getDY());
 
             try {
                 Thread.sleep(100);
