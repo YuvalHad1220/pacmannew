@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PanelMap extends JPanel {
-    private ScreenMain mainFrame;
     private Map map;
     private Pacman pacman;
     private Ghost[] ghosts;
@@ -11,18 +10,11 @@ public class PanelMap extends JPanel {
 
 
 
-    public PanelMap(int scale, String seed, ScreenMain mainFrame) {
-        this.mainFrame = mainFrame;
-        map = new Map(seed);
-        map.ClassicMap();
+    public PanelMap(int scale, Pacman pacman, Ghost[] ghosts, Map map) {
+        this.map = map;
         this.scale = scale;
-        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png");
-        this.ghosts = new Ghost[]{
-                new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png"),
-                new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png"),
-                new GhostInky(14, 15, 0, 0, "imgs/ghost_inky.png"),
-                new GhostPinky(12, 15, 0, 0, "imgs/ghost_pinky.png")
-        };
+        this.pacman = pacman;
+        this.ghosts = ghosts;
 
         afterInit();
     }
@@ -31,7 +23,6 @@ public class PanelMap extends JPanel {
         setFocusable(true);
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(map.getMap()[0].length * scale, map.getMap().length * scale));
-
 
         PacmanThread pc_thread = new PacmanThread(this, pacman);
         pc_thread.start();

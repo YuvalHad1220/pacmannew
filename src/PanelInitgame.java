@@ -1,8 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.*;
 
 public class PanelInitgame extends PacmanJPanel implements ActionListener {
@@ -11,8 +9,8 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
     private JTextField seedField;
     private JButton backButton;
     private JButton startButton;
-    private JLabel scaleLabel;
-    private JLabel seedLabel;
+    private PacmanJLabel scaleLabel;
+    private PacmanJLabel seedLabel;
 
     public PanelInitgame(String screenType, ScreenMain mainFrame) {
         super();
@@ -24,13 +22,8 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
 
         JPanel fields = new JPanel();
         fields.setLayout(new GridLayout(0,1));
-        seedLabel = new JLabel("Seed");
-        seedLabel.setFont(pacmanFont);
-        seedLabel.setForeground(Color.WHITE);
-        seedLabel.setOpaque(true);
-        seedLabel.setBackground(Color.BLACK);
+        seedLabel = new PacmanJLabel("Seed", pacmanFont);
         fields.add(seedLabel);
-
 
         seedField = new JTextField();
         if (screenType.equals("Default")){
@@ -46,11 +39,7 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         seedField.setBackground(Color.BLACK);
         fields.add(seedField);
 
-        scaleLabel = new JLabel("Scale");
-        scaleLabel.setFont(pacmanFont);
-        scaleLabel.setForeground(Color.WHITE);
-        scaleLabel.setOpaque(true);
-        scaleLabel.setBackground(Color.BLACK);
+        scaleLabel = new PacmanJLabel("Scale", pacmanFont);
         fields.add(scaleLabel);
 
         scaleField = new JTextField();
@@ -94,13 +83,13 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         if (clicked == startButton){
             int scale = Integer.parseInt(scaleField.getText());
             String seed = seedField.getText();
-            PanelMap game = new PanelMap(scale, seed, mainFrame);
+            PanelGame game = new PanelGame(scale, seed, mainFrame);
             mainFrame.addPanel(game, "gamePanel");
-            mainFrame.changePanel("gamePanel");
+            mainFrame.showPanel("gamePanel");
         }
 
         if (clicked == backButton){
-            mainFrame.changePanel("startPanel");
+            mainFrame.showPanel("startPanel");
         }
 
     }

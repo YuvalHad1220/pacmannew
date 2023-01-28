@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
 public class PanelStart extends PacmanJPanel implements ActionListener {
     ScreenMain mainFrame;
@@ -21,9 +19,8 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
         setBackground(Color.BLACK);
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("PACMAN");
+        PacmanJLabel titleLabel = new PacmanJLabel("PACMAN", pacmanFont.deriveFont(56f));
         titleLabel.setForeground(Color.GRAY);
-        titleLabel.setFont(pacmanFont.deriveFont(56f));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         add(titleLabel, BorderLayout.CENTER);
 
@@ -65,7 +62,7 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
                 mainFrame.addPanel(defaultInit, "initGameDefault");
             }
 
-            mainFrame.changePanel("initGameDefault");
+            mainFrame.showPanel("initGameDefault");
         }
 
         // start game with seed
@@ -74,7 +71,7 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
                 seedInit = new PanelInitgame("Seed", mainFrame);
                 mainFrame.addPanel(seedInit, "initGameSeed");
             }
-            mainFrame.changePanel("initGameSeed");
+            mainFrame.showPanel("initGameSeed");
 
         }
 
@@ -83,7 +80,7 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
         if (clicked == buttons[2]){
             PanelDatabase dbp = new PanelDatabase(mainFrame);
             mainFrame.addPanel(dbp, "LoadPanel");
-            mainFrame.changePanel("LoadPanel");
+            mainFrame.showPanel("LoadPanel");
 
         }
     }
