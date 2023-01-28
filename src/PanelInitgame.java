@@ -5,9 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
 
-public class ScreenInitGame extends JPanel implements ActionListener {
-
-    private String screenType;
+public class PanelInitgame extends JPanel implements ActionListener {
+    ScreenMain mainFrame;
     private JTextField scaleField;
     private JTextField seedField;
     private JButton backButton;
@@ -15,8 +14,8 @@ public class ScreenInitGame extends JPanel implements ActionListener {
     private JLabel scaleLabel;
     private JLabel seedLabel;
 
-    public ScreenInitGame(String screenType) {
-        this.screenType = screenType;
+    public PanelInitgame(String screenType, ScreenMain mainFrame) {
+        this.mainFrame = mainFrame;
         setPreferredSize(new Dimension(600, 600));
         setLayout(new BorderLayout());
         File fontFile = new File("src/emulogic.ttf");
@@ -41,11 +40,19 @@ public class ScreenInitGame extends JPanel implements ActionListener {
         seedLabel.setBackground(Color.BLACK);
         fields.add(seedLabel);
 
-        seedField = new JTextField("OG_MAP");
-        seedField.setForeground(Color.GRAY);
+
+        seedField = new JTextField();
+        if (screenType.equals("Default")){
+            seedField.setForeground(Color.GRAY);
+            seedField.setEditable(false);
+            seedField.setText("OG_MAP");
+        }
+        else {
+            seedField.setForeground(Color.WHITE);
+        }
+
         seedField.setFont(buttonPacmanFont);
         seedField.setBackground(Color.BLACK);
-        seedField.setEditable(false);
         fields.add(seedField);
 
         scaleLabel = new JLabel("Scale");
@@ -73,6 +80,7 @@ public class ScreenInitGame extends JPanel implements ActionListener {
         backButton.setForeground(Color.WHITE);
         backButton.setBackground(Color.BLACK);
         backButton.setFocusable(false);
+        backButton.addActionListener(this);
         buttons.add(backButton);
 
         startButton = new JButton("Start Game");
@@ -80,6 +88,7 @@ public class ScreenInitGame extends JPanel implements ActionListener {
         startButton.setForeground(Color.WHITE);
         startButton.setBackground(Color.BLACK);
         startButton.setFocusable(false);
+        startButton.addActionListener(this);
         buttons.add(startButton);
 
         add(buttons, BorderLayout.SOUTH);
@@ -90,8 +99,24 @@ public class ScreenInitGame extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
 
-        if (clicked == startButton){
 
+        if (clicked == startButton){
+            int scale = Integer.parseInt(scaleField.getText());
+            PanelMap game;
+            String seed = seedField.getText();
+            if (seed.equals("OG_MAP"))
+                game = new PanelMap(scale, mainFrame);
+            else
+                game = new PanelMap(scale, Integer.parseInt(seed), mainFrame);
+
+
+            mainFrame.addPanel(game, "gamePanel");
+            mainFrame.changePanel("gamePanel");
         }
+
+        if (clicked == backButton){
+            mainFrame.changePanel("startPanel");
+        }
+
     }
 }

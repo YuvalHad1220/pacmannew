@@ -5,18 +5,31 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class ScreenStart extends JPanel implements ActionListener {
-    JFrame mainFrame;
+public class PanelStart extends JPanel implements ActionListener {
+    ScreenMain mainFrame;
+    PanelInitgame defaultInit;
+    PanelInitgame seedInit;
+
+
+
+
     private JButton[] buttons;
 
-    public ScreenStart(JFrame mainFrame) throws IOException, FontFormatException {
+    public PanelStart(ScreenMain mainFrame) {
         this.mainFrame = mainFrame;
-        setPreferredSize(new Dimension(600, 600));
+        setPreferredSize(new Dimension(700, 700));
         setBackground(Color.BLACK);
         setLayout(new BorderLayout());
         //create the font
         File fontFile = new File("src/emulogic.ttf");
-        Font titlePacmanFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+        Font titlePacmanFont = null;
+        try {
+            titlePacmanFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         titlePacmanFont = titlePacmanFont.deriveFont(56f);
         Font buttonPacmanFont = titlePacmanFont.deriveFont(24f);
 
@@ -52,13 +65,6 @@ public class ScreenStart extends JPanel implements ActionListener {
     }
 
 
-    public static void main(String[] args) throws IOException, FontFormatException {
-        JFrame frame = new JFrame("ScreenStart");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new ScreenStart(frame));
-        frame.pack();
-        frame.setVisible(true);
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -66,10 +72,22 @@ public class ScreenStart extends JPanel implements ActionListener {
 
         // start game
         if (clicked == buttons[0]) {
-            ScreenInitGame screenInitGame = new ScreenInitGame("some screen type");
-            mainFrame.setContentPane(screenInitGame);
-            mainFrame.revalidate();
-            mainFrame.repaint();
+            if (defaultInit == null){
+                defaultInit = new PanelInitgame("Default", mainFrame);
+                mainFrame.addPanel(defaultInit, "initGameDefault");
+            }
+
+            mainFrame.changePanel("initGameDefault");
+        }
+
+        // start game with seed
+        if (clicked == buttons[1]){
+            if (seedInit == null){
+                seedInit = new PanelInitgame("Seed", mainFrame);
+                mainFrame.addPanel(seedInit, "initGameSeed");
+            }
+            mainFrame.changePanel("initGameSeed");
+
         }
     }
 }

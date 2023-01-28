@@ -1,22 +1,45 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-public class MapPanel extends JPanel {
+public class PanelMap extends JPanel {
+    private ScreenMain mainFrame;
     private Map map;
     private Pacman pacman;
     private Ghost[] ghosts;
     private int scale;
 
-    public MapPanel(Map map, int scale, Pacman pacman, Ghost[] ghosts) {
-        this.map = map;
+
+    public PanelMap(int scale, int seed, ScreenMain mainFrame) {
+        System.out.println("doing nothing because we didnt set a random");
+    }
+
+    public PanelMap(int scale, ScreenMain mainFrame) {
+        this.mainFrame = mainFrame;
+        map = new Map();
+        map.OriginalMap();
         this.scale = scale;
-        this.pacman = pacman;
-        this.ghosts = ghosts;
+        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png");
+        ;
+        this.ghosts = new Ghost[]{
+                new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png"),
+                new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png"),
+                new GhostInky(14, 15, 0, 0, "imgs/ghost_inky.png"),
+                new GhostPinky(12, 15, 0, 0, "imgs/ghost_pinky.png")
+        };
+
+        afterInit();
+    }
+
+    private void afterInit() {
         setFocusable(true);
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(map.getMap()[0].length * scale, map.getMap().length * scale));
+
+
+        PacmanThread pc_thread = new PacmanThread(this, pacman);
+        pc_thread.start();
+        Timer timer = new Timer(100, e -> this.repaint());
+        timer.start();
     }
 
     protected void paintComponent(Graphics g) {
@@ -50,26 +73,26 @@ public class MapPanel extends JPanel {
         for (int row = 0; row < my_map.length; row++) {
             for (int col = 0; col < my_map[row].length; col++) {
                 int value = my_map[row][col];
-                switch (value){
+                switch (value) {
                     case 2:
                         // normal point
-                        g.fillOval(col * scale + scale / 2 , row * scale + scale / 2, scale/4, scale/4);
+                        g.fillOval(col * scale + scale / 2, row * scale + scale / 2, scale / 4, scale / 4);
                         break;
                     case 3:
-                        g.fillOval(col * scale + scale / 2 , row * scale + scale / 2, scale/2, scale/2);
-                    }
+                        g.fillOval(col * scale + scale / 2, row * scale + scale / 2, scale / 2, scale / 2);
                 }
             }
+        }
         drawGhosts(g);
         drawPacman(g);
     }
 
-    protected void drawPacman(Graphics g){
+    protected void drawPacman(Graphics g) {
         g.drawImage(pacman.getPacmanImage(), pacman.getX() * scale, pacman.getY() * scale, 2 * scale * 32 / pacman.getPacmanImage().getWidth(), 2 * scale * 32 / pacman.getPacmanImage().getWidth(), this);
     }
 
-    protected void drawGhosts(Graphics g){
-        for (Ghost ghost: ghosts){
+    protected void drawGhosts(Graphics g) {
+        for (Ghost ghost : ghosts) {
             g.drawImage(ghost.getGhostImage(), ghost.getX() * scale, ghost.getY() * scale, 2 * scale * 32 / ghost.getGhostImage().getWidth(), 2 * scale * 32 / ghost.getGhostImage().getWidth(), this);
 
         }
@@ -79,4 +102,5 @@ public class MapPanel extends JPanel {
     public Map getMap() {
         return map;
     }
+
 }
