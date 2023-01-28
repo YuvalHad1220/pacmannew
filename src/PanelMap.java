@@ -6,7 +6,7 @@ public class PanelMap extends JPanel {
     private Pacman pacman;
     private Ghost[] ghosts;
     private int scale;
-
+    private boolean isSuspend;
 
 
 
@@ -15,10 +15,17 @@ public class PanelMap extends JPanel {
         this.scale = scale;
         this.pacman = pacman;
         this.ghosts = ghosts;
-
+        this.isSuspend = false;
         afterInit();
     }
 
+    public void setSuspend(boolean sus){
+        isSuspend = sus;
+    }
+
+    public boolean getSuspend(){
+        return isSuspend;
+    }
     private void afterInit() {
         setFocusable(true);
         setBackground(Color.BLACK);

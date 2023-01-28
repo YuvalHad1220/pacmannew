@@ -10,6 +10,14 @@ public class GhostThread extends Thread {
 
     public void run() {
         while (true){
+            if (mapPanel.getSuspend()){
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
             ghost.Chase(p);
             ghost.setX(ghost.getX() + ghost.getDX());
             ghost.setY(ghost.getY() + ghost.getDY());

@@ -6,13 +6,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 
-public class PanelGame extends PacmanJPanel {
+public class PanelGame extends PacmanJPanel implements KeyListener{
     private ScreenMain mainFrame;
     PanelMap mapPanel;
     JPanel dataPanel;
     private Pacman pacman;
     private Ghost[] ghosts;
     private Map map;
+    private PanelPause pausePanel;
 
     public PanelGame(int scale, String seed, ScreenMain mainFrame){
         super();
@@ -57,42 +58,53 @@ public class PanelGame extends PacmanJPanel {
             }
         });
 
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            public void keyPressed(KeyEvent e) {
-                int keyCode = e.getKeyCode();
-                switch(keyCode) {
-                    case KeyEvent.VK_W:
-                    case KeyEvent.VK_UP:
-                        pacman.setDY(-1);
-                        pacman.setDX(0);
-                        break;
-                    case KeyEvent.VK_A:
-                    case KeyEvent.VK_LEFT:
-                        pacman.setDX(-1);
-                        pacman.setDY(0);
-                        break;
-                    case KeyEvent.VK_S:
-                    case KeyEvent.VK_DOWN:
-                        pacman.setDY(1);
-                        pacman.setDX(0);
-                        break;
-                    case KeyEvent.VK_D:
-                    case KeyEvent.VK_RIGHT:
-                        pacman.setDX(1);
-                        pacman.setDY(0);
-                        break;
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
+        addKeyListener(this);
     }
 
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+        switch(keyCode) {
+            case KeyEvent.VK_W:
+            case KeyEvent.VK_UP:
+                pacman.setDY(-1);
+                pacman.setDX(0);
+                break;
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_LEFT:
+                pacman.setDX(-1);
+                pacman.setDY(0);
+                break;
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_DOWN:
+                pacman.setDY(1);
+                pacman.setDX(0);
+                break;
+            case KeyEvent.VK_D:
+            case KeyEvent.VK_RIGHT:
+                pacman.setDX(1);
+                pacman.setDY(0);
+                break;
+
+
+            case KeyEvent.VK_ESCAPE:
+                if (pausePanel == null){
+                    pausePanel = new PanelPause(mainFrame, mapPanel);
+                    mainFrame.addPanel(pausePanel, "pausePanel");
+
+                }
+                mapPanel.setSuspend(true);
+                mainFrame.showPanel("pausePanel");
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
 }
