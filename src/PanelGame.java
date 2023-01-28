@@ -15,6 +15,11 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     private Map map;
     private PanelPause pausePanel;
 
+
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
     public PanelGame(int scale, String seed, ScreenMain mainFrame){
         super();
         map = new Map(seed);

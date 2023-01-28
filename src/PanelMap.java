@@ -103,4 +103,19 @@ public class PanelMap extends JPanel {
         return map;
     }
 
+    public Pacman getPacman() {
+        return pacman;
+    }
+
+    public void setPacman(Pacman pacman) {
+        this.pacman = pacman;
+    }
+
+    public Ghost[] getGhosts() {
+        return ghosts;
+    }
+
+    public void setGhosts(Ghost[] ghosts) {
+        this.ghosts = ghosts;
+    }
 }

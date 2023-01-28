@@ -26,9 +26,6 @@ public class Database implements Serializable {
 
     public static void writeFile(String filename, Map map, Pacman p){
         Database toFile = new Database(map.getMap(), map.getSeed(), p.getScore(), p.getLives());
-        File directory = new File(DATABASE_FOLDER);
-        if (!directory.exists())
-            directory.mkdir();
 
         try {
             FileOutputStream fileOut = new FileOutputStream(DATABASE_FOLDER + filename);

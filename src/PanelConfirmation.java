@@ -50,11 +50,11 @@ public class PanelConfirmation extends PacmanJPanel implements ActionListener {
         JButton clicked = (JButton) e.getSource();
 
         if (clicked == yes){
-            panelDatabase.onResult(true);
+            panelDatabase.onConfResult(true);
 
         }
         if (clicked == no){
-            panelDatabase.onResult(false);
+            panelDatabase.onConfResult(false);
 
         }
 

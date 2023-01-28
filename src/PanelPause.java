@@ -8,21 +8,19 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
     private ScreenMain mainFrame;
     private PanelMap mapPanel;
 
-    private PanelDatabase saveGame;
-
     public PanelPause(ScreenMain mainFrame, PanelMap mapPanel) {
         this.mainFrame = mainFrame;
         this.mapPanel = mapPanel;
         this.mapPanel.setSuspend(true);
 
-        setLayout(new GridLayout(0,1));
+        setLayout(new GridLayout(0, 1));
 
         // need to implement get to game, save, exit buttons with actionListener
         continueBtn = new PacmanJButton("Continue Game", pacmanFont.deriveFont(12f));
         continueBtn.addActionListener(this);
         saveBtn = new PacmanJButton("Save Game", pacmanFont.deriveFont(12f));
         saveBtn.addActionListener(this);
-        exitBtn = new PacmanJButton("Exit", pacmanFont.deriveFont(12f));
+        exitBtn = new PacmanJButton("Exit To Main Menu (currently closes game)", pacmanFont.deriveFont(12f));
         exitBtn.addActionListener(this);
 
         add(continueBtn);
@@ -50,7 +48,7 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
             public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
 
-                if (keyCode == KeyEvent.VK_ESCAPE){
+                if (keyCode == KeyEvent.VK_ESCAPE) {
                     mapPanel.setSuspend(false);
                     mainFrame.showPanel("gamePanel");
                 }
@@ -69,17 +67,15 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
         if (clicked == exitBtn)
             System.exit(0);
 
-        if (clicked == continueBtn){
+        if (clicked == continueBtn) {
             mapPanel.setSuspend(false);
             mainFrame.showPanel("gamePanel");
         }
 
-        if (clicked == saveBtn){
-            if (saveGame == null){
-                saveGame = new PanelDatabase(mainFrame, "save");
-                mainFrame.addPanel(saveGame, "savePanel");
-            }
-
+        if (clicked == saveBtn) {
+            // we always remove the panel so its okay to create a new one
+            PanelDatabase saveGame = new PanelDatabase(mainFrame, "save", this.mapPanel);
+            mainFrame.addPanel(saveGame, "savePanel");
             mainFrame.showPanel("savePanel");
         }
     }
