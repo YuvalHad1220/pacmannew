@@ -8,6 +8,8 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
     private ScreenMain mainFrame;
     private PanelMap mapPanel;
 
+    private PanelDatabase saveGame;
+
     public PanelPause(ScreenMain mainFrame, PanelMap mapPanel) {
         this.mainFrame = mainFrame;
         this.mapPanel = mapPanel;
@@ -35,9 +37,6 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
                 Component src = (Component) e.getSource();
                 src.setFocusable(true);
                 src.requestFocusInWindow();
-                System.out.println("requested focus, result: " +src.isFocusable());
-                System.out.println(src);
-
             }
         });
 
@@ -73,6 +72,15 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
         if (clicked == continueBtn){
             mapPanel.setSuspend(false);
             mainFrame.showPanel("gamePanel");
+        }
+
+        if (clicked == saveBtn){
+            if (saveGame == null){
+                saveGame = new PanelDatabase(mainFrame, "save");
+                mainFrame.addPanel(saveGame, "savePanel");
+            }
+
+            mainFrame.showPanel("savePanel");
         }
     }
 }

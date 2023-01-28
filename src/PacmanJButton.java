@@ -9,6 +9,5 @@ public class PacmanJButton extends JButton {
         setForeground(Color.WHITE);
         setBackground(Color.BLACK);
 
-
     }
 }

@@ -11,15 +11,20 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
     private JButton[] buttons;
     private JButton backButton;
     private ScreenMain mainFrame;
+    private String type;
+    private PanelConfirmation confDialogue;
 
-    public PanelDatabase(ScreenMain mainFrame){
+    public PanelDatabase(ScreenMain mainFrame, String type){
         super();
+        this.type = type;
         this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
+        PacmanJLabel titleLabel;
+        if (type.equals("save"))
+             titleLabel = new PacmanJLabel("Save Game", pacmanFont.deriveFont(36f));
+        else
+            titleLabel = new PacmanJLabel("Load Game", pacmanFont.deriveFont(36f));
 
-        JLabel titleLabel = new JLabel("Save Game");
-        titleLabel.setForeground(Color.GRAY);
-        titleLabel.setFont(pacmanFont.deriveFont(36f));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         add(titleLabel, BorderLayout.CENTER);
 
@@ -44,9 +49,12 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
         backButton.setForeground(Color.WHITE);
         backButton.setBackground(Color.BLACK);
         backButton.setFocusable(false);
+        backButton.addActionListener(this);
         buttonsPanel.add(backButton);
 
         add(buttonsPanel, BorderLayout.SOUTH);
+
+
     }
 
     public static String[] Titles(){
@@ -61,31 +69,50 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
         return titles;
     }
 
+    public void onResult(boolean value){
+        mainFrame.showPanel("confirmationPanel");
+        mainFrame.removePanel(confDialogue);
+
+        // that means we should overwrite save
+        if (value){
+
+        }
+
+        // if we shouldnt overwrite - do nothing
+    }
+
+    private void save(){
+        Database toSave = new Database();
+    }
+
+    private void load(){
+
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
         if (clicked == backButton){
-            // go back
+            if (type.equals("save")){
+                mainFrame.showPanel("pausePanel");
 
+            }
+            else
+                mainFrame.showPanel("startPanel");
         }
         else {
             String text = clicked.getText();
 
             if (text.contains("Populate Save")){
                 // then we just save, no confirmation
+                save();
             }
 
             else {
                 // we will display a confirmation panel
-                PanelConfirmation panelConfirmation = new PanelConfirmation(text);
-                int result = panelConfirmation.showDialog(mainFrame);
-                if (result == JOptionPane.YES_OPTION) {
-                    // user clicked yes
-                    System.out.println("CLICKED YES");
-                } else if (result == JOptionPane.NO_OPTION) {
-                    // user clicked no
-                }
+                confDialogue = new PanelConfirmation(text, this);
+                mainFrame.addPanel(confDialogue, "confirmationPanel");
+                mainFrame.showPanel("confirmationPanel");
             }
         }
 

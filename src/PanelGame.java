@@ -52,9 +52,6 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
                 Component src = (Component) e.getSource();
                 src.setFocusable(true);
                 src.requestFocusInWindow();
-                System.out.println("requested focus, result: " +src.isFocusable());
-                System.out.println(src);
-
             }
         });
 

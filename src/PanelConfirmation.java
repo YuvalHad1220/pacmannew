@@ -4,12 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PanelConfirmation extends PacmanJPanel implements ActionListener {
-    private int result = JOptionPane.CLOSED_OPTION;
+    PanelDatabase panelDatabase;
     JButton yes;
     JButton no;
 
-    public PanelConfirmation(String text){
+    public PanelConfirmation(String text, PanelDatabase panelDatabase){
         super();
+        this.panelDatabase = panelDatabase;
         JLabel confirmation = new JLabel("Overwrite \""+ text + "\"?");
         confirmation.setFont(pacmanFont.deriveFont(12f));
         confirmation.setHorizontalAlignment(JLabel.CENTER);
@@ -43,34 +44,19 @@ public class PanelConfirmation extends PacmanJPanel implements ActionListener {
         yes.addActionListener(this);
         no.addActionListener(this);
     }
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Custom Dialog Panel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        String text = "Save 1";
-        PanelConfirmation panelConfirmation = new PanelConfirmation(text);
-        frame.add(panelConfirmation);
-        frame.pack();
-        frame.setVisible(true);
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == yes) {
-            result = JOptionPane.YES_OPTION;
-        } else if (e.getSource() == no) {
-            result = JOptionPane.NO_OPTION;
+        JButton clicked = (JButton) e.getSource();
+
+        if (clicked == yes){
+            panelDatabase.onResult(true);
+
         }
-        // close the dialog
-        Container parent = this.getParent();
-        while (!(parent instanceof JDialog)) {
-            parent = parent.getParent();
+        if (clicked == no){
+            panelDatabase.onResult(false);
+
         }
-        ((JDialog) parent).dispose();
-    }
-    public int showDialog(JFrame frame) {
-        JOptionPane optionPane = new JOptionPane(this);
-        JDialog dialog = optionPane.createDialog(frame, "Overwrite Confirmation");
-        dialog.setVisible(true);
-        return result;
+
     }
 }

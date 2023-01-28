@@ -78,7 +78,7 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
 
         // load from file
         if (clicked == buttons[2]){
-            PanelDatabase dbp = new PanelDatabase(mainFrame);
+            PanelDatabase dbp = new PanelDatabase(mainFrame, "load");
             mainFrame.addPanel(dbp, "LoadPanel");
             mainFrame.showPanel("LoadPanel");
 
