@@ -29,16 +29,12 @@ public class Pacman extends Entity{
     }
 
     // method to check collision with ghosts
-    public boolean checkCollision(Ghost g) {
-        if (x + image.getWidth() > g.getX() && x < g.getX() + g.getGhostImage().getWidth()
-                && y + image.getHeight() > g.getY() && y < g.getY() + g.getGhostImage().getHeight()) {
-            return true;
-        }
-        return false;
-    }
     public boolean checkWallCollision(int[][] map) {
 
+        return false;
     }
+
+
 
     // Getters and setters for Pacman's position, velocity and score.
     public int getX() { return x; }
