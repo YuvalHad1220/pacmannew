@@ -9,17 +9,14 @@ public class PanelMap extends JPanel {
     private int scale;
 
 
-    public PanelMap(int scale, int seed, ScreenMain mainFrame) {
-        System.out.println("doing nothing because we didnt set a random");
-    }
 
-    public PanelMap(int scale, ScreenMain mainFrame) {
+
+    public PanelMap(int scale, String seed, ScreenMain mainFrame) {
         this.mainFrame = mainFrame;
-        map = new Map();
-        map.OriginalMap();
+        map = new Map(seed);
+        map.ClassicMap();
         this.scale = scale;
         this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png");
-        ;
         this.ghosts = new Ghost[]{
                 new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png"),
                 new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png"),
@@ -44,7 +41,7 @@ public class PanelMap extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int[][] my_map = map.getMap();
+        byte[][] my_map = map.getMap();
         for (int row = 0; row < my_map.length; row++) {
             for (int col = 0; col < my_map[row].length; col++) {
                 int value = my_map[row][col];

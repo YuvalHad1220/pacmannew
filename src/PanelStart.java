@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class PanelStart extends JPanel implements ActionListener {
+public class PanelStart extends PacmanJPanel implements ActionListener {
     ScreenMain mainFrame;
     PanelInitgame defaultInit;
     PanelInitgame seedInit;
@@ -20,23 +20,12 @@ public class PanelStart extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(700, 700));
         setBackground(Color.BLACK);
         setLayout(new BorderLayout());
-        //create the font
-        File fontFile = new File("src/emulogic.ttf");
-        Font titlePacmanFont = null;
-        try {
-            titlePacmanFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-        } catch (FontFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        titlePacmanFont = titlePacmanFont.deriveFont(56f);
-        Font buttonPacmanFont = titlePacmanFont.deriveFont(24f);
 
         JLabel titleLabel = new JLabel("PACMAN");
         titleLabel.setForeground(Color.GRAY);
-        titleLabel.setFont(titlePacmanFont);
+        titleLabel.setFont(pacmanFont.deriveFont(56f));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(titleLabel, BorderLayout.CENTER);
 
         buttons = new JButton[] {
                 new JButton("Start Game"),
@@ -47,14 +36,13 @@ public class PanelStart extends JPanel implements ActionListener {
         };
 
         for (JButton button : buttons) {
-            button.setFont(buttonPacmanFont);
+            button.setFont(pacmanFont);
             button.setForeground(Color.WHITE);
             button.setBackground(Color.BLACK);
             button.setFocusable(false);
             button.addActionListener(this);
         }
 
-        add(titleLabel, BorderLayout.CENTER);
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(0,1));
@@ -87,6 +75,15 @@ public class PanelStart extends JPanel implements ActionListener {
                 mainFrame.addPanel(seedInit, "initGameSeed");
             }
             mainFrame.changePanel("initGameSeed");
+
+        }
+
+
+        // load from file
+        if (clicked == buttons[2]){
+            PanelDatabase dbp = new PanelDatabase(mainFrame);
+            mainFrame.addPanel(dbp, "LoadPanel");
+            mainFrame.changePanel("LoadPanel");
 
         }
     }

@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
 
-public class PanelInitgame extends JPanel implements ActionListener {
+public class PanelInitgame extends PacmanJPanel implements ActionListener {
     ScreenMain mainFrame;
     private JTextField scaleField;
     private JTextField seedField;
@@ -15,26 +15,17 @@ public class PanelInitgame extends JPanel implements ActionListener {
     private JLabel seedLabel;
 
     public PanelInitgame(String screenType, ScreenMain mainFrame) {
+        super();
         this.mainFrame = mainFrame;
         setPreferredSize(new Dimension(600, 600));
         setLayout(new BorderLayout());
-        File fontFile = new File("src/emulogic.ttf");
-        Font buttonPacmanFont = null;
-        try {
-            buttonPacmanFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-        } catch (FontFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        buttonPacmanFont = buttonPacmanFont.deriveFont(24f);
         setBackground(Color.BLACK);
 
 
         JPanel fields = new JPanel();
         fields.setLayout(new GridLayout(0,1));
         seedLabel = new JLabel("Seed");
-        seedLabel.setFont(buttonPacmanFont);
+        seedLabel.setFont(pacmanFont);
         seedLabel.setForeground(Color.WHITE);
         seedLabel.setOpaque(true);
         seedLabel.setBackground(Color.BLACK);
@@ -45,18 +36,18 @@ public class PanelInitgame extends JPanel implements ActionListener {
         if (screenType.equals("Default")){
             seedField.setForeground(Color.GRAY);
             seedField.setEditable(false);
-            seedField.setText("OG_MAP");
+            seedField.setText("CLASSIC_MAP");
         }
         else {
             seedField.setForeground(Color.WHITE);
         }
 
-        seedField.setFont(buttonPacmanFont);
+        seedField.setFont(pacmanFont);
         seedField.setBackground(Color.BLACK);
         fields.add(seedField);
 
         scaleLabel = new JLabel("Scale");
-        scaleLabel.setFont(buttonPacmanFont);
+        scaleLabel.setFont(pacmanFont);
         scaleLabel.setForeground(Color.WHITE);
         scaleLabel.setOpaque(true);
         scaleLabel.setBackground(Color.BLACK);
@@ -65,7 +56,7 @@ public class PanelInitgame extends JPanel implements ActionListener {
         scaleField = new JTextField();
         scaleField.setText("20");
         scaleField.setForeground(Color.WHITE);
-        scaleField.setFont(buttonPacmanFont);
+        scaleField.setFont(pacmanFont);
         scaleField.setBackground(Color.BLACK);
         fields.add(scaleField);
 
@@ -76,7 +67,7 @@ public class PanelInitgame extends JPanel implements ActionListener {
         buttons.setBackground(Color.BLACK);
 
         backButton = new JButton("Back");
-        backButton.setFont(buttonPacmanFont);
+        backButton.setFont(pacmanFont);
         backButton.setForeground(Color.WHITE);
         backButton.setBackground(Color.BLACK);
         backButton.setFocusable(false);
@@ -84,7 +75,7 @@ public class PanelInitgame extends JPanel implements ActionListener {
         buttons.add(backButton);
 
         startButton = new JButton("Start Game");
-        startButton.setFont(buttonPacmanFont);
+        startButton.setFont(pacmanFont);
         startButton.setForeground(Color.WHITE);
         startButton.setBackground(Color.BLACK);
         startButton.setFocusable(false);
@@ -102,14 +93,8 @@ public class PanelInitgame extends JPanel implements ActionListener {
 
         if (clicked == startButton){
             int scale = Integer.parseInt(scaleField.getText());
-            PanelMap game;
             String seed = seedField.getText();
-            if (seed.equals("OG_MAP"))
-                game = new PanelMap(scale, mainFrame);
-            else
-                game = new PanelMap(scale, Integer.parseInt(seed), mainFrame);
-
-
+            PanelMap game = new PanelMap(scale, seed, mainFrame);
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.changePanel("gamePanel");
         }
