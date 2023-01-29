@@ -26,12 +26,12 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         map = new Map(seed);
         map.ClassicMap();
-        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png", scale);
+        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, scale);
         this.ghosts = new Ghost[]{
-                new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png", scale),
-                new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png", scale),
-                new GhostInky(12, 15, 0, 0, "imgs/ghost_inky.png", scale),
-                new GhostPinky(14, 15, 0, 0, "imgs/ghost_pinky.png", scale)
+                new GhostBlinky(22, 4, scale),
+                new GhostClyde(16, 15, scale),
+                new GhostInky(12, 15, scale),
+                new GhostPinky(14, 15, scale)
         };
 
         //setting blinky
@@ -63,6 +63,11 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         });
 
         addKeyListener(this);
+        Timer timer = new Timer(1000/FPS, e -> {
+            livesLabel.setText("Lives: " + pacman.getLives());
+            scoreLabel.setText("Score: " + pacman.getScore());
+        });
+        timer.start();
     }
 
     @Override

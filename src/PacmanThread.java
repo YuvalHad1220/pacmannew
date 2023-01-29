@@ -23,7 +23,11 @@ public class PacmanThread extends Thread {
             pacman.setXInMap(pacman.getXInMap() + pacman.getDX());
             pacman.setYInMap(pacman.getYInMap() + pacman.getDY());
 
+            if (!mapPanel.getMap().isNextBlockValid(pacman)){
+                pacman.setDX(0);
+            }
 
+            int x = mapPanel.getMap().eatPoint(pacman);
 
             try {
                 Thread.sleep(1000/FPS);

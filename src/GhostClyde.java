@@ -2,8 +2,8 @@ import java.awt.*;
 
 public class GhostClyde extends Ghost {
 
-    public GhostClyde(int startingX, int startingY, int startingDX, int startingDY, String ghostPath, int scale) {
-        super(startingX, startingY, startingDX, startingDY, ghostPath, scale);
+    public GhostClyde(int startingX, int startingY, int scale) {
+        super(startingX, startingY,"imgs/ghost_clyde.png", scale);
     }
 
     @Override

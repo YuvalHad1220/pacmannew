@@ -9,8 +9,8 @@ public class Pacman extends Entity{
 
     private int score;
     private int lives;
-    public Pacman(int startingX, int startingY, int startingDX, int startingDY, String PacmanPath, int scale) {
-        super(startingX, startingY, startingDX, startingDY, PacmanPath, scale);
+    public Pacman(int startingX, int startingY, int scale) {
+        super(startingX, startingY, "imgs/sad_pacman.png", scale);
 
     }
 

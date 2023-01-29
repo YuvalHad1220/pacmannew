@@ -1,7 +1,7 @@
 public class GhostBlinky extends Ghost{
 
-    public GhostBlinky(int startingX, int startingY, int startingDX, int startingDY, String ghostPath, int scale) {
-        super(startingX, startingY, startingDX, startingDY, ghostPath, scale);
+    public GhostBlinky(int startingX, int startingY, int scale) {
+        super(startingX, startingY, "imgs/ghost_blinky.png", scale);
     }
 
     @Override

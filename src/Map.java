@@ -9,8 +9,6 @@ https://carminati.altervista.org/PROJECTS/PYTHON3/PACMAN/pacman.html
 
  */
 
-import java.util.*;
-
 class Map {
     private byte[][] map;
     private String seed;
@@ -66,19 +64,29 @@ class Map {
         return seed;
     }
 
-    public boolean isOutOfMap(int xInMap, int yInMap, int scale){
-        int x = xInMap / scale - 1;
-        int y = yInMap / scale;
-
-        if (x < 0 || x + 5 > map[0].length)
-            return true;
-
-        if (y<0 || y> map[0].length)
-            return true;
-
-        return false;
+    public boolean isNextBlockValid(Pacman p) {
+        return true;
     }
 
+    public int eatPoint(Pacman p){
+        if (map[p.getY()][p.getX()] == 2){
+            map[p.getY()][p.getX()] = -2;
+            p.setScore(p.getScore() + 1);
+        }
+        if (map[p.getY()][p.getX()] == 3){
+            map[p.getY()][p.getX()] = -2;
+            p.setScore(p.getScore() + 4);
+        }
+        System.out.println(p.getX() + " " +p.getY() +" " +map[p.getY()][p.getX()]);
+        return 1;
+    }
+
+    public boolean isNextBlockMapExit(Pacman p){
+        // if next block (left or right) is an exit to the other side (mirrored) - we will return true
+        // else return false
+
+        return true;
+    }
 
 
     public boolean isPath(int yInMap, int scale) {

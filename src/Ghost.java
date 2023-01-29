@@ -7,8 +7,8 @@ import java.net.URL;
 
 public class Ghost extends Entity implements GhostAI{
 
-    public Ghost(int startingX, int startingY, int startingDX, int startingDY, String ghostPath, int scale) {
-        super(startingX, startingY, startingDX, startingDY, ghostPath, scale);
+    public Ghost(int startingX, int startingY, String ghostPath, int scale) {
+        super(startingX, startingY, ghostPath, scale);
     }
 
     public BufferedImage getGhostImage() {
