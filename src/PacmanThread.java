@@ -23,6 +23,8 @@ public class PacmanThread extends Thread {
             pacman.setXInMap(pacman.getXInMap() + pacman.getDX());
             pacman.setYInMap(pacman.getYInMap() + pacman.getDY());
 
+
+
             try {
                 Thread.sleep(1000/FPS);
             } catch (InterruptedException e) {

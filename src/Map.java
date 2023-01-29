@@ -65,42 +65,23 @@ class Map {
     public String getSeed() {
         return seed;
     }
-    public void RandomMap() {
-        Random rand = new Random(Long.parseLong(seed));
-        int rows = 34;
-        int cols = 30;
-        map = new byte[rows][cols];
-        boolean[][] visited = new boolean[rows][cols];
-        int[][] walls = new int[rows][cols];
-        int startX = rand.nextInt(rows);
-        int startY = rand.nextInt(cols);
-        DFS(startX, startY, visited, walls);
+
+    public boolean isOutOfMap(int xInMap, int yInMap, int scale){
+        int x = xInMap / scale - 1;
+        int y = yInMap / scale;
+
+        if (x < 0 || x + 5 > map[0].length)
+            return true;
+
+        if (y<0 || y> map[0].length)
+            return true;
+
+        return false;
     }
 
-    private void DFS(int x, int y, boolean[][] visited, int[][] walls) {
-        visited[x][y] = true;
-        int[] dx = { 0, 1, 0, -1 };
-        int[] dy = { 1, 0, -1, 0 };
-        List<Integer> directions = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            directions.add(i);
-        }
-        Collections.shuffle(directions);
-        for (int i = 0; i < 4; i++) {
-            int nextX = x + dx[directions.get(i)];
-            int nextY = y + dy[directions.get(i)];
-            if (nextX >= 0 && nextX < map.length && nextY >= 0 && nextY < map[nextX].length && !visited[nextX][nextY]) {
-                walls[x][y] |= 1 << directions.get(i);
-                walls[nextX][nextY] |= 1 << (directions.get(i) ^ 1);
-                DFS(nextX, nextY, visited, walls);
-            }
-        }
-    }
 
-    public static void main(String[] args) {
-        Map map = new Map("4873098");
-        map.RandomMap();
-        for (byte[] arr: map.getMap())
-            System.out.println(Arrays.toString(arr));
+
+    public boolean isPath(int yInMap, int scale) {
+        return yInMap/scale == 15 ;
     }
 }

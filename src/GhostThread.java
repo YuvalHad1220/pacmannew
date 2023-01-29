@@ -11,6 +11,7 @@ public class GhostThread extends Thread {
         this.p = p;
         this.FPS = FPS;
 
+
     }
 
     public void run() {
