@@ -24,17 +24,11 @@ public class Ghost extends Entity implements GhostAI{
     }
 
     // getter and setter methods for the ghost's position and velocity
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getDX() { return dx; }
-    public int getDY() { return dy; }
+
     public BufferedImage getGhostImage() {
         return image;
     }
-    public void setX(int newX) { x = newX; }
-    public void setY(int newY) { y = newY; }
-    public void setDX(int newDX) { dx = newDX; }
-    public void setDY(int newDY) { dy = newDY; }
+
 
     @Override
     public void Chase(Pacman p) {

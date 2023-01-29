@@ -7,16 +7,29 @@ public class PanelMap extends JPanel {
     private Ghost[] ghosts;
     private int scale;
     private boolean isSuspend;
+    private int FPS;
 
 
-
-    public PanelMap(int scale, Pacman pacman, Ghost[] ghosts, Map map) {
+    public PanelMap(int scale, Pacman pacman, Ghost[] ghosts, Map map, int FPS) {
+        this.FPS = FPS;
         this.map = map;
         this.scale = scale;
         this.pacman = pacman;
         this.ghosts = ghosts;
         this.isSuspend = false;
         afterInit();
+
+        this.pacman.setxInMap(this.pacman.getX() * scale);
+        this.pacman.setyInMap(this.pacman.getY() * scale);
+
+        for (Ghost g : this.ghosts){
+            g.setxInMap(g.getXInMap() * scale);
+            g.setyInMap(g.getYInMap() * scale);
+        }
+    }
+
+    public int getScale(){
+        return scale;
     }
 
     public void setSuspend(boolean sus){
@@ -31,14 +44,14 @@ public class PanelMap extends JPanel {
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(map.getMap()[0].length * scale, map.getMap().length * scale));
 
-        PacmanThread pc_thread = new PacmanThread(this, pacman);
+        PacmanThread pc_thread = new PacmanThread(this, pacman, FPS);
         pc_thread.start();
         GhostThread[] gt_threads = new GhostThread[4];
         for (int i = 0; i < gt_threads.length; i++){
-            gt_threads[i] = new GhostThread(this, ghosts[i], pacman);
+            gt_threads[i] = new GhostThread(this, ghosts[i], pacman, FPS);
             gt_threads[i].start();
         }
-        Timer timer = new Timer(100, e -> this.repaint());
+        Timer timer = new Timer(1000/FPS, e -> this.repaint());
         timer.start();
     }
 
@@ -88,12 +101,12 @@ public class PanelMap extends JPanel {
     }
 
     protected void drawPacman(Graphics g) {
-        g.drawImage(pacman.getPacmanImage(), pacman.getX() * scale, pacman.getY() * scale, 2 * scale * 32 / pacman.getPacmanImage().getWidth(), 2 * scale * 32 / pacman.getPacmanImage().getWidth(), this);
+        g.drawImage(pacman.getPacmanImage(), pacman.getXInMap(), pacman.getYInMap(), 2 * scale * 32 / pacman.getPacmanImage().getWidth(), 2 * scale * 32 / pacman.getPacmanImage().getWidth(), this);
     }
 
     protected void drawGhosts(Graphics g) {
         for (Ghost ghost : ghosts) {
-            g.drawImage(ghost.getGhostImage(), ghost.getX() * scale, ghost.getY() * scale, 2 * scale * 32 / ghost.getGhostImage().getWidth(), 2 * scale * 32 / ghost.getGhostImage().getWidth(), this);
+            g.drawImage(ghost.getGhostImage(), ghost.getXInMap(), ghost.getYInMap(), 2 * scale * 32 / ghost.getGhostImage().getWidth(), 2 * scale * 32 / ghost.getGhostImage().getWidth(), this);
 
         }
 

@@ -14,14 +14,16 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     private Ghost[] ghosts;
     private Map map;
     private PanelPause pausePanel;
+    private int FPS;
 
 
     public void setMap(Map map) {
         this.map = map;
     }
 
-    public PanelGame(int scale, String seed, ScreenMain mainFrame){
+    public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
         super();
+        this.FPS = FPS;
         map = new Map(seed);
         map.ClassicMap();
         this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png");
@@ -36,7 +38,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
         this.mainFrame = mainFrame;
-        mapPanel = new PanelMap(scale, pacman, ghosts, map);
+        mapPanel = new PanelMap(scale, pacman, ghosts, map, FPS);
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));
         PacmanJLabel livesLabel = new PacmanJLabel("Lives: " + pacman.getLives(), pacmanFont.deriveFont(14f));

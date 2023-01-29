@@ -7,10 +7,12 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
     ScreenMain mainFrame;
     private JTextField scaleField;
     private JTextField seedField;
+    private JTextField FPSField;
     private JButton backButton;
     private JButton startButton;
     private PacmanJLabel scaleLabel;
     private PacmanJLabel seedLabel;
+    private PacmanJLabel FPSLabel;
 
     public PanelInitgame(String screenType, ScreenMain mainFrame) {
         super();
@@ -49,7 +51,16 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         scaleField.setBackground(Color.BLACK);
         fields.add(scaleField);
 
+        FPSLabel = new PacmanJLabel("FPS", pacmanFont);
+        fields.add(FPSLabel);
+
         add(fields, BorderLayout.NORTH);
+        FPSField = new JTextField("144");
+        FPSField.setForeground(Color.WHITE);
+        FPSField.setFont(pacmanFont);
+        FPSField.setBackground(Color.BLACK);
+        fields.add(FPSField);
+
 
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1,0));
@@ -82,8 +93,9 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
 
         if (clicked == startButton){
             int scale = Integer.parseInt(scaleField.getText());
+            int FPS = Integer.parseInt(FPSField.getText());
             String seed = seedField.getText();
-            PanelGame game = new PanelGame(scale, seed, mainFrame);
+            PanelGame game = new PanelGame(scale, seed, mainFrame, FPS);
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.showPanel("gamePanel");
         }
