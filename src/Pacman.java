@@ -7,13 +7,11 @@ import java.net.URL;
 
 public class Pacman extends Entity{
 
-    // instance variables for Pacman's position, velocity, and image
     private int score;
     private int lives;
+    public Pacman(int startingX, int startingY, int startingDX, int startingDY, String PacmanPath, int scale) {
+        super(startingX, startingY, startingDX, startingDY, PacmanPath, scale);
 
-    // constructor to initialize Pacman's starting position and velocity
-    public Pacman(int startingX, int startingY, int startingDX, int startingDY, String PacmanPath) {
-        super(startingX, startingY, startingDX, startingDY, PacmanPath);
     }
 
     public int getScore() { return score;}

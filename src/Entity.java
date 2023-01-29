@@ -1,55 +1,75 @@
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import javax.imageio.ImageIO;
 
 public class Entity {
-
-    protected int x, y;
-    protected int xInMap, yInMap;
-    protected int dx, dy;
+    protected int scale;
+    protected int xInMap;
+    protected int yInMap;
+    protected int[] dimensions;
+    protected int dx;
+    protected int dy;
     protected BufferedImage image;
 
-    public Entity(int startingX, int startingY, int startingDX, int startingDY, String imagePath) {
-        x = startingX;
-        y = startingY;
-        dx = startingDX;
-        dy = startingDY;
-        image = loadImage(imagePath);
-        xInMap = x;
-        yInMap = y;
-
+    public Entity(int startingX, int startingY, int startingDX, int startingDY, String imagePath, int scale) {
+        this.dx = startingDX;
+        this.dy = startingDY;
+        this.image = loadImage(imagePath);
+        this.dimensions = new int[]{this.image.getWidth(), this.image.getHeight()};
+        this.scale = scale;
+        this.xInMap = startingX * scale;
+        this.yInMap = startingY * scale;
     }
 
     private BufferedImage loadImage(String path) {
         URL imagePath = getClass().getResource(path);
-        BufferedImage result = null;
         try {
-            result = ImageIO.read(imagePath);
+            return ImageIO.read(imagePath);
         } catch (IOException e) {
-            System.err.println("Error in loading image.");
+            System.err.println("Error loading image: " + e.getMessage());
+            System.exit(-1);
         }
-        return result;
+        return null;
     }
 
     public int getXInMap() {
         return xInMap;
     }
+
     public int getYInMap() {
         return yInMap;
     }
-    public void setxInMap(int xInMap) {
+
+    public void setXInMap(int xInMap) {
         this.xInMap = xInMap;
     }
-    public void setyInMap(int yInMap) {
+
+    public void setYInMap(int yInMap) {
         this.yInMap = yInMap;
     }
-    public void setX(int newX) { x = newX; }
-    public void setY(int newY) { y = newY; }
-    public void setDX(int newDX) { dx = newDX; }
-    public void setDY(int newDY) { dy = newDY; }
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getDX() { return dx; }
-    public int getDY() { return dy; }
+
+    public void setDX(int dx) {
+        this.dx = dx;
+    }
+
+    public void setDY(int dy) {
+        this.dy = dy;
+    }
+
+    public int getX() {
+        return xInMap / scale;
+    }
+
+    public int getY() {
+        return yInMap / scale;
+    }
+
+    public int getDX() {
+        return dx;
+    }
+
+    public int getDY() {
+        return dy;
+    }
 }

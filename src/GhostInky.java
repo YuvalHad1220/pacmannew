@@ -4,8 +4,8 @@ public class GhostInky extends Ghost {
 
     private Ghost blinky;
 
-    public GhostInky(int startingX, int startingY, int startingDX, int startingDY, String ghostPath) {
-        super(startingX, startingY, startingDX, startingDY, ghostPath);
+    public GhostInky(int startingX, int startingY, int startingDX, int startingDY, String ghostPath, int scale) {
+        super(startingX, startingY, startingDX, startingDY, ghostPath, scale);
     }
 
     public void setBlinky(Ghost blinky){

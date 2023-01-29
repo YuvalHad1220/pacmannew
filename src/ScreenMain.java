@@ -47,7 +47,6 @@ public class ScreenMain extends JFrame {
     public void showPanel(String panelName){
         System.out.println("supposed to show " +panelName);
         cardLayout.show(getContentPane(), panelName);
-
     }
 
     public static void main(String[] args) {

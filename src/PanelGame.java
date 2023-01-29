@@ -26,12 +26,12 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         map = new Map(seed);
         map.ClassicMap();
-        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png");
+        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png", scale);
         this.ghosts = new Ghost[]{
-                new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png"),
-                new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png"),
-                new GhostInky(12, 15, 0, 0, "imgs/ghost_inky.png"),
-                new GhostPinky(14, 15, 0, 0, "imgs/ghost_pinky.png")
+                new GhostBlinky(22, 4, 0, 0, "imgs/ghost_blinky.png", scale),
+                new GhostClyde(16, 15, 0, 0, "imgs/ghost_clyde.png", scale),
+                new GhostInky(12, 15, 0, 0, "imgs/ghost_inky.png", scale),
+                new GhostPinky(14, 15, 0, 0, "imgs/ghost_pinky.png", scale)
         };
 
         //setting blinky

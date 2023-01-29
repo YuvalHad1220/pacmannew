@@ -20,15 +20,8 @@ public class PacmanThread extends Thread {
                 continue;
             }
 
-            pacman.setxInMap(pacman.getXInMap() + pacman.getDX());
-            pacman.setyInMap(pacman.getYInMap() + pacman.getDY());
-
-            if (pacman.getXInMap() % mapPanel.getScale() == 0)
-                pacman.setX(pacman.getX() + pacman.getDX());
-
-            if (pacman.getYInMap() % mapPanel.getScale() == 0)
-                pacman.setY(pacman.getY() + pacman.getDY());
-
+            pacman.setXInMap(pacman.getXInMap() + pacman.getDX());
+            pacman.setYInMap(pacman.getYInMap() + pacman.getDY());
 
             try {
                 Thread.sleep(1000/FPS);

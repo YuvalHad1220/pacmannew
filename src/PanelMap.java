@@ -19,13 +19,6 @@ public class PanelMap extends JPanel {
         this.isSuspend = false;
         afterInit();
 
-        this.pacman.setxInMap(this.pacman.getX() * scale);
-        this.pacman.setyInMap(this.pacman.getY() * scale);
-
-        for (Ghost g : this.ghosts){
-            g.setxInMap(g.getXInMap() * scale);
-            g.setyInMap(g.getYInMap() * scale);
-        }
     }
 
     public int getScale(){
@@ -39,10 +32,11 @@ public class PanelMap extends JPanel {
     public boolean getSuspend(){
         return isSuspend;
     }
+
     private void afterInit() {
         setFocusable(true);
         setBackground(Color.BLACK);
-        setPreferredSize(new Dimension(map.getMap()[0].length * scale, map.getMap().length * scale));
+        setPreferredSize(new Dimension(map.getMap().length * scale, map.getMap()[0].length * scale + 50));
 
         PacmanThread pc_thread = new PacmanThread(this, pacman, FPS);
         pc_thread.start();

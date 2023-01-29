@@ -14,15 +14,6 @@ public class Database implements Serializable {
         this.lives = lives;
 
     }
-    public static void main(String[] args) {
-        Map map = new Map("OG");
-        map.ClassicMap();
-        Pacman pacman = new Pacman(map.getMap().length / 2 - 3, 25, 0, 0, "imgs/sad_pacman.png");
-        writeFile("level1.bin", map, pacman);
-
-        Database record = readFile("level1.bin");
-        System.out.println(record.score);
-    }
 
     public static void writeFile(String filename, Map map, Pacman p){
         Database toFile = new Database(map.getMap(), map.getSeed(), p.getScore(), p.getLives());

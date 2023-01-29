@@ -9,7 +9,7 @@ public class GhostThread extends Thread {
         this.ghost = ghost;
         this.mapPanel = mapPanel;
         this.p = p;
-        this.FPS = FPS / 2;
+        this.FPS = FPS;
 
     }
 
@@ -24,15 +24,8 @@ public class GhostThread extends Thread {
                 continue;
             }
 
-            ghost.setxInMap(ghost.getXInMap() + ghost.getDX());
-            ghost.setyInMap(ghost.getYInMap() + ghost.getDY());
-
-            if (ghost.getXInMap() % mapPanel.getScale() == 0)
-                ghost.setX(ghost.getX() + ghost.getDX());
-
-            if (ghost.getYInMap() % mapPanel.getScale() == 0)
-                ghost.setY(ghost.getY() + ghost.getDY());
-
+            ghost.setXInMap(ghost.getXInMap() + ghost.getDX());
+            ghost.setYInMap(ghost.getYInMap() + ghost.getDY());
             ghost.Chase(p);
 
             try {

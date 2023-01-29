@@ -7,23 +7,9 @@ import java.net.URL;
 
 public class Ghost extends Entity implements GhostAI{
 
-    public Ghost(int startingX, int startingY, int startingDX, int startingDY, String ghostPath) {
-        super(startingX, startingY, startingDX, startingDY, ghostPath);
+    public Ghost(int startingX, int startingY, int startingDX, int startingDY, String ghostPath, int scale) {
+        super(startingX, startingY, startingDX, startingDY, ghostPath, scale);
     }
-
-
-    // method to update the ghost's position based on its velocity
-    public void move() {
-        x += dx;
-        y += dy;
-    }
-
-    // method to draw the ghost on the screen
-    public void draw(Graphics g) {
-        g.drawImage(image, x, y, null);
-    }
-
-    // getter and setter methods for the ghost's position and velocity
 
     public BufferedImage getGhostImage() {
         return image;
