@@ -29,6 +29,19 @@ public class PacmanThread extends Thread {
             if (pacman.getYInMap() % mapPanel.getScale() == 0)
                 pacman.setY(pacman.getY() + pacman.getDY());
 
+            if (mapPanel.getMap().isOutOfMap(pacman.getXInMap(), pacman.getYInMap(), mapPanel.getScale())){
+
+                if (mapPanel.getMap().isPath(pacman.getYInMap(), mapPanel.getScale())){
+                    if (pacman.getDX() == 1)
+                        pacman.setX(2);
+                    if (pacman.getDX() == -1)
+                        pacman.setX(27);
+
+                    pacman.setxInMap(pacman.getX() * mapPanel.getScale());
+                }
+                else
+                    pacman.setDX(0);
+            }
 
             try {
                 Thread.sleep(1000/FPS);

@@ -9,7 +9,7 @@ public class GhostThread extends Thread {
         this.ghost = ghost;
         this.mapPanel = mapPanel;
         this.p = p;
-        this.FPS = FPS / 2;
+        this.FPS = FPS * 2;
 
     }
 
@@ -34,7 +34,14 @@ public class GhostThread extends Thread {
                 ghost.setY(ghost.getY() + ghost.getDY());
 
             ghost.Chase(p);
-
+            if (mapPanel.getMap().isOutOfMap(ghost.getXInMap(), ghost.getYInMap(), mapPanel.getScale())){
+                if (mapPanel.getMap().isPath(ghost.getYInMap(), mapPanel.getScale())){
+                    ghost.setX(27);
+                    ghost.setxInMap(ghost.getX() * mapPanel.getScale());
+                }
+                else
+                    ghost.setDX(0);
+            }
             try {
                 Thread.sleep(1000/FPS);
             } catch (InterruptedException e) {
