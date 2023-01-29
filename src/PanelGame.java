@@ -5,44 +5,47 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-
 public class PanelGame extends PacmanJPanel implements KeyListener{
-    private ScreenMain mainFrame;
+    ScreenMain mainFrame;
     PanelMap mapPanel;
     JPanel dataPanel;
-    private Pacman pacman;
-    private Ghost[] ghosts;
-    private Map map;
-    private PanelPause pausePanel;
+    PanelPause pausePanel;
+
+    PacmanJLabel scoreLabel;
+    PacmanJLabel livesLabel;
+
+    private boolean isSuspend;
+    private int scale;
     private int FPS;
-
-
-    public void setMap(Map map) {
-        this.map = map;
-    }
+    private Pacman pacman;
 
     public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
         super();
         this.FPS = FPS;
-        map = new Map(seed);
+        this.scale = scale;
+        this.isSuspend = false;
+        this.mainFrame = mainFrame;
+
+        Map map = new Map(seed);
         map.ClassicMap();
-        this.pacman = new Pacman(map.getMap().length / 2 - 3, 25, scale);
-        this.ghosts = new Ghost[]{
+
+        pacman = new Pacman(map.getMap().length / 2 - 3, 25, scale);
+        Ghost[] ghosts = {
                 new GhostBlinky(22, 4, scale),
                 new GhostClyde(16, 15, scale),
                 new GhostInky(12, 15, scale),
                 new GhostPinky(14, 15, scale)
         };
 
-        //setting blinky
+        // Inky needs Blinky for its AI to work
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-        this.mainFrame = mainFrame;
-        mapPanel = new PanelMap(scale, pacman, ghosts, map, FPS);
+        mapPanel = new PanelMap(pacman, ghosts, map, this);
+
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));
-        PacmanJLabel livesLabel = new PacmanJLabel("Lives: " + pacman.getLives(), pacmanFont.deriveFont(14f));
-        PacmanJLabel scoreLabel = new PacmanJLabel("Score: " + pacman.getScore(), pacmanFont.deriveFont(14f));
+        livesLabel = new PacmanJLabel("Lives: " + pacman.getLives(), pacmanFont.deriveFont(14f));
+        scoreLabel = new PacmanJLabel("Score: " + pacman.getScore(), pacmanFont.deriveFont(14f));
 
         dataPanel.add(livesLabel);
         dataPanel.add(scoreLabel);
@@ -63,11 +66,10 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         });
 
         addKeyListener(this);
-        Timer timer = new Timer(1000/FPS, e -> {
-            livesLabel.setText("Lives: " + pacman.getLives());
-            scoreLabel.setText("Score: " + pacman.getScore());
-        });
-        timer.start();
+
+
+        // starting threads and such
+        mapPanel.afterInitThreads();
     }
 
     @Override
@@ -84,36 +86,56 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
                 pacman.setDY(-1);
                 pacman.setDX(0);
                 break;
+
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
                 pacman.setDX(-1);
                 pacman.setDY(0);
                 break;
+
             case KeyEvent.VK_S:
             case KeyEvent.VK_DOWN:
                 pacman.setDY(1);
                 pacman.setDX(0);
                 break;
+
             case KeyEvent.VK_D:
             case KeyEvent.VK_RIGHT:
                 pacman.setDX(1);
                 pacman.setDY(0);
                 break;
 
-
             case KeyEvent.VK_ESCAPE:
-                if (pausePanel == null){
-                    pausePanel = new PanelPause(mainFrame, mapPanel);
+                if (pausePanel == null) {
+                    pausePanel = new PanelPause(mainFrame, this);
                     mainFrame.addPanel(pausePanel, "pausePanel");
-
+                    mainFrame.showPanel("pausePanel");
                 }
-                mapPanel.setSuspend(true);
-                mainFrame.showPanel("pausePanel");
         }
+    }
+
+    public void setSuspend(boolean flag){
+        isSuspend = flag;
+    }
+
+    public void updateScore(){
+        scoreLabel.setText("Score: " + pacman.getScore());
+    }
+    public int getScale() {
+        return scale;
+    }
+    public int getFPS() {
+        return FPS;
+    }
+
+    public boolean getSuspend() {
+        return isSuspend;
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
     }
+
+
 }

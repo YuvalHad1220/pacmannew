@@ -6,12 +6,12 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
     PacmanJButton continueBtn, saveBtn, exitBtn;
 
     private ScreenMain mainFrame;
-    private PanelMap mapPanel;
+    private PanelGame gamePanel;
 
-    public PanelPause(ScreenMain mainFrame, PanelMap mapPanel) {
+    public PanelPause(ScreenMain mainFrame, PanelGame gamePanel) {
         this.mainFrame = mainFrame;
-        this.mapPanel = mapPanel;
-        this.mapPanel.setSuspend(true);
+        this.gamePanel = gamePanel;
+        this.gamePanel.setSuspend(true);
 
         setLayout(new GridLayout(0, 1));
 
@@ -49,7 +49,7 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
                 int keyCode = e.getKeyCode();
 
                 if (keyCode == KeyEvent.VK_ESCAPE) {
-                    mapPanel.setSuspend(false);
+                    gamePanel.setSuspend(false);
                     mainFrame.showPanel("gamePanel");
                 }
             }
@@ -68,13 +68,13 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
             System.exit(0);
 
         if (clicked == continueBtn) {
-            mapPanel.setSuspend(false);
+            gamePanel.setSuspend(false);
             mainFrame.showPanel("gamePanel");
         }
 
         if (clicked == saveBtn) {
             // we always remove the panel so its okay to create a new one
-            PanelDatabase saveGame = new PanelDatabase(mainFrame, "save", this.mapPanel);
+            PanelDatabase saveGame = new PanelDatabase(mainFrame, "save", this.gamePanel.mapPanel);
             mainFrame.addPanel(saveGame, "savePanel");
             mainFrame.showPanel("savePanel");
         }

@@ -5,105 +5,14 @@ public class PanelMap extends JPanel {
     private Map map;
     private Pacman pacman;
     private Ghost[] ghosts;
-    private int scale;
-    private boolean isSuspend;
-    private int FPS;
+    PanelGame gamePanel;
 
-
-    public PanelMap(int scale, Pacman pacman, Ghost[] ghosts, Map map, int FPS) {
-        this.FPS = FPS;
+    public PanelMap(Pacman pacman, Ghost[] ghosts, Map map, PanelGame gamePanel) {
+        setBackground(Color.BLACK);
         this.map = map;
-        this.scale = scale;
         this.pacman = pacman;
         this.ghosts = ghosts;
-        this.isSuspend = false;
-        afterInit();
-
-    }
-
-    public int getScale(){
-        return scale;
-    }
-
-    public void setSuspend(boolean sus){
-        isSuspend = sus;
-    }
-
-    public boolean getSuspend(){
-        return isSuspend;
-    }
-
-    private void afterInit() {
-        setFocusable(true);
-        setBackground(Color.BLACK);
-        setPreferredSize(new Dimension(map.getMap().length * scale, map.getMap()[0].length * scale + 50));
-
-        PacmanThread pc_thread = new PacmanThread(this, pacman, FPS);
-        pc_thread.start();
-        GhostThread[] gt_threads = new GhostThread[4];
-        for (int i = 0; i < gt_threads.length; i++){
-            gt_threads[i] = new GhostThread(this, ghosts[i], pacman, FPS);
-            gt_threads[i].start();
-        }
-        Timer timer = new Timer(1000/FPS, e -> this.repaint());
-        timer.start();
-    }
-
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        byte[][] my_map = map.getMap();
-        for (int row = 0; row < my_map.length; row++) {
-            for (int col = 0; col < my_map[row].length; col++) {
-                int value = my_map[row][col];
-                g.setColor(Color.BLACK);
-                switch (value) {
-                    case 0:
-                        g.setColor(Color.BLUE);
-                        break;
-
-                    // doing nothing
-                    case -2:
-                    case 1:
-                    case 3:
-                        continue;
-                    case 4:
-                        // door
-                        g.setColor(Color.ORANGE);
-                        break;
-                }
-                if (g.getColor() != Color.BLACK)
-                    g.fillRect(col * scale, row * scale, scale, scale);
-
-            }
-        }
-        g.setColor(Color.WHITE);
-        for (int row = 0; row < my_map.length; row++) {
-            for (int col = 0; col < my_map[row].length; col++) {
-                int value = my_map[row][col];
-                switch (value) {
-                    case 2:
-                        // normal point
-                        g.fillOval(col * scale + scale / 2, row * scale + scale / 2, scale / 4, scale / 4);
-                        break;
-                    case 3:
-                        g.fillOval(col * scale + scale / 2, row * scale + scale / 2, scale / 2, scale / 2);
-                }
-            }
-        }
-        drawGhosts(g);
-        drawPacman(g);
-    }
-
-    protected void drawPacman(Graphics g) {
-        g.drawImage(pacman.getPacmanImage(), pacman.getXInMap(), pacman.getYInMap(), pacman.getWidth(), pacman.getHeight(), this);
-    }
-
-    protected void drawGhosts(Graphics g) {
-        for (Ghost ghost : ghosts) {
-            g.drawImage(ghost.getGhostImage(), ghost.getXInMap(), ghost.getYInMap(), ghost.getWidth(), ghost.getHeight(), this);
-
-        }
-
+        this.gamePanel = gamePanel;
     }
 
     public Map getMap() {
@@ -118,11 +27,64 @@ public class PanelMap extends JPanel {
         this.pacman = pacman;
     }
 
-    public Ghost[] getGhosts() {
-        return ghosts;
+    public void afterInitThreads() {
+        PacmanThread pcThread = new PacmanThread(gamePanel, pacman);
+        pcThread.start();
+
+        GhostThread[] ghostThreads = new GhostThread[4];
+        for (int i = 0; i < ghostThreads.length; i++) {
+            ghostThreads[i] = new GhostThread(gamePanel, ghosts[i], pacman);
+            ghostThreads[i].start();
+        }
+
+        Timer timer = new Timer(1000 / gamePanel.getFPS(), e -> this.repaint());
+        timer.start();
     }
 
-    public void setGhosts(Ghost[] ghosts) {
-        this.ghosts = ghosts;
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int scale = gamePanel.getScale();
+        byte[][] my_map = map.getMap();
+        for (int row = 0; row < my_map.length; row++) {
+            for (int col = 0; col < my_map[row].length; col++) {
+                int value = my_map[row][col];
+                if (value == 0) {
+                    g.setColor(Color.BLUE);
+                    g.fillRect(col * scale, row * scale, scale, scale);
+                }
+                if (value == -2 || value == 2 || value == 3){
+                    // walkable
+                    g.setColor(Color.PINK);
+                    g.fillRect(col * scale, row * scale, scale, scale);
+
+                }
+                if (value == 4) {
+                    // door
+                    g.setColor(Color.ORANGE);
+                    g.fillRect(col * scale, row * scale, scale, scale);
+                }
+                if (value == 2) {
+                    g.setColor(Color.WHITE);
+                    g.fillOval(col * scale + (scale / 2), row * scale + (scale / 2), scale / 4, scale / 4);
+                }
+                if (value == 3) {
+                    g.setColor(Color.WHITE);
+                    g.fillOval(col * scale + (scale / 2), row * scale + (scale / 2), scale / 2, scale / 2);
+                }
+            }
+        }
+
+        drawGhosts(g);
+        drawPacman(g);
     }
+
+    protected void drawPacman(Graphics g) {
+        g.drawImage(pacman.getPacmanImage(), pacman.getXInMap(), pacman.getYInMap(), pacman.getWidth(), pacman.getHeight(), this);
+    }
+
+    protected void drawGhosts(Graphics g) {
+        for (Ghost ghost : ghosts)
+            g.drawImage(ghost.getGhostImage(), ghost.getXInMap(), ghost.getYInMap(), ghost.getWidth(), ghost.getHeight(), this);
+    }
+
 }

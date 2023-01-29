@@ -1,22 +1,22 @@
 public class GhostThread extends Thread {
     private Ghost ghost;
     private Pacman p;
-    private PanelMap mapPanel;
+    private PanelGame gamePanel;
     private int FPS;
 
 
-    public GhostThread(PanelMap mapPanel, Ghost ghost, Pacman p, int FPS) {
+    public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p) {
         this.ghost = ghost;
-        this.mapPanel = mapPanel;
+        this.gamePanel = gamePanel;
         this.p = p;
-        this.FPS = FPS;
+        this.FPS = gamePanel.getFPS();
 
 
     }
 
     public void run() {
         while (true){
-            if (mapPanel.getSuspend()){
+            if (gamePanel.getSuspend()){
                 try {
                     Thread.sleep(1000/FPS);
                 } catch (InterruptedException e) {

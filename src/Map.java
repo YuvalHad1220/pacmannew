@@ -68,17 +68,18 @@ class Map {
         return true;
     }
 
-    public int eatPoint(Pacman p){
+    public boolean eatPoint(Pacman p){
         if (map[p.getY()][p.getX()] == 2){
             map[p.getY()][p.getX()] = -2;
             p.setScore(p.getScore() + 1);
+            return true;
         }
         if (map[p.getY()][p.getX()] == 3){
             map[p.getY()][p.getX()] = -2;
             p.setScore(p.getScore() + 4);
+            return true;
         }
-        System.out.println(p.getX() + " " +p.getY() +" " +map[p.getY()][p.getX()]);
-        return 1;
+        return false;
     }
 
     public boolean isNextBlockMapExit(Pacman p){
