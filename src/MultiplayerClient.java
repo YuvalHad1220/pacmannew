@@ -3,24 +3,25 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class MultiplayerClient extends Thread{
-    PanelLobby panelLobby;
+public class MultiplayerClient extends Multiplayer{
     int serverPort;
     String serverIP;
     byte[] payload;
-    private DatagramSocket socket;
 
 
     public MultiplayerClient(String ip, int port ,PanelLobby panelLobby){
-        this.panelLobby = panelLobby;
+        super(panelLobby);
         this.serverIP = ip;
         this.serverPort = port;
         resetPayload();
     }
 
 
-    public boolean parseMessage(byte[] msg) {
-        String messageStr = new String(msg);
+
+    public boolean parseMessage(byte[] message) {
+        System.out.println("CLIENT: " +Arrays.toString(message));
+        String messageStr = trimZeros(new String(message));
+
         System.out.println("Received message: " + messageStr);
 
         switch (messageStr) {
@@ -33,7 +34,7 @@ public class MultiplayerClient extends Thread{
     }
 
     public void resetPayload(){
-        this.payload = new byte[1024];
+        this.payload = new byte[MAX_LENGTH];
     }
     public void chooseEntity(String choice){
 

@@ -15,6 +15,8 @@ we show this panel either by:
 3.
  */
 public class PanelLobby extends PacmanJPanel implements ActionListener{
+    static final String[] entitiesNames = {"Pacman", "Clyde", "Inky", "Pinky", "Blinky"};
+
     ScreenMain mainFrame;
     String type;
     MultiplayerClient client;
@@ -23,10 +25,13 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
     PacmanJButton connectButton;
     PacmanJButton goBackButton, continueButton;
     PacmanJButton[] entitiesButtons;
+    PacmanJButton previouslySelectedEntity;
 
     PacmanJLabel IPLabel, portLabel;
 
     JTextField IPtextField, portTextField;
+
+    String selectedEntity;
 
     public PanelLobby(String type, ScreenMain mainFrame){
         this.mainFrame = mainFrame;
@@ -67,7 +72,6 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         PacmanJPanel entitiesPanel = new PacmanJPanel();
         entitiesPanel.setLayout(new GridLayout(0,1));
 
-        String[] entitiesNames = {"Pacman", "Clyde", "Inky", "Pinky", "Blinky"};
         entitiesButtons = new PacmanJButton[entitiesNames.length];
         for (int i=0; i<entitiesNames.length; i++){
             entitiesButtons[i] = new PacmanJButton(entitiesNames[i], pacmanFont.deriveFont(14f));
@@ -144,7 +148,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
     }
     public void onConnectClick(){
         String ip = IPtextField.getText();
-        int port = Integer.parseInt(IPtextField.getText());
+        int port = Integer.parseInt(portTextField.getText());
 
         client = new MultiplayerClient(ip, port, this);
         if (client.connect()){
@@ -192,13 +196,16 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
         else {
             // that's a entitiy selection button
-
-            // first we will un-select every button (even if it is disabled its okay)
-            for (JButton entityBtn : entitiesButtons){
-                entityBtn.setBackground(Color.BLACK);
+            if (previouslySelectedEntity != null){
+                System.out.println("set background of " +previouslySelectedEntity.getText() + " black");
+                previouslySelectedEntity.setBackground(Color.BLACK);
             }
+
             clicked.setBackground(Color.DARK_GRAY);
             continueButton.setEnabled(true);
+            previouslySelectedEntity = (PacmanJButton) clicked;
+
+            selectedEntity = clicked.getText();
         }
 
         System.out.println(clicked.getText());

@@ -1,16 +1,21 @@
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 
-public class MultiplayerServer extends Thread{
+public class MultiplayerServer extends Multiplayer{
+    static String trimZeros(String str) {
+        int pos = str.indexOf(0);
+        return pos == -1 ? str : str.substring(0, pos);
+    }
 
     // once a player connects it chooses who is pacman, who is blinky, who is pinky and clyde
 
-    private DatagramSocket socket;
     private String serverIP;
     private int serverPort;
-    private PanelLobby panelLobby;
 
     public MultiplayerServer(PanelLobby panelLobby) {
+        super(panelLobby);
+
         try {
             this.serverIP = InetAddress.getLocalHost().getHostAddress();
             this.socket = new DatagramSocket(0);
@@ -32,7 +37,8 @@ public class MultiplayerServer extends Thread{
     }
 
     public byte[] handleMessage(byte[] message) {
-        String messageStr = new String(message);
+        System.out.println("SERVER:" +Arrays.toString(message));
+        String messageStr = trimZeros(new String(message));
 
         System.out.println("Received message: " + messageStr);
 
@@ -54,7 +60,7 @@ public class MultiplayerServer extends Thread{
         // receive packets from clients
         try {
             while (true) {
-                byte[] incomingData = new byte[1024];
+                byte[] incomingData = new byte[MAX_LENGTH];
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
 
