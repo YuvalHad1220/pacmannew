@@ -43,6 +43,11 @@ public class PanelMap extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        drawMap(g);
+        drawGhosts(g);
+        drawPacman(g);
+    }
+    private void drawMap(Graphics g){
         int scale = gamePanel.getScale();
         byte[][] my_map = map.getMap();
         for (int row = 0; row < my_map.length; row++) {
@@ -73,13 +78,11 @@ public class PanelMap extends JPanel {
                 }
             }
         }
-
-        drawGhosts(g);
-        drawPacman(g);
     }
 
     protected void drawPacman(Graphics g) {
         g.drawImage(pacman.getPacmanImage(), pacman.getXInMap(), pacman.getYInMap(), pacman.getWidth(), pacman.getHeight(), this);
+        g.fillOval(pacman.getXInMap(), pacman.getYInMap(), 30, 30 );
     }
 
     protected void drawGhosts(Graphics g) {

@@ -23,7 +23,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         super();
         this.FPS = FPS;
         this.scale = scale;
-        this.isSuspend = false;
+        this.isSuspend = true;
         this.mainFrame = mainFrame;
 
         Map map = new Map(seed);

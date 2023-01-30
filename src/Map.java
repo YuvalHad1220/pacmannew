@@ -68,7 +68,14 @@ class Map {
         return true;
     }
 
+    public boolean isValidDirection(int dx, int dy){
+        // once we change our direction - before we can actually change it we need to see if it is allowed to us.
+        // using it with isNextBlockValid should be appropiate enough to solve the route issue
+        return true;
+    }
+
     public boolean eatPoint(Pacman p){
+        // if pacman is on point (we need to decide how can we be on point as it is scaling related, contains related etc)
         if (map[p.getY()][p.getX()] == 2){
             map[p.getY()][p.getX()] = -2;
             p.setScore(p.getScore() + 1);
