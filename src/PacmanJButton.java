@@ -8,6 +8,7 @@ public class PacmanJButton extends JButton {
         setFont(font);
         setForeground(Color.WHITE);
         setBackground(Color.BLACK);
+        setFocusable(false);
 
     }
 }

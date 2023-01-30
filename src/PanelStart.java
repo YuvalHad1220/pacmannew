@@ -83,5 +83,17 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
             mainFrame.showPanel("LoadPanel");
 
         }
+
+        if (clicked == buttons[3]){
+            PanelLobby serverPanel = new PanelLobby("server", mainFrame);
+            mainFrame.addPanel(serverPanel, "serverPanel");
+            mainFrame.showPanel("serverPanel");
+        }
+
+        if (clicked == buttons[4]){
+            PanelLobby clientPanel = new PanelLobby("client", mainFrame);
+            mainFrame.addPanel(clientPanel, "clientPanel");
+            mainFrame.showPanel("clientPanel");
+        }
     }
 }
