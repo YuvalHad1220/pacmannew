@@ -61,6 +61,14 @@ public class MultiplayerServer extends Multiplayer{
         return null;
     }
 
+    public void updateSelected(String selected){
+        // we need to update our map then send broadcast to everyone else
+    }
+
+    public void onPeerUpdateSelected(String selected, String ip){
+        // iterate over ip
+
+    }
     public String getIP() {
         return serverIP;
     }
@@ -95,17 +103,15 @@ public class MultiplayerServer extends Multiplayer{
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
                 System.out.println("got data");
-                if (!addConnected(incomingPacket))
-                    System.out.println("full server, can't add, not returning a response");
-                else {
-                    System.out.println("Server got a valid connection from " + incomingPacket.getAddress());
-                    byte[] toSend = handleMessage(incomingPacket);
-                    System.out.println("Server sends: " + new String(toSend));
-                    if (toSend != null) {
-                        DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
-                        socket.send(outgoingPacket);
-                    }
+                if (addConnected(incomingPacket)) System.out.println("Server got a valid connection from " + incomingPacket.getAddress());
+                byte[] toSend = handleMessage(incomingPacket);
+                System.out.println("Server sends: " + new String(toSend));
+                if (toSend != null) {
+                    DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
+                    socket.send(outgoingPacket);
                 }
+                else
+                    System.out.println("full server, can't add, not returning a response");
 
                 Thread.sleep(100);
             }
