@@ -1,24 +1,17 @@
-import java.io.IOException;
 import java.net.*;
-import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Objects;
 
 public class MultiplayerServer extends Multiplayer{
-    static String trimZeros(String str) {
-        int pos = str.indexOf(0);
-        return pos == -1 ? str : str.substring(0, pos);
-    }
-
-    // once a player connects it chooses who is pacman, who is blinky, who is pinky and clyde
 
     private String serverIP;
     private int serverPort;
-    private MultiplayerConnections[] connected;
-    private int connected_cntr;
+    private Hashtable<MultiplayerConnection, String> connectionsAndChoices;
+    private final int MAX_CONNECTED = 4;
     public MultiplayerServer(PanelLobby panelLobby) {
         super(panelLobby);
 
-        connected = new MultiplayerConnections[4]; // we can have 4 maximum that are connected to us
-        connected_cntr = 0;
+        connectionsAndChoices = new Hashtable<>();
         try {
             this.serverIP = InetAddress.getLocalHost().getHostAddress();
             this.socket = new DatagramSocket(0);
@@ -31,24 +24,34 @@ public class MultiplayerServer extends Multiplayer{
         }
     }
 
-    public String getIP() {
-        return serverIP;
-    }
+    public byte[] handleMessage(DatagramPacket incomingPacket) {
+        byte[] message = incomingPacket.getData();
 
-    public int getPort() {
-        return serverPort;
-    }
-
-    public byte[] handleMessage(byte[] message) {
-        System.out.println("SERVER:" +Arrays.toString(message));
         String messageStr = trimZeros(new String(message));
 
-        System.out.println("Received message: " + messageStr);
-
+        messageStr = messageStr.split(" ", 1)[0];
         switch (messageStr){
             // just a ping message to validate
-            case "PING":
-                return "PING".getBytes();
+            case CONNECT:
+                return sendAllChosenMessage(connectionsAndChoices.values().stream().filter(Objects::nonNull).toArray(String[]::new));
+
+            case SELECTENTITY:
+            {
+                String chosen = getEntityFromMessage(message);
+                for (MultiplayerConnection mpc : connectionsAndChoices.keySet())
+                    if (mpc.getIp() == incomingPacket.getAddress().getHostAddress())
+                        connectionsAndChoices.replace(mpc, chosen);
+                break;
+            }
+
+            case DESELECTENTITY:
+            {
+                String unchosen = deselectEntityFromMessage(message);
+                for (MultiplayerConnection mpc : connectionsAndChoices.keySet())
+                    if (mpc.getIp() == incomingPacket.getAddress().getHostAddress())
+                        connectionsAndChoices.replace(mpc, null);
+
+            }
         }
 
 
@@ -56,23 +59,23 @@ public class MultiplayerServer extends Multiplayer{
         return null;
     }
 
+    public String getIP() {
+        return serverIP;
+    }
+    public int getPort() {
+        return serverPort;
+    }
+
     public boolean addConnected(DatagramPacket incomingPacket){
-        if (connected_cntr >= connected.length - 1)
+        if (connectionsAndChoices.size() == MAX_CONNECTED){
+            // that means 4 are connected to us, return false
             return false;
-
-        connected[connected_cntr] = new MultiplayerConnections(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort());
-        connected_cntr++;
-
+        }
+        connectionsAndChoices.put(new MultiplayerConnection(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()), null);
         return true;
 
     }
 
-    public void announceChosen(String choice){
-        // will send a message to all connections that a player is chosen
-
-
-
-    }
 
     public void run(){
 
@@ -90,7 +93,7 @@ public class MultiplayerServer extends Multiplayer{
                 }
 
                 else {
-                    byte[] toSend = handleMessage(incomingPacket.getData());
+                    byte[] toSend = handleMessage(incomingPacket);
                     if (toSend != null) {
                         DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
                         socket.send(outgoingPacket);

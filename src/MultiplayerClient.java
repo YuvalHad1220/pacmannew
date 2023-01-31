@@ -32,7 +32,7 @@ public class MultiplayerClient extends Multiplayer{
 
 
     public void chooseEntity(String choice){
-
+        socket.send(new );
     }
 
     public boolean connect(){
