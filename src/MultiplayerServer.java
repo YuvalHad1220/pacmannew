@@ -12,10 +12,13 @@ public class MultiplayerServer extends Multiplayer{
 
     private String serverIP;
     private int serverPort;
-
+    private MultiplayerConnections[] connected;
+    private int connected_cntr;
     public MultiplayerServer(PanelLobby panelLobby) {
         super(panelLobby);
 
+        connected = new MultiplayerConnections[4]; // we can have 4 maximum that are connected to us
+        connected_cntr = 0;
         try {
             this.serverIP = InetAddress.getLocalHost().getHostAddress();
             this.socket = new DatagramSocket(0);
@@ -53,6 +56,24 @@ public class MultiplayerServer extends Multiplayer{
         return null;
     }
 
+    public boolean addConnected(DatagramPacket incomingPacket){
+        if (connected_cntr >= connected.length - 1)
+            return false;
+
+        connected[connected_cntr] = new MultiplayerConnections(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort());
+        connected_cntr++;
+
+        return true;
+
+    }
+
+    public void announceChosen(String choice){
+        // will send a message to all connections that a player is chosen
+
+
+
+    }
+
     public void run(){
 
         System.out.println("Server started on IP: " + serverIP + " and Port: " + serverPort);
@@ -64,11 +85,16 @@ public class MultiplayerServer extends Multiplayer{
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
 
-                byte[] toSend = handleMessage(incomingPacket.getData());
+                if (!addConnected(incomingPacket)){
+                    System.out.println("full server, can't add, not returning a response");
+                }
 
-                if (toSend != null) {
-                    DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
-                    socket.send(outgoingPacket);
+                else {
+                    byte[] toSend = handleMessage(incomingPacket.getData());
+                    if (toSend != null) {
+                        DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
+                        socket.send(outgoingPacket);
+                    }
                 }
 
                 Thread.sleep(100);

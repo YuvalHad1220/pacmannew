@@ -164,18 +164,10 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
     }
 
-    public void updateUnselected(){
-
-    }
-
     public void closeServerDeleteFrame(){
         mainFrame.removePanel(this);
-        if (server == null)
-            return;
-
-        server.stopServer();
-
-
+        if (server != null)
+            server.stopServer();
     }
 
     @Override

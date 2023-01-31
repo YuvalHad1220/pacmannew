@@ -6,14 +6,11 @@ import java.util.Arrays;
 public class MultiplayerClient extends Multiplayer{
     int serverPort;
     String serverIP;
-    byte[] payload;
-
 
     public MultiplayerClient(String ip, int port ,PanelLobby panelLobby){
         super(panelLobby);
         this.serverIP = ip;
         this.serverPort = port;
-        resetPayload();
     }
 
 
@@ -33,9 +30,7 @@ public class MultiplayerClient extends Multiplayer{
         return false;
     }
 
-    public void resetPayload(){
-        this.payload = new byte[MAX_LENGTH];
-    }
+
     public void chooseEntity(String choice){
 
     }
@@ -45,14 +40,13 @@ public class MultiplayerClient extends Multiplayer{
         try {
             socket = new DatagramSocket();
             serverAddress = InetAddress.getByName(serverIP);
-            payload = "PING".getBytes();
+            byte[] payload = "PING".getBytes();
             DatagramPacket packet = new DatagramPacket(payload, payload.length, serverAddress, serverPort);
             socket.send(packet);
             packet = new DatagramPacket(payload, payload.length);
             socket.setSoTimeout(2000);
             socket.receive(packet);
             if (parseMessage(packet.getData())){
-                resetPayload();
                 return true;
             }
 
