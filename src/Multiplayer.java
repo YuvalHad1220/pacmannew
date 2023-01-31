@@ -1,5 +1,6 @@
 import java.net.DatagramSocket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class Multiplayer extends Thread{
 
@@ -24,7 +25,6 @@ public class Multiplayer extends Thread{
     }
 
     static String getEntityFromMessage(byte[] msg){
-        // reverse of         String msg = "SELECTENTITY " + choice;
         return trimZeros(new String(msg).split(SELECTENTITY, 1)[1]);
     }
 
@@ -41,7 +41,12 @@ public class Multiplayer extends Thread{
 //        String msg = "SELECTENTITIES ";
 //        msg += String.join(",", chosen);
 
-        return new String(msg).split(SELECTENTITIES, 1)[1].split(",");
+        String respStr = new String(msg).split(SELECTENTITIES)[1];
+        System.out.println(respStr);
+        if (respStr.contains(","))
+            return Arrays.stream(respStr.split(",")).map(Multiplayer::trimZeros).toArray(String[]::new);
+
+        return new String[]{trimZeros(respStr).trim()};
 
     }
 
@@ -52,7 +57,7 @@ public class Multiplayer extends Thread{
     }
 
     static String deselectEntityFromMessage(byte[] msg){
-        return new String(msg).split("DESELECTENTITY")[1];
+        return trimZeros(new String(msg).split("DESELECTENTITY")[1]);
     }
 
 

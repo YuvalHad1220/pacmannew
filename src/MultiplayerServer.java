@@ -1,4 +1,5 @@
 import java.net.*;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Objects;
 
@@ -6,17 +7,20 @@ public class MultiplayerServer extends Multiplayer{
 
     private String serverIP;
     private int serverPort;
-    private Hashtable<MultiplayerConnection, String> connectionsAndChoices;
+    private HashMap<MultiplayerConnection, String> connectionsAndChoices;
     private final int MAX_CONNECTED = 4;
+
     public MultiplayerServer(PanelLobby panelLobby) {
         super(panelLobby);
 
-        connectionsAndChoices = new Hashtable<>();
+        connectionsAndChoices = new HashMap<>();
         try {
             this.serverIP = InetAddress.getLocalHost().getHostAddress();
             this.socket = new DatagramSocket(0);
             this.serverPort = socket.getLocalPort();
             this.panelLobby = panelLobby;
+
+
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {
@@ -26,10 +30,9 @@ public class MultiplayerServer extends Multiplayer{
 
     public byte[] handleMessage(DatagramPacket incomingPacket) {
         byte[] message = incomingPacket.getData();
-
         String messageStr = trimZeros(new String(message));
-
-        messageStr = messageStr.split(" ", 1)[0];
+        messageStr = messageStr.split(" ")[0];
+        System.out.println("Server got following message type: " + messageStr);
         switch (messageStr){
             // just a ping message to validate
             case CONNECT:
@@ -54,7 +57,6 @@ public class MultiplayerServer extends Multiplayer{
             }
         }
 
-
         // here we will handle what to do with message
         return null;
     }
@@ -71,7 +73,12 @@ public class MultiplayerServer extends Multiplayer{
             // that means 4 are connected to us, return false
             return false;
         }
-        connectionsAndChoices.put(new MultiplayerConnection(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()), null);
+        try{
+            connectionsAndChoices.put(new MultiplayerConnection(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()), null);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return true;
 
     }
@@ -87,13 +94,13 @@ public class MultiplayerServer extends Multiplayer{
                 byte[] incomingData = new byte[MAX_LENGTH];
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
-
-                if (!addConnected(incomingPacket)){
+                System.out.println("got data");
+                if (!addConnected(incomingPacket))
                     System.out.println("full server, can't add, not returning a response");
-                }
-
                 else {
+                    System.out.println("Server got a valid connection from " + incomingPacket.getAddress());
                     byte[] toSend = handleMessage(incomingPacket);
+                    System.out.println("Server sends: " + new String(toSend));
                     if (toSend != null) {
                         DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
                         socket.send(outgoingPacket);
@@ -104,7 +111,7 @@ public class MultiplayerServer extends Multiplayer{
             }
         }
         catch (Exception e){
-            if (socket != null)
+            if (socket.isClosed())
                 socket.close();
 
             return;
@@ -112,9 +119,18 @@ public class MultiplayerServer extends Multiplayer{
 
     }
 
-    public void announceAvailableEntities(){
 
+    public void onSelfSelect(String choice){
+        // once we, as a server, clicked; we need to add ourselves to our hashmap
+        for (MultiplayerConnection conn : connectionsAndChoices.keySet())
+            if (conn.getIp().equals(serverIP)){
+                connectionsAndChoices.replace(conn, choice);
+                return;
+            }
+
+        connectionsAndChoices.put(new MultiplayerConnection(serverIP, serverPort), choice);
     }
+
     public void stopServer() {
         socket.close();
     }

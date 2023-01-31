@@ -2,10 +2,12 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class MultiplayerClient extends Multiplayer{
     int serverPort;
     String serverIP;
+    String selected;
 
     public MultiplayerClient(String ip, int port ,PanelLobby panelLobby){
         super(panelLobby);
@@ -14,62 +16,79 @@ public class MultiplayerClient extends Multiplayer{
     }
 
 
+    public String[] handleMessage(DatagramPacket incomingPacket) {
+        byte[] message = incomingPacket.getData();
 
-    public boolean parseMessage(byte[] message) {
-        System.out.println("CLIENT: " +Arrays.toString(message));
         String messageStr = trimZeros(new String(message));
-
-        System.out.println("Received message: " + messageStr);
-
-        switch (messageStr) {
-            // just a ping message to validate
-            case "PING":
-                return true;
-
-        }
-        return false;
-    }
-
-
-    public void chooseEntity(String choice){
-        socket.send(new );
-    }
-
-    public boolean connect(){
-        InetAddress serverAddress;
-        try {
-            socket = new DatagramSocket();
-            serverAddress = InetAddress.getByName(serverIP);
-            byte[] payload = "PING".getBytes();
-            DatagramPacket packet = new DatagramPacket(payload, payload.length, serverAddress, serverPort);
-            socket.send(packet);
-            packet = new DatagramPacket(payload, payload.length);
-            socket.setSoTimeout(2000);
-            socket.receive(packet);
-            if (parseMessage(packet.getData())){
-                return true;
+        messageStr = messageStr.split(" ")[0];
+        switch (messageStr){
+            case SELECTENTITIES: {
+                // that means we first connected with the server. we need to set selected entities in our lobypanel
+                return getEntitiesFromMessage(message);
             }
 
-        }
-        catch (SocketException e) {
+            }
+        return null;
+    }
+    public boolean sendMessage(byte[] msg){
+        try {
+            DatagramPacket outgoingPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
+            socket.send(outgoingPacket);
+        } catch (UnknownHostException e) {
             e.printStackTrace();
-            return false;
-        }
-        catch (UnknownHostException e) {
-            e.printStackTrace();
-            socket.close();
             return false;
         } catch (IOException e) {
             e.printStackTrace();
             socket.close();
-            return false;
         }
 
-        return false;
+        return true;
+    }
+
+    public void chooseEntity(String choice){
+        if (selected != null)
+            sendMessage(deselectEntityMessage(selected));
+
+        selected = choice;
+
+        sendMessage(chooseEntityMessage(selected));
+    }
+
+    public String[] connect(){
+        InetAddress serverAddress;
+        try {
+            socket = new DatagramSocket();
+            serverAddress = InetAddress.getByName(serverIP);
+            byte[] connectMsg = connectMessage();
+            DatagramPacket packet = new DatagramPacket(connectMsg, connectMsg.length, serverAddress, serverPort);
+            socket.send(packet);
+            byte[] recv = new byte[MAX_LENGTH];
+            packet = new DatagramPacket(recv, recv.length);
+            socket.setSoTimeout(2000);
+            socket.receive(packet);
+            String[] chosenEntities = handleMessage(packet);
+            System.out.println("client connected to server. the response we got from the server: " + Arrays.toString(chosenEntities));
+            return chosenEntities;
+
+        }
+        catch (SocketException e) {
+            e.printStackTrace();
+            return null;
+        }
+        catch (UnknownHostException e) {
+            e.printStackTrace();
+            socket.close();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            socket.close();
+            return null;
+        }
 
     }
 
     public void run(){
+        // here we will always listen for messages
 
     }
 

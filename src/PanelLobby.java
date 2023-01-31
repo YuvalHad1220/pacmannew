@@ -111,7 +111,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
         IPLabel = new PacmanJLabel("Enter IP:", pacmanFont.deriveFont(16f));
 
-        IPtextField = new JTextField();
+        IPtextField = new JTextField("172.27.128.1");
         IPtextField.setForeground(Color.WHITE);
         IPtextField.setFont(pacmanFont.deriveFont(18f));
         IPtextField.setBackground(Color.GRAY);
@@ -151,16 +151,38 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         int port = Integer.parseInt(portTextField.getText());
 
         client = new MultiplayerClient(ip, port, this);
-        if (client.connect()){
-            for (PacmanJButton entityBtn: entitiesButtons)
-                entityBtn.setEnabled(true);
+        String[] selectedEntities = client.connect();
+        for (PacmanJButton entityBtn : entitiesButtons)
+            entityBtn.setEnabled(true);
 
-            client.start(); // now once we will start than we will update selected as we go
+        if (selectedEntities != null){
+        for (String selected : selectedEntities)
+            setTaken(selected);
+
+        client.start(); // now once we will start than we will update selected as we go
+
         }
     }
 
+    public void setTaken(String choice){
+        System.out.println("need to set " +choice +" as taken");
+        for (PacmanJButton entityBtn : entitiesButtons) {
+            if (entityBtn.getText().equals(choice)) {
+                System.out.println(entityBtn.getText());
+                entityBtn.setEnabled(false);
+                return;
+            }
+        }
+    }
 
     public void updateSelected(){
+        if (type.equals("client")){
+            client.chooseEntity(selectedEntity);
+        }
+
+        if (type.equals("server")){
+            server.chooseEntity(selectedEntity);
+        }
 
     }
 
@@ -196,10 +218,13 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
             clicked.setBackground(Color.DARK_GRAY);
             continueButton.setEnabled(true);
             previouslySelectedEntity = (PacmanJButton) clicked;
-
             selectedEntity = clicked.getText();
+
+            if (type.equals("server")){
+                server.onSelfSelect(selectedEntity);
+            }
+
         }
 
-        System.out.println(clicked.getText());
     }
 }
