@@ -25,12 +25,13 @@ public class Multiplayer extends Thread{
     }
 
     static String getEntityFromMessage(byte[] msg){
-        return trimZeros(new String(msg).split(SELECTENTITY, 1)[1]);
+        return trimZeros(new String(msg).split(SELECTENTITY)[1]);
     }
 
-    static byte[] sendAllChosenMessage(String[] chosen){
+    static byte[] sendAllChosenMessage(String[] chosen, String serverOwnChoice){
         String msg = SELECTENTITIES +" ";
         msg += String.join(",", chosen);
+        msg += "," + serverOwnChoice;
 
         return msg.getBytes(StandardCharsets.UTF_8);
     }

@@ -168,23 +168,12 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         System.out.println("need to set " +choice +" as taken");
         for (PacmanJButton entityBtn : entitiesButtons) {
             if (entityBtn.getText().equals(choice)) {
-                System.out.println(entityBtn.getText());
                 entityBtn.setEnabled(false);
                 return;
             }
         }
     }
 
-    public void updateSelected(){
-        if (type.equals("client")){
-            client.chooseEntity(selectedEntity);
-        }
-
-        if (type.equals("server")){
-            server.chooseEntity(selectedEntity);
-        }
-
-    }
 
     public void closeServerDeleteFrame(){
         mainFrame.removePanel(this);
@@ -209,22 +198,44 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         }
 
         else {
-            // that's a entitiy selection button
-            if (previouslySelectedEntity != null){
-                System.out.println("set background of " +previouslySelectedEntity.getText() + " black");
-                previouslySelectedEntity.setBackground(Color.BLACK);
-            }
+            if (previouslySelectedEntity == clicked)
+                return;
 
+            // here we are an entityButton
             clicked.setBackground(Color.DARK_GRAY);
             continueButton.setEnabled(true);
-            previouslySelectedEntity = (PacmanJButton) clicked;
             selectedEntity = clicked.getText();
 
-            if (type.equals("server")){
-                server.onSelfSelect(selectedEntity);
+            if (previouslySelectedEntity == null){
+                // that means this is the first time we select an entity. we will update the client and server if needed
+                if (server != null)
+                    server.updateSelected(selectedEntity, null);
+                if (client != null)
+                    client.updateSelected(selectedEntity, null);
             }
+
+            else {
+                // need to update
+                previouslySelectedEntity.setBackground(Color.BLACK);
+                if (server != null)
+                    server.updateSelected(selectedEntity, previouslySelectedEntity.getText());
+                if (client != null)
+                    client.updateSelected(selectedEntity, previouslySelectedEntity.getText());
+            }
+
+            // always happens
+            previouslySelectedEntity = (PacmanJButton) clicked;
 
         }
 
+    }
+
+    public void cancelChosen(String old){
+        for (PacmanJButton chosen : entitiesButtons){
+            if (chosen.getText().equals(old)){
+                chosen.setEnabled(true);
+                break;
+            }
+        }
     }
 }

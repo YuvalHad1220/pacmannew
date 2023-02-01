@@ -1,8 +1,6 @@
 import java.io.IOException;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class MultiplayerClient extends Multiplayer{
     int serverPort;
@@ -27,31 +25,20 @@ public class MultiplayerClient extends Multiplayer{
                 return getEntitiesFromMessage(message);
             }
 
+            case DESELECTENTITY: {
+                String unchosen = deselectEntityFromMessage(message);
+                panelLobby.cancelChosen(unchosen);
+                break;
             }
-        return null;
-    }
-    public boolean sendMessage(byte[] msg){
-        try {
-            DatagramPacket outgoingPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
-            socket.send(outgoingPacket);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            socket.close();
+
+            case SELECTENTITY: {
+                String chosen = getEntityFromMessage(message);
+                panelLobby.setTaken(chosen);
+
+            }
+
         }
-
-        return true;
-    }
-
-    public void chooseEntity(String choice){
-        if (selected != null)
-            sendMessage(deselectEntityMessage(selected));
-
-        selected = choice;
-
-        sendMessage(chooseEntityMessage(selected));
+        return null;
     }
 
     public String[] connect(){
@@ -62,6 +49,7 @@ public class MultiplayerClient extends Multiplayer{
             byte[] connectMsg = connectMessage();
             DatagramPacket packet = new DatagramPacket(connectMsg, connectMsg.length, serverAddress, serverPort);
             socket.send(packet);
+            System.out.println("Client sent a connect msg, expecting a msg back");
             byte[] recv = new byte[MAX_LENGTH];
             packet = new DatagramPacket(recv, recv.length);
             socket.setSoTimeout(2000);
@@ -88,8 +76,48 @@ public class MultiplayerClient extends Multiplayer{
     }
 
     public void run(){
-        // here we will always listen for messages
+        // here we will always listen for messages that may come such as enable\disable entities
+        try {
+            socket.setSoTimeout(0);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
 
+        while (true){
+            byte[] incomingData = new byte[MAX_LENGTH];
+            DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
+            try {
+                socket.receive(incomingPacket);
+                handleMessage(incomingPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+    public void updateSelected(String newChoice, String oldChoice){
+        System.out.println("client need to update value to " +newChoice +" and announce it");
+        selected = newChoice;
+        byte[] msg = deselectEntityMessage(oldChoice);
+        try {
+            if (oldChoice != null){
+                socket.send(new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort));
+                System.out.println("Client set to deselect " + oldChoice);
+            }
+            msg = chooseEntityMessage(newChoice);
+            socket.send(new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort));
+            System.out.println("client sent to select " + newChoice);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateLobbyScreen(){
