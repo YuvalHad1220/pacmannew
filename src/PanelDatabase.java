@@ -93,12 +93,12 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
         return titles;
     }
 
-    public void onConfResult(boolean value){
+    public void onConfResult(boolean value, String overwriteFilename){
         mainFrame.removePanel(confDialogue);
 
         // that means we should overwrite save, and after that go back to pausePanel
         if (value)
-            save();
+            save(overwriteFilename);
 
         // showing the save panel again so user can choose
         else
@@ -106,9 +106,12 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
 
     }
 
-    private void save(){
+    private void save(String overwriteFilename){
         String filename = "save_" + getTotalSaves() +".bin";
-        Database.writeFile(filename, mapPanel.getMap(),  mapPanel.getPacman());
+        if (overwriteFilename != null)
+            filename = overwriteFilename;
+
+        Database.writeFile(filename, mapPanel.getMap(),  mapPanel.getPacman(), mapPanel.getGhosts());
         mainFrame.showPanel("pausePanel");
         mainFrame.removePanel(this);
     }
@@ -133,7 +136,7 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
 
             if (text.contains("Populate Save")){
                 // then we just save, no confirmation
-                save();
+                save(null);
             }
 
             else {

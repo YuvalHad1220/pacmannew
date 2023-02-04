@@ -51,6 +51,7 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
                 if (keyCode == KeyEvent.VK_ESCAPE) {
                     gamePanel.setSuspend(false);
                     mainFrame.showPanel("gamePanel");
+
                 }
             }
 

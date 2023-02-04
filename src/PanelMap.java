@@ -7,6 +7,10 @@ public class PanelMap extends JPanel {
     private Ghost[] ghosts;
     PanelGame gamePanel;
 
+    public Ghost[] getGhosts() {
+        return ghosts;
+    }
+
     public PanelMap(Pacman pacman, Ghost[] ghosts, Map map, PanelGame gamePanel) {
         setBackground(Color.BLACK);
         this.map = map;

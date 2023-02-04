@@ -1,22 +1,29 @@
 import java.io.*;
 
 public class Database implements Serializable {
-    public byte[][] bm;
-    public String seed;
-    public int score;
-    public int lives;
-    private static final String DATABASE_FOLDER = "./levels/";
+    // map related
+    private byte[][] bm;
+    private String seed;
 
-    public Database(byte[][] bm, String seed, int score, int lives){
+    // entities related
+    private int[] pacmanData; // (score, lives, xInMap, yInMap)
+    private int[][] ghostsData; // (xInMap, yInMap), (xInMap, yInMap), so on
+
+    // class related
+    public static final String DATABASE_FOLDER = "./levels/";
+
+    public Database(byte[][] bm, String seed, Pacman p, Ghost[] ghosts){
         this.bm = bm;
         this.seed = seed;
-        this.score = score;
-        this.lives = lives;
+        this.pacmanData = new int[]{p.getScore(), p.getLives(), p.getXInMap(), p.getYInMap()};
+        this.ghostsData = new int[ghosts.length][];
+        for (int i = 0; i<ghosts.length; i++)
+            ghostsData[i] = new int[]{ghosts[i].getXInMap(), ghosts[i].getYInMap()};
 
     }
 
-    public static void writeFile(String filename, Map map, Pacman p){
-        Database toFile = new Database(map.getMap(), map.getSeed(), p.getScore(), p.getLives());
+    public static void writeFile(String filename, Map map, Pacman p, Ghost[] ghosts){
+        Database toFile = new Database(map.getMap(), map.getSeed(),p, ghosts);
 
         try {
             FileOutputStream fileOut = new FileOutputStream(DATABASE_FOLDER + filename);

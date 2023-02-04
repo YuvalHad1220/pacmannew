@@ -106,11 +106,16 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
                 break;
 
             case KeyEvent.VK_ESCAPE:
+            {
+                setSuspend(true);
                 if (pausePanel == null) {
                     pausePanel = new PanelPause(mainFrame, this);
                     mainFrame.addPanel(pausePanel, "pausePanel");
-                    mainFrame.showPanel("pausePanel");
+
                 }
+                mainFrame.showPanel("pausePanel");
+            }
+
         }
     }
 

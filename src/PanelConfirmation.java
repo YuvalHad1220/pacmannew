@@ -5,12 +5,14 @@ import java.awt.event.ActionListener;
 
 public class PanelConfirmation extends PacmanJPanel implements ActionListener {
     PanelDatabase panelDatabase;
+    String selected;
     JButton yes;
     JButton no;
 
     public PanelConfirmation(String text, PanelDatabase panelDatabase){
         super();
         this.panelDatabase = panelDatabase;
+        selected = text;
         JLabel confirmation = new JLabel("Overwrite \""+ text + "\"?");
         confirmation.setFont(pacmanFont.deriveFont(12f));
         confirmation.setHorizontalAlignment(JLabel.CENTER);
@@ -50,11 +52,11 @@ public class PanelConfirmation extends PacmanJPanel implements ActionListener {
         JButton clicked = (JButton) e.getSource();
 
         if (clicked == yes){
-            panelDatabase.onConfResult(true);
+            panelDatabase.onConfResult(true, selected);
 
         }
         if (clicked == no){
-            panelDatabase.onConfResult(false);
+            panelDatabase.onConfResult(false, selected);
 
         }
 
