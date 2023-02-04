@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 /*
 
@@ -14,7 +13,7 @@ we show this panel either by:
 2. display port
 3.
  */
-public class PanelLobby extends PacmanJPanel implements ActionListener{
+public class PanelLobby extends PacmanJPanel implements ActionListener {
     static final String[] entitiesNames = {"Pacman", "Clyde", "Inky", "Pinky", "Blinky"};
 
     ScreenMain mainFrame;
@@ -33,7 +32,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
     String selectedEntity;
 
-    public PanelLobby(String type, ScreenMain mainFrame){
+    public PanelLobby(String type, ScreenMain mainFrame) {
         this.mainFrame = mainFrame;
         this.type = type;
 
@@ -41,7 +40,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         initEntitiesPanel();
         initMetaPanel();
 
-        if (type.equals("server")){
+        if (type.equals("server")) {
             // inititate a server and then show ip and port, also make "connect" button greyed out
             server = new MultiplayerServer(this);
             server.start();
@@ -51,7 +50,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
     }
 
-    private void initMetaPanel(){
+    private void initMetaPanel() {
         goBackButton = new PacmanJButton("Go Back", pacmanFont.deriveFont(16f));
         continueButton = new PacmanJButton("Continue", pacmanFont.deriveFont(16f));
         continueButton.addActionListener(this);
@@ -60,7 +59,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         continueButton.setEnabled(false);
 
         PacmanJPanel metaPanel = new PacmanJPanel();
-        metaPanel.setLayout(new GridLayout(1,0));
+        metaPanel.setLayout(new GridLayout(1, 0));
 
         metaPanel.add(goBackButton);
         metaPanel.add(continueButton);
@@ -68,12 +67,12 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         add(metaPanel, BorderLayout.SOUTH);
     }
 
-    private void initEntitiesPanel(){
+    private void initEntitiesPanel() {
         PacmanJPanel entitiesPanel = new PacmanJPanel();
-        entitiesPanel.setLayout(new GridLayout(0,1));
+        entitiesPanel.setLayout(new GridLayout(0, 1));
 
         entitiesButtons = new PacmanJButton[entitiesNames.length];
-        for (int i=0; i<entitiesNames.length; i++){
+        for (int i = 0; i < entitiesNames.length; i++) {
             entitiesButtons[i] = new PacmanJButton(entitiesNames[i], pacmanFont.deriveFont(14f));
             entitiesButtons[i].addActionListener(this);
             entitiesButtons[i].setEnabled(false);
@@ -83,7 +82,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         add(entitiesPanel, BorderLayout.CENTER);
     }
 
-    private void setAsServer(){
+    private void setAsServer() {
         connectButton.setEnabled(false);
         IPLabel.setText("IP:");
         portLabel.setText("PORT:");
@@ -94,12 +93,13 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         portTextField.setEnabled(false);
         portTextField.setBackground(Color.DARK_GRAY);
 
-        for (PacmanJButton entityBtn: entitiesButtons)
+        for (PacmanJButton entityBtn : entitiesButtons)
             entityBtn.setEnabled(true);
 
 
     }
-    public void initConnPanel(){
+
+    public void initConnPanel() {
         PacmanJPanel IPPanel = new PacmanJPanel();
         PacmanJPanel portPanel = new PacmanJPanel();
         PacmanJPanel connectionPanel = new PacmanJPanel();
@@ -107,11 +107,11 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         setBackground(Color.BLACK);
         setLayout(new BorderLayout());
 
-        IPPanel.setLayout(new GridLayout(0,1));
+        IPPanel.setLayout(new GridLayout(0, 1));
 
         IPLabel = new PacmanJLabel("Enter IP:", pacmanFont.deriveFont(16f));
 
-        IPtextField = new JTextField("172.27.128.1");
+        IPtextField = new JTextField("172.25.224.1");
         IPtextField.setForeground(Color.WHITE);
         IPtextField.setFont(pacmanFont.deriveFont(18f));
         IPtextField.setBackground(Color.GRAY);
@@ -120,8 +120,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         IPPanel.add(IPtextField);
 
 
-
-        portPanel.setLayout(new GridLayout(0,1));
+        portPanel.setLayout(new GridLayout(0, 1));
 
         portLabel = new PacmanJLabel("Enter Port:", pacmanFont.deriveFont(16f));
         portTextField = new JTextField();
@@ -136,7 +135,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         connectButton = new PacmanJButton("Connect", pacmanFont.deriveFont(18f));
         connectButton.addActionListener(this);
 
-        connectionPanel.setLayout(new GridLayout(1,0));
+        connectionPanel.setLayout(new GridLayout(1, 0));
 
         connectionPanel.add(IPPanel);
         connectionPanel.add(portPanel);
@@ -146,7 +145,8 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
 
     }
-    public void onConnectClick(){
+
+    public void onConnectClick() {
         String ip = IPtextField.getText();
         int port = Integer.parseInt(portTextField.getText());
 
@@ -155,17 +155,17 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
         for (PacmanJButton entityBtn : entitiesButtons)
             entityBtn.setEnabled(true);
 
-        if (selectedEntities != null){
-        for (String selected : selectedEntities)
-            setTaken(selected);
+        if (selectedEntities != null) {
+            for (String selected : selectedEntities)
+                setTaken(selected);
 
-        client.start(); // now once we will start than we will update selected as we go
+            client.start(); // now once we will start than we will update selected as we go
 
         }
     }
 
-    public void setTaken(String choice){
-        System.out.println("need to set " +choice +" as taken");
+    public void setTaken(String choice) {
+        System.out.println("need to set " + choice + " as taken");
         for (PacmanJButton entityBtn : entitiesButtons) {
             if (entityBtn.getText().equals(choice)) {
                 entityBtn.setEnabled(false);
@@ -175,7 +175,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
     }
 
 
-    public void closeServerDeleteFrame(){
+    public void closeServerDeleteFrame() {
         mainFrame.removePanel(this);
         if (server != null)
             server.stopServer();
@@ -184,20 +184,14 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
-        if (clicked == connectButton){
+        if (clicked == connectButton) {
             onConnectClick();
-        }
-
-        else if (clicked == goBackButton){
+        } else if (clicked == goBackButton) {
             closeServerDeleteFrame();
             mainFrame.showPanel("startPanel");
-        }
+        } else if (clicked == continueButton) {
 
-        else if (clicked == continueButton){
-
-        }
-
-        else {
+        } else {
             if (previouslySelectedEntity == clicked)
                 return;
 
@@ -206,15 +200,13 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
             continueButton.setEnabled(true);
             selectedEntity = clicked.getText();
 
-            if (previouslySelectedEntity == null){
+            if (previouslySelectedEntity == null) {
                 // that means this is the first time we select an entity. we will update the client and server if needed
                 if (server != null)
                     server.updateSelected(selectedEntity, null);
                 if (client != null)
                     client.updateSelected(selectedEntity, null);
-            }
-
-            else {
+            } else {
                 // need to update
                 previouslySelectedEntity.setBackground(Color.BLACK);
                 if (server != null)
@@ -230,9 +222,9 @@ public class PanelLobby extends PacmanJPanel implements ActionListener{
 
     }
 
-    public void cancelChosen(String old){
-        for (PacmanJButton chosen : entitiesButtons){
-            if (chosen.getText().equals(old)){
+    public void cancelChosen(String old) {
+        for (PacmanJButton chosen : entitiesButtons) {
+            if (chosen.getText().equals(old)) {
                 chosen.setEnabled(true);
                 break;
             }
