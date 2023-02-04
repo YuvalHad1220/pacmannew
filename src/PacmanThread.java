@@ -21,8 +21,8 @@ public class PacmanThread extends Thread {
                 continue;
             }
 
-            pacman.setXInMap(pacman.getXInMap() + pacman.getDX());
-            pacman.setYInMap(pacman.getYInMap() + pacman.getDY());
+            pacman.setXinPanel(pacman.getXInPanel() + pacman.getDX());
+            pacman.setYinPanel(pacman.getYinPanel() + pacman.getDY());
 
             if (!gamePanel.mapPanel.getMap().isNextBlockValid(pacman)){
                 pacman.setDX(0);

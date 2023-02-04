@@ -100,4 +100,8 @@ class Map {
     public boolean isPath(int yInMap, int scale) {
         return yInMap/scale == 15 ;
     }
+
+    public void setMap(byte[][] bm) {
+        this.map = bm;
+    }
 }
