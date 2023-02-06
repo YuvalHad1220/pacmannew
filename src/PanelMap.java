@@ -85,13 +85,13 @@ public class PanelMap extends JPanel {
     }
 
     protected void drawPacman(Graphics g) {
-        g.drawImage(pacman.getPacmanImage(), pacman.getXInMap(), pacman.getYInMap(), pacman.getWidth(), pacman.getHeight(), this);
-        g.fillOval(pacman.getXInMap(), pacman.getYInMap(), 30, 30 );
+        g.drawImage(pacman.getPacmanImage(), pacman.getXInPanel(), pacman.getYinPanel(), pacman.getWidth(), pacman.getHeight(), this);
+        g.fillOval(pacman.getXInPanel(), pacman.getYinPanel(), 30, 30 );
     }
 
     protected void drawGhosts(Graphics g) {
         for (Ghost ghost : ghosts)
-            g.drawImage(ghost.getGhostImage(), ghost.getXInMap(), ghost.getYInMap(), ghost.getWidth(), ghost.getHeight(), this);
+            g.drawImage(ghost.getGhostImage(), ghost.getXInPanel(), ghost.getYinPanel(), ghost.getWidth(), ghost.getHeight(), this);
     }
 
 }

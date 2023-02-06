@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.logging.Logger;
 
 public class PanelDatabase extends PacmanJPanel implements ActionListener {
     private static final String DATABASE_FOLDER = "./levels/";
@@ -133,17 +134,24 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
 
         else {
             String text = clicked.getText();
+            if (type.equals("save")){
+                if (text.contains("Populate Save"))
+                    // then we just save, no confirmation
+                    save(null);
 
-            if (text.contains("Populate Save")){
-                // then we just save, no confirmation
-                save(null);
+                else {
+                    confDialogue = new PanelConfirmation(text, this);
+                    mainFrame.addPanel(confDialogue, "confirmationPanel");
+                    mainFrame.showPanel("confirmationPanel");
+                }
             }
 
-            else {
-                // we will display a confirmation panel and we will get an OnResult callback
-                confDialogue = new PanelConfirmation(text, this);
-                mainFrame.addPanel(confDialogue, "confirmationPanel");
-                mainFrame.showPanel("confirmationPanel");
+
+            if (type.equals("load")){
+                Database data = Database.readFile(text);
+                PanelInitgame init = new PanelInitgame(data, mainFrame);
+                mainFrame.addPanel(init, "gamePanel");
+                mainFrame.showPanel("gamePanel");
             }
         }
 

@@ -25,8 +25,8 @@ public class GhostThread extends Thread {
                 continue;
             }
 
-            ghost.setXInMap(ghost.getXInMap() + ghost.getDX());
-            ghost.setYInMap(ghost.getYInMap() + ghost.getDY());
+            ghost.setXinPanel(ghost.getXInPanel() + ghost.getDX());
+            ghost.setYinPanel(ghost.getYinPanel() + ghost.getDY());
             ghost.Chase(p);
 
             try {

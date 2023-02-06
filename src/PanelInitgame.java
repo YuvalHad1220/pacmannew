@@ -13,44 +13,58 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
     private PacmanJLabel scaleLabel;
     private PacmanJLabel seedLabel;
     private PacmanJLabel FPSLabel;
+    private Database savedRecord;
+    public PanelInitgame(Database savedRecord, ScreenMain mainFrame){
+        super();
+        this.savedRecord = savedRecord;
+        this.mainFrame = mainFrame;
 
-    public PanelInitgame(String screenType, ScreenMain mainFrame) {
+        init("fromSave");
+    }
+
+    public PanelInitgame(String screenType, ScreenMain mainFrame){
         super();
         this.mainFrame = mainFrame;
+        init(screenType);
+    }
+
+    private void init(String type){
         setPreferredSize(new Dimension(600, 600));
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
-
-
         JPanel fields = new JPanel();
         fields.setLayout(new GridLayout(0,1));
         seedLabel = new PacmanJLabel("Seed", pacmanFont);
         fields.add(seedLabel);
 
         seedField = new JTextField();
-        if (screenType.equals("Default")){
+        if (type.equals("Default")){
             seedField.setForeground(Color.GRAY);
             seedField.setEditable(false);
             seedField.setText("CLASSIC_MAP");
         }
+
+        else if (type.equals("fromSave")){
+            seedField.setForeground(Color.GRAY);
+            seedField.setEditable(false);
+            seedField.setText(savedRecord.seed);
+        }
+
         else {
             seedField.setForeground(Color.WHITE);
         }
-
         seedField.setFont(pacmanFont);
         seedField.setBackground(Color.BLACK);
         fields.add(seedField);
 
         scaleLabel = new PacmanJLabel("Scale", pacmanFont);
         fields.add(scaleLabel);
-
         scaleField = new JTextField();
         scaleField.setText("20");
         scaleField.setForeground(Color.WHITE);
         scaleField.setFont(pacmanFont);
         scaleField.setBackground(Color.BLACK);
         fields.add(scaleField);
-
         FPSLabel = new PacmanJLabel("FPS", pacmanFont);
         fields.add(FPSLabel);
 
@@ -60,8 +74,6 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         FPSField.setFont(pacmanFont);
         FPSField.setBackground(Color.BLACK);
         fields.add(FPSField);
-
-
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1,0));
         buttons.setBackground(Color.BLACK);
@@ -81,21 +93,25 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         startButton.setFocusable(false);
         startButton.addActionListener(this);
         buttons.add(startButton);
-
         add(buttons, BorderLayout.SOUTH);
 
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
 
-
         if (clicked == startButton){
             int scale = Integer.parseInt(scaleField.getText());
             int FPS = Integer.parseInt(FPSField.getText());
             String seed = seedField.getText();
-            PanelGame game = new PanelGame(scale, seed, mainFrame, FPS);
+            PanelGame game;
+            if (savedRecord != null)
+                game = new PanelGame(scale, mainFrame, FPS, savedRecord);
+            else
+                game = new PanelGame(scale, seed, mainFrame, FPS);
+
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.showPanel("gamePanel");
         }

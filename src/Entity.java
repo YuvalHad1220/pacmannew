@@ -56,19 +56,19 @@ public class Entity {
         return height;
     }
 
-    public int getXInMap() {
+    public int getXInPanel() {
         return xInMap;
     }
 
-    public int getYInMap() {
+    public int getYinPanel() {
         return yInMap;
     }
 
-    public void setXInMap(int xInMap) {
+    public void setXinPanel(int xInMap) {
         this.xInMap = xInMap;
     }
 
-    public void setYInMap(int yInMap) {
+    public void setYinPanel(int yInMap) {
         this.yInMap = yInMap;
     }
 

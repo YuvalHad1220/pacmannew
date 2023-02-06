@@ -2,12 +2,12 @@ import java.io.*;
 
 public class Database implements Serializable {
     // map related
-    private byte[][] bm;
-    private String seed;
+    public byte[][] bm;
+    public String seed;
 
     // entities related
-    private int[] pacmanData; // (score, lives, xInMap, yInMap)
-    private int[][] ghostsData; // (xInMap, yInMap), (xInMap, yInMap), so on
+    public int[] pacmanData; // (score, lives, xInMap, yInMap)
+    public int[][] ghostsData; // (xInMap, yInMap), (xInMap, yInMap), so on
 
     // class related
     public static final String DATABASE_FOLDER = "./levels/";
@@ -15,10 +15,10 @@ public class Database implements Serializable {
     public Database(byte[][] bm, String seed, Pacman p, Ghost[] ghosts){
         this.bm = bm;
         this.seed = seed;
-        this.pacmanData = new int[]{p.getScore(), p.getLives(), p.getXInMap(), p.getYInMap()};
+        this.pacmanData = new int[]{p.getScore(), p.getLives(), p.getX(), p.getY()};
         this.ghostsData = new int[ghosts.length][];
         for (int i = 0; i<ghosts.length; i++)
-            ghostsData[i] = new int[]{ghosts[i].getXInMap(), ghosts[i].getYInMap()};
+            ghostsData[i] = new int[]{ghosts[i].getX(), ghosts[i].getY()};
 
     }
 
@@ -52,8 +52,7 @@ public class Database implements Serializable {
         } catch (ClassNotFoundException c) {
             c.printStackTrace();
         }
-        finally {
-            return fromFile;
-        }
+
+        return fromFile;
     }
 }
