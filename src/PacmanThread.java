@@ -11,7 +11,16 @@ public class PacmanThread extends Thread {
     }
 
     public void run() {
+        // running on queue until user sets a movement
+        while (!pacman.updateNextDir()){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         while (true) {
+
             if (gamePanel.getSuspend()){
                 try {
                     Thread.sleep(1000/FPS);
@@ -21,11 +30,29 @@ public class PacmanThread extends Thread {
                 continue;
             }
 
-            pacman.setXinPanel(pacman.getXInPanel() + pacman.getDX());
-            pacman.setYinPanel(pacman.getYinPanel() + pacman.getDY());
+            int[] pacmanDir = pacman.getDir();
+            pacman.setXinPanel(pacman.getXInPanel() + pacmanDir[0]);
+            pacman.setYinPanel(pacman.getYinPanel() + pacmanDir[1]);
 
-            if (!gamePanel.mapPanel.getMap().isNextBlockValid(pacman)){
-                pacman.setDX(0);
+            int collType = gamePanel.mapPanel.getMap().wallCollision(pacman);
+            if (collType != -1){
+                System.out.println("coll");
+
+                pacman.setDir(new int[]{0,0});
+                pacman.updateNextDir();
+                if (pacmanDir[1] == -1)
+                    pacman.setYinPanel(pacman.getYinPanel() + 5);
+
+                //                if (pacmanDir[1] == 1)
+//                    pacman.setYinPanel(pacman.getYinPanel() - 5);
+
+
+                if (pacmanDir[0] == -1)
+                    pacman.setXinPanel(pacman.getXInPanel() + 5);
+//                if (pacmanDir[0] == 1)
+//                    pacman.setXinPanel(pacman.getXInPanel() - 5);
+
+
             }
 
             boolean wasPointEaten = gamePanel.mapPanel.getMap().eatPoint(pacman);

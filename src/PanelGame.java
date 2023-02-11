@@ -19,13 +19,15 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     private int FPS;
     private Pacman pacman;
 
+    private boolean isInGame;
+
     public PanelGame(int scale, ScreenMain mainFrame, int FPS, Database savedRecord){
         super();
         this.FPS = FPS;
         this.scale = scale;
-        this.isSuspend = true;
+        this.isSuspend = false;
+        this.isInGame = true;
         this.mainFrame = mainFrame;
-
         init(savedRecord);
     }
 
@@ -115,6 +117,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         // starting threads and such
         mapPanel.afterInitThreads();
+
     }
     public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
 
@@ -135,29 +138,26 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+        int[] pacmanDir = null;
         switch(keyCode) {
             case KeyEvent.VK_W:
             case KeyEvent.VK_UP:
-                pacman.setDY(-1);
-                pacman.setDX(0);
+                pacmanDir = new int[]{0,-1};
                 break;
 
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
-                pacman.setDX(-1);
-                pacman.setDY(0);
+                pacmanDir = new int[]{-1,0};
                 break;
 
             case KeyEvent.VK_S:
             case KeyEvent.VK_DOWN:
-                pacman.setDY(1);
-                pacman.setDX(0);
+                pacmanDir = new int[]{0,1};
                 break;
 
             case KeyEvent.VK_D:
             case KeyEvent.VK_RIGHT:
-                pacman.setDX(1);
-                pacman.setDY(0);
+                pacmanDir = new int[]{1,0};
                 break;
 
             case KeyEvent.VK_ESCAPE:
@@ -172,6 +172,9 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
             }
 
         }
+        if (pacmanDir != null)
+            pacman.addDirToQueue(pacmanDir);
+
     }
 
     public void setSuspend(boolean flag){
@@ -197,4 +200,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
     }
 
+    public boolean isInGame() {
+        return isInGame;
+    }
 }

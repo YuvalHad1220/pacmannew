@@ -32,8 +32,8 @@ public class GhostClyde extends Ghost {
                 dy = diffY > 0 ? 1 : -1;
             }
         }
-        this.setDX(dx);
-        this.setDY(dy);
+        this.setDir(new int[]{dx,dy});
+
     }
 
     @Override
@@ -50,16 +50,16 @@ public class GhostClyde extends Ghost {
         } else {
             dy = diffY > 0 ? 1 : -1;
         }
-        this.setDX(dx);
-        this.setDY(dy);
+        this.setDir(new int[]{dx,dy});
+
     }
 
     @Override
     public void Frightened(Pacman p) {
         // Implement Clyde's frightened AI here
         // Clyde will move in a random direction
-        this.setDX((int) (Math.random() * 3) - 1);
-        this.setDY((int) (Math.random() * 3) - 1);
+        this.setDir(new int[]{(int) ((Math.random() * 3) - 1), (int) ((Math.random() * 3) - 1)});
+
     }
 
 }

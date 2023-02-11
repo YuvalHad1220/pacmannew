@@ -1,6 +1,8 @@
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.Queue;
 import javax.imageio.ImageIO;
 
 public class Entity {
@@ -9,32 +11,23 @@ public class Entity {
     protected int yInMap;
     protected int width;
     protected int height;
-
-    public int getScale() {
-        return scale;
-    }
-
-    public int getDx() {
-        return dx;
-    }
-
-    public int getDy() {
-        return dy;
-    }
-
-    protected int dx;
-    protected int dy;
+    protected int[] currDir; // [dx,dy]
+    protected Queue<int[]> directionQueue;
     protected BufferedImage image;
 
     public Entity(int startingX, int startingY, String imagePath, int scale) {
-        this.dx = 0;
-        this.dy = 0;
         this.image = loadImage(imagePath);
         this.width = 2 * scale * 32 / this.image.getWidth();
         this.height = 2 * scale * 32 / this.image.getHeight();
         this.scale = scale;
         this.xInMap = startingX * scale;
         this.yInMap = startingY * scale;
+        this.directionQueue = new LinkedList<>();
+        this.currDir = new int[]{0,0};
+
+    }
+    public int getScale() {
+        return scale;
     }
 
     private BufferedImage loadImage(String path) {
@@ -72,14 +65,9 @@ public class Entity {
         this.yInMap = yInMap;
     }
 
-    public void setDX(int dx) {
-        this.dx = dx;
+    public int[] getDir(){
+        return currDir;
     }
-
-    public void setDY(int dy) {
-        this.dy = dy;
-    }
-
     public int getX() {
         return xInMap / scale;
     }
@@ -88,11 +76,26 @@ public class Entity {
         return yInMap / scale;
     }
 
-    public int getDX() {
-        return dx;
+
+    public void addDirToQueue(int[] dir){
+        if (dir[0] != 0 && currDir[0] != 0 || dir[1] != 0 && currDir[1] != 0)
+            currDir = dir;
+
+        else
+            directionQueue.add(dir);
+
     }
 
-    public int getDY() {
-        return dy;
+    public void setDir(int[] dir){
+        currDir = dir;
+    }
+    public boolean updateNextDir(){
+        int[] nextDir = directionQueue.poll();
+        if (nextDir != null){
+            currDir = nextDir;
+            return true;
+        }
+        return false;
+
     }
 }

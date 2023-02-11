@@ -86,7 +86,8 @@ public class PanelMap extends JPanel {
 
     protected void drawPacman(Graphics g) {
         g.drawImage(pacman.getPacmanImage(), pacman.getXInPanel(), pacman.getYinPanel(), pacman.getWidth(), pacman.getHeight(), this);
-        g.fillOval(pacman.getXInPanel(), pacman.getYinPanel(), 30, 30 );
+        g.setColor(Color.RED);
+        g.fillRect(pacman.getXInPanel(), pacman.getYinPanel(), pacman.getWidth() / 2 - (pacman.getScale() / 10), pacman.getHeight() / 2 - (pacman.getScale() / 10));
     }
 
     protected void drawGhosts(Graphics g) {

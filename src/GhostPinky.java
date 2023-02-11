@@ -12,9 +12,11 @@ public class GhostPinky extends Ghost {
         // Pinky will target 4 tiles ahead of pacman's current position and direction
         int pacmanX = p.getX();
         int pacmanY = p.getY();
+        int[] pacmanDir = p.getDir();
+
         int dx = 0, dy = 0;
-        int targetX = pacmanX + 4 * p.getDX();
-        int targetY = pacmanY + 4 * p.getDY();
+        int targetX = pacmanX + 4 * pacmanDir[0];
+        int targetY = pacmanY + 4 * pacmanDir[1];
         // calculate the difference between the target position and pinky's position
         int diffX = targetX - this.getX();
         int diffY = targetY - this.getY();
@@ -24,8 +26,8 @@ public class GhostPinky extends Ghost {
         } else {
             dy = diffY > 0 ? 1 : -1;
         }
-        this.setDX(dx);
-        this.setDY(dy);
+        this.setDir(new int[]{dx,dy});
+
     }
 
     @Override
@@ -42,16 +44,17 @@ public class GhostPinky extends Ghost {
         } else {
             dy = diffY > 0 ? 1 : -1;
         }
-        this.setDX(dx);
-        this.setDY(dy);
+        this.setDir(new int[]{dx,dy});
+
     }
 
     @Override
     public void Frightened(Pacman p) {
         // Implement Pinky's frightened AI here
         // Pinky will move in a random direction
-        this.setDX((int) (Math.random() * 3) - 1);
-        this.setDY((int) (Math.random() * 3) - 1);
+
+        this.setDir(new int[]{(int) ((Math.random() * 3) - 1), (int) ((Math.random() * 3) - 1)});
+
     }
 
 }

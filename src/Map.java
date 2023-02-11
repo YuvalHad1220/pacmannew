@@ -9,6 +9,8 @@ https://carminati.altervista.org/PROJECTS/PYTHON3/PACMAN/pacman.html
 
  */
 
+import java.awt.*;
+
 class Map {
     private byte[][] map;
     private String seed;
@@ -64,14 +66,39 @@ class Map {
         return seed;
     }
 
-    public boolean isNextBlockValid(Pacman p) {
-        return true;
-    }
+    public int wallCollision(Pacman p) {
+        int block;
+        int[] pacmanDir = p.getDir();
+        if (pacmanDir[0] == 1){
+            // right
+             block = map[p.getY()][p.getX() + 1];
+             if (!(block == 2 || block == -2 || block == 3))
+                 return 0;
+        }
+        if (pacmanDir[0] == -1){
+            // left
+            block = map[p.getY()][p.getX()];
+            if (!(block == 2 || block == -2 || block == 3))
+                return 1;
+        }
 
-    public boolean isValidDirection(int dx, int dy){
-        // once we change our direction - before we can actually change it we need to see if it is allowed to us.
-        // using it with isNextBlockValid should be appropiate enough to solve the route issue
-        return true;
+        if (pacmanDir[1] == 1){
+            // down
+            block = map[p.getY() + 1][p.getX()];
+            if (!(block == 2 || block == -2 || block == 3))
+                return 2;
+        }
+
+
+        if (pacmanDir[1] == -1){
+            // up
+            block = map[p.getY()][p.getX()];
+            if (!(block == 2 || block == -2 || block == 3))
+                return 3;
+        }
+
+        return -1;
+
     }
 
     public boolean eatPoint(Pacman p){
@@ -87,18 +114,6 @@ class Map {
             return true;
         }
         return false;
-    }
-
-    public boolean isNextBlockMapExit(Pacman p){
-        // if next block (left or right) is an exit to the other side (mirrored) - we will return true
-        // else return false
-
-        return true;
-    }
-
-
-    public boolean isPath(int yInMap, int scale) {
-        return yInMap/scale == 15 ;
     }
 
     public void setMap(byte[][] bm) {

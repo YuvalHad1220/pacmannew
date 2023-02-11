@@ -19,9 +19,10 @@ public class GhostInky extends Ghost {
         // Inky will target 2 tiles ahead of pacman's current position and direction, then double the vector between that point and Blinky's current position
         int pacmanX = p.getX();
         int pacmanY = p.getY();
+        int[] pacmanDir = p.getDir();
         int dx = 0, dy = 0;
-        int targetX = pacmanX + 2 * p.getDX();
-        int targetY = pacmanY + 2 * p.getDY();
+        int targetX = pacmanX + 2 * pacmanDir[0];
+        int targetY = pacmanY + 2 * pacmanDir[1];
         int diffX = (targetX - blinky.getX()) * 2;
         int diffY = (targetY - blinky.getY()) * 2;
         targetX += diffX;
@@ -35,8 +36,8 @@ public class GhostInky extends Ghost {
         } else {
             dy = diffY > 0 ? 1 : -1;
         }
-        this.setDX(dx);
-        this.setDY(dy);
+        this.setDir(new int[]{dx,dy});
+
     }
 
     @Override
@@ -53,16 +54,16 @@ public class GhostInky extends Ghost {
         } else {
             dy = diffY > 0 ? 1 : -1;
         }
-        this.setDX(dx);
-        this.setDY(dy);
+        this.setDir(new int[]{dx,dy});
+
     }
 
     @Override
     public void Frightened(Pacman p) {
         // Implement Inky's frightened AI here
         // Inky will move in a random direction
-        this.setDX((int) (Math.random() * 3) - 1);
-        this.setDY((int) (Math.random() * 3) - 1);
+        this.setDir(new int[]{(int) ((Math.random() * 3) - 1), (int) ((Math.random() * 3) - 1)});
+
     }
 
     // Override the other methods of GhostAI interface as needed

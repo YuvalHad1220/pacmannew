@@ -15,7 +15,7 @@ public class GhostThread extends Thread {
     }
 
     public void run() {
-        while (true){
+        while (true) {
             if (gamePanel.getSuspend()){
                 try {
                     Thread.sleep(1000/FPS);
@@ -25,8 +25,9 @@ public class GhostThread extends Thread {
                 continue;
             }
 
-            ghost.setXinPanel(ghost.getXInPanel() + ghost.getDX());
-            ghost.setYinPanel(ghost.getYinPanel() + ghost.getDY());
+            int[] ghostDir = ghost.getDir();
+            ghost.setXinPanel(ghost.getXInPanel() + ghostDir[0]);
+            ghost.setYinPanel(ghost.getYinPanel() + ghostDir[1]);
             ghost.Chase(p);
 
             try {
