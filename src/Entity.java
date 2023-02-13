@@ -78,8 +78,9 @@ public class Entity {
 
 
     public void addDirToQueue(int[] dir){
-        if (dir[0] != 0 && currDir[0] != 0 || dir[1] != 0 && currDir[1] != 0)
+        if (dir[0] != 0 && currDir[0] != 0 || dir[1] != 0 && currDir[1] != 0){
             currDir = dir;
+        }
 
         else
             directionQueue.add(dir);
@@ -87,8 +88,12 @@ public class Entity {
     }
 
     public void setDir(int[] dir){
+        // reverse dir but same direction
         currDir = dir;
+        directionQueue.clear();
+
     }
+
     public boolean updateNextDir(){
         int[] nextDir = directionQueue.poll();
         if (nextDir != null){
