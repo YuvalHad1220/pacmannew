@@ -10,6 +10,7 @@ https://carminati.altervista.org/PROJECTS/PYTHON3/PACMAN/pacman.html
  */
 
 import java.awt.*;
+import java.util.Arrays;
 
 class Map {
     private byte[][] map;
@@ -99,6 +100,41 @@ class Map {
 
         return -1;
 
+    }
+    public boolean isIntersection(Pacman p){
+        System.out.println(Arrays.toString(p.getDir()));
+        int block;
+        int[] pacmanDir = p.getDir();
+        if (pacmanDir[0] == 1 || pacmanDir[0] == -1) {
+            // that means we go either left or right, we will check top and bottom
+
+            block = map[p.getY() + 1][p.getX()];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            block = map[p.getY() - 1][p.getX()];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            return false;
+
+        }
+
+        if (pacmanDir[1] == 1 || pacmanDir[1] == -1) {
+            // that means we go either top or bottom, we will check left and right
+
+            block = map[p.getY()][p.getX() + 1];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            block = map[p.getY()][p.getX() - 1];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            return false;
+        }
+
+        return false; // unneeded but for compliation
     }
 
     public boolean eatPoint(Pacman p){

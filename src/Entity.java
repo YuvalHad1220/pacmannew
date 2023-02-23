@@ -90,7 +90,6 @@ public class Entity {
     public void setDir(int[] dir){
         // reverse dir but same direction
         currDir = dir;
-        directionQueue.clear();
 
     }
 
