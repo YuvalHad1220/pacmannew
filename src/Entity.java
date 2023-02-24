@@ -93,6 +93,14 @@ public class Entity {
 
     }
 
+    public int[] DifferentDirectionFromQueue(){
+        for (int[] dir : directionQueue){
+            if (dir[0] != 0 && currDir[0] == 0 || dir[1] != 0 && currDir[1] == 0)
+                return dir;
+        }
+
+        return null;
+    }
     public boolean updateNextDir(){
         int[] nextDir = directionQueue.poll();
         if (nextDir != null){

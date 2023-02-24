@@ -11,7 +11,6 @@ public class PacmanThread extends Thread {
     }
 
     public void run() {
-        int collCntr = 0;
         while (true) {
             if (gamePanel.getSuspend()){
                 try {
@@ -29,32 +28,27 @@ public class PacmanThread extends Thread {
             pacman.setXinPanel(pacman.getXInPanel() + pacmanDir[0]);
             pacman.setYinPanel(pacman.getYinPanel() + pacmanDir[1]);
 
-            int collType = gamePanel.mapPanel.getMap().wallCollision(pacman);
-            if (collType != -1){
-                System.out.println(++collCntr);
-
+            if (gamePanel.mapPanel.getMap().wallCollision(pacman)){
                 pacman.setDir(new int[]{0,0});
                 pacman.updateNextDir();
                 if (pacmanDir[1] == -1)
                     pacman.setYinPanel(pacman.getYinPanel() + pacman.getScale() / 5);
-
-                //                if (pacmanDir[1] == 1)
-//                    pacman.setYinPanel(pacman.getYinPanel() - 5);
-
-
                 if (pacmanDir[0] == -1)
                     pacman.setXinPanel(pacman.getXInPanel() + pacman.getScale() / 5);
-//                if (pacmanDir[0] == 1)
-//                    pacman.setXinPanel(pacman.getXInPanel() - 5);
-
 
             }
-            else {
-                collCntr = 0;
+
+            if (gamePanel.mapPanel.getMap().atIntersection(pacman)) {
+                // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
+                System.out.println("at intersection");
+                int[] newDir = pacman.DifferentDirectionFromQueue();
+                if (newDir != null){
+                    pacman.setDir(new int[]{0,0});
+                    pacman.setDir(newDir);
+                }
             }
 
-            boolean wasPointEaten = gamePanel.mapPanel.getMap().eatPoint(pacman);
-            if (wasPointEaten)
+            if (gamePanel.mapPanel.getMap().eatPoint(pacman))
                 gamePanel.updateScore();
 
             try {

@@ -67,27 +67,27 @@ class Map {
         return seed;
     }
 
-    public int wallCollision(Pacman p) {
+    public boolean wallCollision(Pacman p) {
         int block;
         int[] pacmanDir = p.getDir();
         if (pacmanDir[0] == 1){
             // right
              block = map[p.getY()][p.getX() + 1];
              if (!(block == 2 || block == -2 || block == 3))
-                 return 0;
+                 return true;
         }
         if (pacmanDir[0] == -1){
             // left
             block = map[p.getY()][p.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return 1;
+                return true;
         }
 
         if (pacmanDir[1] == 1){
             // down
             block = map[p.getY() + 1][p.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return 2;
+                return true;
         }
 
 
@@ -95,14 +95,13 @@ class Map {
             // up
             block = map[p.getY()][p.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return 3;
+                return true;
         }
 
-        return -1;
+        return false;
 
     }
-    public boolean isIntersection(Pacman p){
-        System.out.println(Arrays.toString(p.getDir()));
+    public boolean atIntersection(Pacman p){
         int block;
         int[] pacmanDir = p.getDir();
         if (pacmanDir[0] == 1 || pacmanDir[0] == -1) {
@@ -155,4 +154,5 @@ class Map {
     public void setMap(byte[][] bm) {
         this.map = bm;
     }
+
 }
