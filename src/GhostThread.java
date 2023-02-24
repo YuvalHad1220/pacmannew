@@ -3,6 +3,7 @@ public class GhostThread extends Thread {
     private Pacman p;
     private PanelGame gamePanel;
     private int FPS;
+    private static final int GHOST_SLOWING = 2;
 
 
     public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p) {
@@ -18,7 +19,7 @@ public class GhostThread extends Thread {
         while (true) {
             if (gamePanel.getSuspend()){
                 try {
-                    Thread.sleep(1000/FPS);
+                    Thread.sleep(1000/FPS * GHOST_SLOWING);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -31,7 +32,7 @@ public class GhostThread extends Thread {
             ghost.Chase(p);
 
             try {
-                Thread.sleep(1000/FPS);
+                Thread.sleep(1000/FPS * GHOST_SLOWING);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
