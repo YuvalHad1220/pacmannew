@@ -64,7 +64,7 @@ public class PanelMap extends JPanel {
                 if (value == -2 || value == 2 || value == 3){
                     // walkable
                     g.setColor(Color.PINK);
-                    g.fillRect(col * scale, row * scale, scale, scale);
+//                    g.fillRect(col * scale, row * scale, scale, scale);
 
                 }
                 if (value == 4) {
@@ -74,11 +74,11 @@ public class PanelMap extends JPanel {
                 }
                 if (value == 2) {
                     g.setColor(Color.WHITE);
-                    g.fillOval(col * scale + (scale / 2), row * scale + (scale / 2), scale / 4, scale / 4);
+                    g.fillOval((col + 1) * scale, (row + 1) * scale, scale / 3, scale / 3);
                 }
                 if (value == 3) {
                     g.setColor(Color.WHITE);
-                    g.fillOval(col * scale + (scale / 2), row * scale + (scale / 2), scale / 2, scale / 2);
+                    g.fillOval((col + 1) * scale, (row + 1) * scale, scale / 2, scale / 2);
                 }
             }
         }

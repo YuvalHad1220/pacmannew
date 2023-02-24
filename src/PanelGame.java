@@ -69,6 +69,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         addKeyListener(this);
 
+        mainFrame.setSize(new Dimension((map.getMap().length + 3) * scale, (map.getMap()[0].length + 1) * scale + livesLabel.getHeight()));
 
         // starting threads and such
         mapPanel.afterInitThreads();
@@ -114,6 +115,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         addKeyListener(this);
 
+        mainFrame.setSize(new Dimension((map.getMap()[0].length + 1) * scale, (map.getMap().length + 3) * scale + livesLabel.getHeight()));
 
         // starting threads and such
         mapPanel.afterInitThreads();
