@@ -14,6 +14,7 @@ public class Entity {
     protected int[] currDir; // [dx,dy]
     protected Queue<int[]> directionQueue;
     protected BufferedImage image;
+    protected boolean wasFirstMoved;
 
     public Entity(int startingX, int startingY, String imagePath, int scale) {
         this.image = loadImage(imagePath);
@@ -24,6 +25,7 @@ public class Entity {
         this.yInMap = startingY * scale;
         this.directionQueue = new LinkedList<>();
         this.currDir = new int[]{0,0};
+        this.wasFirstMoved = false;
 
     }
     public int getScale() {
@@ -61,6 +63,14 @@ public class Entity {
         this.xInMap = xInMap;
     }
 
+    public void updateXInPanel(int xInMapOffset){
+        this.xInMap += xInMapOffset;
+    }
+
+    public void updateYInPanel(int yInMapOffset){
+        this.yInMap += yInMapOffset;
+    }
+
     public void setYinPanel(int yInMap) {
         this.yInMap = yInMap;
     }
@@ -76,38 +86,54 @@ public class Entity {
         return yInMap / scale;
     }
 
+    public void addDir(int[] dir){
+        directionQueue.add(dir);
+    }
+    public void pollForFirstMovement() {
+        int[] dir;
+        while (!wasFirstMoved){
+            dir = directionQueue.poll();
+            if (dir != null){
+                currDir = dir;
+                wasFirstMoved = true;
+                break;
+            }
 
-    public void addDirToQueue(int[] dir){
-        if (dir[0] != 0 && currDir[0] != 0 || dir[1] != 0 && currDir[1] != 0){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // for when on AI mode
+    protected void setDir(int[] dir) {
+        this.currDir = dir;
+    }
+
+    public void setDirForCollision() {
+        int[] dir;
+        while (true){
+            dir = directionQueue.poll();
+            if (dir != null){
+                currDir = dir;
+                break;
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void pollDirForReversedMovement(){
+        int[] dir = directionQueue.peek();
+        if (dir != null && (dir[0] == -currDir[0] || dir[1] == -currDir[1])){
+            directionQueue.remove();
             currDir = dir;
         }
-
-        else
-            directionQueue.add(dir);
-
-    }
-
-    public void setDir(int[] dir){
-        // reverse dir but same direction
-        currDir = dir;
-
-    }
-
-    public int[] DifferentDirectionFromQueue(){
-        for (int[] dir : directionQueue){
-            if (dir[0] != 0 && currDir[0] == 0 || dir[1] != 0 && currDir[1] == 0)
-                return dir;
-        }
-
-        return null;
-    }
-    public boolean updateNextDir(){
-        int[] nextDir = directionQueue.poll();
-        if (nextDir != null){
-            currDir = nextDir;
-            return true;
-        }
-        return false;
-
     }
 }

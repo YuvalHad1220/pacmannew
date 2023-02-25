@@ -59,7 +59,7 @@ class Map {
         };
     }
 
-    public byte[][] getMap(){
+    public byte[][] asByteArray(){
         return map;
     }
 

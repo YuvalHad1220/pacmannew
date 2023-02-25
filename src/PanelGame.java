@@ -69,7 +69,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         addKeyListener(this);
 
-        mainFrame.setSize(new Dimension((map.getMap().length + 3) * scale, (map.getMap()[0].length + 1) * scale + livesLabel.getHeight()));
+        mainFrame.setSize(new Dimension((map.asByteArray().length + 3) * scale, (map.asByteArray()[0].length + 1) * scale + livesLabel.getHeight()));
 
         // starting threads and such
         mapPanel.afterInitThreads();
@@ -79,7 +79,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         Map map = new Map(seed);
         map.ClassicMap();
 
-        pacman = new Pacman(map.getMap().length / 2 - 3, 25, scale);
+        pacman = new Pacman(map.asByteArray().length / 2 - 3, 25, scale);
         Ghost[] ghosts = {
                 new GhostBlinky(22, 4, scale),
                 new GhostClyde(16, 15, scale),
@@ -115,7 +115,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         addKeyListener(this);
 
-        mainFrame.setSize(new Dimension((map.getMap()[0].length + 1) * scale, (map.getMap().length + 3) * scale + livesLabel.getHeight()));
+        mainFrame.setSize(new Dimension((map.asByteArray()[0].length + 1) * scale, (map.asByteArray().length + 3) * scale + livesLabel.getHeight()));
 
         // starting threads and such
         mapPanel.afterInitThreads();
@@ -174,8 +174,11 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
             }
 
         }
-        if (pacmanDir != null)
-            pacman.addDirToQueue(pacmanDir);
+        if (pacmanDir != null){
+            System.out.println("added");
+            pacman.addDir(pacmanDir);
+
+        }
 
     }
 

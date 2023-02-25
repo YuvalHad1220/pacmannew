@@ -23,7 +23,7 @@ public class Database implements Serializable {
     }
 
     public static void writeFile(String filename, Map map, Pacman p, Ghost[] ghosts){
-        Database toFile = new Database(map.getMap(), map.getSeed(),p, ghosts);
+        Database toFile = new Database(map.asByteArray(), map.getSeed(),p, ghosts);
 
         try {
             FileOutputStream fileOut = new FileOutputStream(DATABASE_FOLDER + filename);

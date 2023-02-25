@@ -20,32 +20,28 @@ public class PacmanThread extends Thread {
                 }
                 continue;
             }
+            pacman.pollForFirstMovement(); // wont leave that polling function until gets first movement
+            pacman.pollDirForReversedMovement();
 
             int[] pacmanDir = pacman.getDir();
-            if (pacmanDir[0] == 0 && pacmanDir[0] == 0){
-                pacman.updateNextDir();
-            }
-            pacman.setXinPanel(pacman.getXInPanel() + pacmanDir[0]);
-            pacman.setYinPanel(pacman.getYinPanel() + pacmanDir[1]);
+            pacman.updateXInPanel(pacmanDir[0]);
+            pacman.updateYInPanel(pacmanDir[1]);
 
             if (gamePanel.mapPanel.getMap().wallCollision(pacman)){
-                pacman.setDir(new int[]{0,0});
-                pacman.updateNextDir();
+                int scale = gamePanel.getScale();
+                pacman.setDirForCollision(); // when a collision happens it will fix pacmans dir
                 if (pacmanDir[1] == -1)
-                    pacman.setYinPanel(pacman.getYinPanel() + pacman.getScale() / 5);
+                    pacman.updateYInPanel(scale / 5);
                 if (pacmanDir[0] == -1)
-                    pacman.setXinPanel(pacman.getXInPanel() + pacman.getScale() / 5);
+                    pacman.updateXInPanel(scale / 5);
 
             }
 
-            if (gamePanel.mapPanel.getMap().atIntersection(pacman)) {
+            else if (gamePanel.mapPanel.getMap().atIntersection(pacman)) {
                 // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
                 System.out.println("at intersection");
-                int[] newDir = pacman.DifferentDirectionFromQueue();
-                if (newDir != null){
-                    pacman.setDir(new int[]{0,0});
-                    pacman.setDir(newDir);
-                }
+//                pacman.setDirForIntersection();
+                // we will also need to move pacman in the right direction of new dir
             }
 
             if (gamePanel.mapPanel.getMap().eatPoint(pacman))

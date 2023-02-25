@@ -5,8 +5,8 @@ public class PanelMap extends JPanel {
     private Map map;
     private Pacman pacman;
     private Ghost[] ghosts;
-    PanelGame gamePanel;
-
+    private PanelGame gamePanel;
+    private PowerUpThread put;
     public Ghost[] getGhosts() {
         return ghosts;
     }
@@ -17,6 +17,8 @@ public class PanelMap extends JPanel {
         this.pacman = pacman;
         this.ghosts = ghosts;
         this.gamePanel = gamePanel;
+
+        put = new PowerUpThread(this);
     }
 
     public Map getMap() {
@@ -53,7 +55,7 @@ public class PanelMap extends JPanel {
     }
     private void drawMap(Graphics g){
         int scale = gamePanel.getScale();
-        byte[][] my_map = map.getMap();
+        byte[][] my_map = map.asByteArray();
         for (int row = 0; row < my_map.length; row++) {
             for (int col = 0; col < my_map[row].length; col++) {
                 int value = my_map[row][col];
@@ -95,4 +97,7 @@ public class PanelMap extends JPanel {
             g.drawImage(ghost.getGhostImage(), ghost.getXInPanel(), ghost.getYinPanel(), ghost.getWidth(), ghost.getHeight(), this);
     }
 
+    protected void drawPowerUps(Graphics g){
+
+    }
 }
