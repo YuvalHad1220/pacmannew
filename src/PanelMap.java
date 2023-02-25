@@ -87,14 +87,16 @@ public class PanelMap extends JPanel {
     }
 
     protected void drawPacman(Graphics g) {
-        g.drawImage(pacman.getPacmanImage(), pacman.getXInPanel(), pacman.getYinPanel(), pacman.getWidth(), pacman.getHeight(), this);
+        int pacmanSize = gamePanel.getScale() * 2;
+        g.drawImage(pacman.getPacmanImage(), pacman.getXInPanel(), pacman.getYinPanel(), pacmanSize, pacmanSize, this);
         g.setColor(Color.RED);
         g.fillRect(pacman.getXInPanel(), pacman.getYinPanel(), pacman.getWidth() / 2 - (pacman.getScale() / 10), pacman.getHeight() / 2 - (pacman.getScale() / 10));
     }
 
     protected void drawGhosts(Graphics g) {
+        int ghostSize = gamePanel.getScale() * 2;
         for (Ghost ghost : ghosts)
-            g.drawImage(ghost.getGhostImage(), ghost.getXInPanel(), ghost.getYinPanel(), ghost.getWidth(), ghost.getHeight(), this);
+            g.drawImage(ghost.getGhostImage(), ghost.getXInPanel(), ghost.getYinPanel(), ghostSize, ghostSize, this);
     }
 
     protected void drawPowerUps(Graphics g){
