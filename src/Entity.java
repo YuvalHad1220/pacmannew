@@ -1,6 +1,7 @@
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import javax.imageio.ImageIO;
@@ -14,7 +15,6 @@ public class Entity {
     protected int[] currDir; // [dx,dy]
     protected Queue<int[]> directionQueue;
     protected BufferedImage image;
-    protected boolean wasFirstMoved;
 
     public Entity(int startingX, int startingY, String imagePath, int scale) {
         this.image = loadImage(imagePath);
@@ -25,7 +25,6 @@ public class Entity {
         this.yInMap = startingY * scale;
         this.directionQueue = new LinkedList<>();
         this.currDir = new int[]{0,0};
-        this.wasFirstMoved = false;
 
     }
     public int getScale() {
@@ -91,11 +90,10 @@ public class Entity {
     }
     public void pollForFirstMovement() {
         int[] dir;
-        while (!wasFirstMoved){
+        while (true){
             dir = directionQueue.poll();
             if (dir != null){
                 currDir = dir;
-                wasFirstMoved = true;
                 break;
             }
 
@@ -112,11 +110,11 @@ public class Entity {
         this.currDir = dir;
     }
 
-    public void setDirForCollision() {
+    public void setDirForCollision(int[] notAllowedToGoInDirection) {
         int[] dir;
         while (true){
             dir = directionQueue.poll();
-            if (dir != null){
+            if (dir != null && !Arrays.equals(notAllowedToGoInDirection, dir)){
                 currDir = dir;
                 break;
             }

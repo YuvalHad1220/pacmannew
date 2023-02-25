@@ -12,7 +12,9 @@ public class PacmanThread extends Thread {
 
     public void run() {
         int scale = gamePanel.getScale();
+        int[] notAllowedToGoInDirection = null;
 
+        pacman.pollForFirstMovement(); // wont leave that polling function until gets first movement
         while (true) {
             if (gamePanel.getSuspend()){
                 try {
@@ -22,15 +24,16 @@ public class PacmanThread extends Thread {
                 }
                 continue;
             }
-            pacman.pollForFirstMovement(); // wont leave that polling function until gets first movement
             pacman.pollDirForReversedMovement();
 
             int[] pacmanDir = pacman.getDir();
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);
 
-            if (gamePanel.mapPanel.getMap().wallCollision(pacman)){
-                pacman.setDirForCollision(); // when a collision happens it will fix pacmans dir
+            notAllowedToGoInDirection = gamePanel.mapPanel.getMap().wallCollision(pacman);
+
+            if (notAllowedToGoInDirection != null){
+                pacman.setDirForCollision(notAllowedToGoInDirection); // when a collision happens it will fix pacmans dir
                 if (pacmanDir[1] == -1)
                     pacman.updateYInPanel(scale / 5);
                 if (pacmanDir[0] == -1)
@@ -38,19 +41,30 @@ public class PacmanThread extends Thread {
 
             }
 
-            else if (gamePanel.mapPanel.getMap().atIntersection(pacman)) {
-                // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
-                System.out.println("at intersection");
+            else{
+                notAllowedToGoInDirection = gamePanel.mapPanel.getMap().atIntersection(pacman);
 
-                // that means that we decided to change dir
-                if (pacman.setDirForIntersection()){
-                    if (pacmanDir[0] == -1)
-                        pacman.updateYInPanel(3);
+                if (notAllowedToGoInDirection != null) {
+                    // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
+                    System.out.println("at intersection");
+
+                    // that means that we decided to change dir
+                    if (pacman.setDirForIntersection()){
+                        if (pacmanDir[0] == -1)
+                            pacman.updateYInPanel(3);
+
+                        else if (pacmanDir[0] == 1)
+                            pacman.updateYInPanel(-3);
+
+                        else if (pacmanDir[1] == 1)
+                            pacman.updateXInPanel(3);
+
+                        else
+                            pacman.updateXInPanel(-3);
+                    }
+
+
                 }
-
-
-                // we will also need to move pacman in the right direction of new dir
-
             }
 
             if (gamePanel.mapPanel.getMap().eatPoint(pacman))

@@ -64,27 +64,28 @@ class Map {
         return seed;
     }
 
-    public boolean wallCollision(Pacman p) {
+    // returns a vector of which the collision is going to happen
+    public int[] wallCollision(Pacman p) {
         int block;
         int[] pacmanDir = p.getDir();
         if (pacmanDir[0] == 1){
             // right
              block = map[p.getY()][p.getX() + 1];
              if (!(block == 2 || block == -2 || block == 3))
-                 return true;
+                 return new int[]{1,0};
         }
         if (pacmanDir[0] == -1){
             // left
             block = map[p.getY()][p.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return true;
+                return new int[]{-1,0};
         }
 
         if (pacmanDir[1] == 1){
             // down
             block = map[p.getY() + 1][p.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return true;
+                return new int[]{0,1};
         }
 
 
@@ -92,28 +93,27 @@ class Map {
             // up
             block = map[p.getY()][p.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return true;
+                return new int[]{0,-1};
         }
 
-        return false;
+        return null;
 
     }
 
-    public boolean atIntersection(Pacman p){
+    public int[] atIntersection(Pacman p){
         int block;
         int[] pacmanDir = p.getDir();
         if (pacmanDir[0] == 1) {
-            // that means we go right, we need to see if to our top or bottom is empty
 
             block = map[p.getY() + 1][p.getX()];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
             block = map[p.getY() - 1][p.getX()];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
-            return false;
+            return null;
 
         }
         if (pacmanDir[0] == -1) {
@@ -121,13 +121,13 @@ class Map {
 
             block = map[p.getY() + 1][p.getX() + 1];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
             block = map[p.getY() - 1][p.getX() + 1];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
-            return false;
+            return null;
 
         }
 
@@ -137,29 +137,29 @@ class Map {
 
             block = map[p.getY()][p.getX() + 1];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
             block = map[p.getY()][p.getX() - 1];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
-            return false;
+            return null;
         }
         if (pacmanDir[1] == -1) {
             // that means we go top or bottom, we will check left and right
 
             block = map[p.getY() + 1][p.getX() + 1];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
             block = map[p.getY() + 1][p.getX() - 1];
             if (block == 2 || block == -2 || block == 3)
-                return true;
+                return null;
 
-            return false;
+            return null;
         }
 
-        return false; // unneeded but for compliation
+        return null;
     }
 
     public boolean eatPoint(Pacman p){
