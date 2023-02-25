@@ -12,7 +12,6 @@ public class GhostThread extends Thread {
         this.p = p;
         this.FPS = gamePanel.getFPS();
 
-
     }
 
     public void run() {
@@ -27,8 +26,8 @@ public class GhostThread extends Thread {
             }
 
             int[] ghostDir = ghost.getDir();
-            ghost.setXinPanel(ghost.getXInPanel() + ghostDir[0]);
-            ghost.setYinPanel(ghost.getYinPanel() + ghostDir[1]);
+            ghost.updateXInPanel(ghostDir[0]);
+            ghost.updateYInPanel(ghostDir[1]);
             ghost.Chase(p);
 
             try {

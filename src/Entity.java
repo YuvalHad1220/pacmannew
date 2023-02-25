@@ -136,4 +136,14 @@ public class Entity {
             currDir = dir;
         }
     }
+
+    public boolean setDirForIntersection() {
+        int[] dir;
+        dir = directionQueue.poll();
+        if (dir != null){
+            currDir = dir;
+            return true;
+        }
+        return false;
+    }
 }

@@ -9,9 +9,6 @@ https://carminati.altervista.org/PROJECTS/PYTHON3/PACMAN/pacman.html
 
  */
 
-import java.awt.*;
-import java.util.Arrays;
-
 class Map {
     private byte[][] map;
     private String seed;
@@ -101,11 +98,12 @@ class Map {
         return false;
 
     }
+
     public boolean atIntersection(Pacman p){
         int block;
         int[] pacmanDir = p.getDir();
-        if (pacmanDir[0] == 1 || pacmanDir[0] == -1) {
-            // that means we go either left or right, we will check top and bottom
+        if (pacmanDir[0] == 1) {
+            // that means we go right, we need to see if to our top or bottom is empty
 
             block = map[p.getY() + 1][p.getX()];
             if (block == 2 || block == -2 || block == 3)
@@ -118,15 +116,43 @@ class Map {
             return false;
 
         }
+        if (pacmanDir[0] == -1) {
+            // that means we go either left or right, we will check top and bottom
 
-        if (pacmanDir[1] == 1 || pacmanDir[1] == -1) {
-            // that means we go either top or bottom, we will check left and right
+            block = map[p.getY() + 1][p.getX() + 1];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            block = map[p.getY() - 1][p.getX() + 1];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            return false;
+
+        }
+
+
+        if (pacmanDir[1] == 1) {
+            // bottom, we will check left and right
 
             block = map[p.getY()][p.getX() + 1];
             if (block == 2 || block == -2 || block == 3)
                 return true;
 
             block = map[p.getY()][p.getX() - 1];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            return false;
+        }
+        if (pacmanDir[1] == -1) {
+            // that means we go top or bottom, we will check left and right
+
+            block = map[p.getY() + 1][p.getX() + 1];
+            if (block == 2 || block == -2 || block == 3)
+                return true;
+
+            block = map[p.getY() + 1][p.getX() - 1];
             if (block == 2 || block == -2 || block == 3)
                 return true;
 

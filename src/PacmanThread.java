@@ -11,6 +11,8 @@ public class PacmanThread extends Thread {
     }
 
     public void run() {
+        int scale = gamePanel.getScale();
+
         while (true) {
             if (gamePanel.getSuspend()){
                 try {
@@ -28,7 +30,6 @@ public class PacmanThread extends Thread {
             pacman.updateYInPanel(pacmanDir[1]);
 
             if (gamePanel.mapPanel.getMap().wallCollision(pacman)){
-                int scale = gamePanel.getScale();
                 pacman.setDirForCollision(); // when a collision happens it will fix pacmans dir
                 if (pacmanDir[1] == -1)
                     pacman.updateYInPanel(scale / 5);
@@ -40,8 +41,16 @@ public class PacmanThread extends Thread {
             else if (gamePanel.mapPanel.getMap().atIntersection(pacman)) {
                 // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
                 System.out.println("at intersection");
-//                pacman.setDirForIntersection();
+
+                // that means that we decided to change dir
+                if (pacman.setDirForIntersection()){
+                    if (pacmanDir[0] == -1)
+                        pacman.updateYInPanel(3);
+                }
+
+
                 // we will also need to move pacman in the right direction of new dir
+
             }
 
             if (gamePanel.mapPanel.getMap().eatPoint(pacman))
