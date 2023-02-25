@@ -100,61 +100,50 @@ class Map {
 
     }
 
-    public int[] atIntersection(Pacman p){
+    public int[] atIntersection(Pacman p) {
         int block;
         int[] pacmanDir = p.getDir();
-        if (pacmanDir[0] == 1) {
 
+        if (pacmanDir[0] == 1) {
             block = map[p.getY() + 1][p.getX()];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{0, 1};
 
             block = map[p.getY() - 1][p.getX()];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{0, -1};
 
             return null;
 
-        }
-        if (pacmanDir[0] == -1) {
-            // that means we go either left or right, we will check top and bottom
+        } else if (pacmanDir[0] == -1) {
+            block = map[p.getY() + 1][p.getX()];
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{0, 1};
 
-            block = map[p.getY() + 1][p.getX() + 1];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
-
-            block = map[p.getY() - 1][p.getX() + 1];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
+            block = map[p.getY() - 1][p.getX()];
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{0, -1};
 
             return null;
 
-        }
-
-
-        if (pacmanDir[1] == 1) {
-            // bottom, we will check left and right
-
+        } else if (pacmanDir[1] == 1) {
             block = map[p.getY()][p.getX() + 1];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{-1, 0};
 
             block = map[p.getY()][p.getX() - 1];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{1, 0};
 
             return null;
-        }
-        if (pacmanDir[1] == -1) {
-            // that means we go top or bottom, we will check left and right
+        } else if (pacmanDir[1] == -1) {
+            block = map[p.getY()][p.getX() + 1];
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{-1, 0};
 
-            block = map[p.getY() + 1][p.getX() + 1];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
-
-            block = map[p.getY() + 1][p.getX() - 1];
-            if (block == 2 || block == -2 || block == 3)
-                return null;
+            block = map[p.getY()][p.getX() - 1];
+            if (!(block == 0 || block == 1 || block == 4))
+                return new int[]{1, 0};
 
             return null;
         }
