@@ -9,6 +9,8 @@ https://carminati.altervista.org/PROJECTS/PYTHON3/PACMAN/pacman.html
 
  */
 
+import java.util.Arrays;
+
 class Map {
     private byte[][] map;
     private String seed;
@@ -101,6 +103,7 @@ class Map {
     }
 
     public int[] atIntersection(Pacman p) {
+        System.out.println(Arrays.toString(p.getDir()));
         int block;
         int[] pacmanDir = p.getDir();
 
@@ -116,11 +119,11 @@ class Map {
             return null;
 
         } else if (pacmanDir[0] == -1) {
-            block = map[p.getY() + 1][p.getX()];
+            block = map[p.getY() + 1][p.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{0, 1};
 
-            block = map[p.getY() - 1][p.getX()];
+            block = map[p.getY() - 1][p.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{0, -1};
 
@@ -137,11 +140,11 @@ class Map {
 
             return null;
         } else if (pacmanDir[1] == -1) {
-            block = map[p.getY()][p.getX() + 1];
+            block = map[p.getY() + 1][p.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{-1, 0};
 
-            block = map[p.getY()][p.getX() - 1];
+            block = map[p.getY() + 1][p.getX() - 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{1, 0};
 

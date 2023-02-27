@@ -135,6 +135,15 @@ public class Entity {
         }
     }
 
+    public boolean setDirForIntersection(int[] notAllowedToGoInDirection) {
+        int[] dir;
+        dir = directionQueue.poll();
+        if (dir != null && !Arrays.equals(notAllowedToGoInDirection, dir)){
+            currDir = dir;
+            return true;
+        }
+        return false;
+    }
     public boolean setDirForIntersection() {
         int[] dir;
         dir = directionQueue.poll();

@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class PacmanThread extends Thread {
     private Pacman pacman;
     private PanelGame gamePanel;
@@ -49,18 +51,20 @@ public class PacmanThread extends Thread {
                     System.out.println("at intersection");
 
                     // that means that we decided to change dir
-                    if (pacman.setDirForIntersection()){
+                    if (pacman.setDirForIntersection(notAllowedToGoInDirection)){
+                        pacmanDir = pacman.getDir();
+                        System.out.println("not allowed to go in dir " + Arrays.toString(notAllowedToGoInDirection));
                         if (pacmanDir[0] == -1)
-                            pacman.updateYInPanel(3);
+                            pacman.updateYInPanel(scale / 5);
 
-                        else if (pacmanDir[0] == 1)
-                            pacman.updateYInPanel(-3);
+                        if (pacmanDir[0] == 1)
+                            pacman.updateYInPanel(scale / 5);
 
-                        else if (pacmanDir[1] == 1)
-                            pacman.updateXInPanel(3);
+                        if (pacmanDir[1] == 1)
+                            pacman.updateXInPanel(scale / 5);
 
-                        else
-                            pacman.updateXInPanel(-3);
+                        if (pacmanDir[1] == -1)
+                            pacman.updateXInPanel(scale / 5);
                     }
 
 
