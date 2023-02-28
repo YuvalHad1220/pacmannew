@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class PanelMap extends JPanel {
     private Map map;
@@ -21,6 +24,14 @@ public class PanelMap extends JPanel {
         put = new PowerUpThread(this);
     }
 
+    public static void sleep(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Map getMap() {
         return map;
     }
@@ -33,18 +44,95 @@ public class PanelMap extends JPanel {
         this.pacman = pacman;
     }
 
-    public void afterInitThreads() {
+    public void startGame() {
+        /*
+        procedure:
+        1. start pacman immediately
+        2. start red ghost immediately
+        3. pinky release-from-cage-and-chase after 7 seconds
+        4. inky same after 17 seconds
+        5. clyde after 32 seconds
+         */
         PacmanThread pcThread = new PacmanThread(gamePanel, pacman);
         pcThread.start();
-
-        GhostThread[] ghostThreads = new GhostThread[4];
-        for (int i = 0; i < ghostThreads.length; i++) {
-            ghostThreads[i] = new GhostThread(gamePanel, ghosts[i], pacman);
-            ghostThreads[i].start();
-        }
+        gamePanel.mapPanel.getMap().removeCageDoors();
 
         Timer timer = new Timer(1000 / gamePanel.getFPS(), e -> this.repaint());
         timer.start();
+
+        // initating thread for releasing ghosts
+        new Thread(() -> {
+            sleep(500);
+            new GhostThread(gamePanel, ghosts[0], pacman).start();
+
+            sleep(500);
+            releasePinky();
+            new GhostThread(gamePanel, ghosts[3], pacman).start();
+
+            sleep(500);
+            releaseClyde();
+            new GhostThread(gamePanel, ghosts[1], pacman).start();
+
+            sleep(500);
+            releaseInky();
+            new GhostThread(gamePanel, ghosts[2], pacman).start();
+
+            gamePanel.mapPanel.getMap().addCageDoors();
+        }).start();
+
+
+    }
+
+    public void ghostOutOfCage(Ghost g){
+        int originalY = g.getY(); // lets say its 5. we need to run the for loop until it turns 4
+        while (g.getY() > originalY - 5){ // 5 blocks in total
+            g.updateYInPanel(-1);
+            try {
+                Thread.sleep(1000/gamePanel.getFPS());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void releasePinky(){
+        Ghost pinky = ghosts[3];
+
+        // it just moves straight up and then thats it
+        ghostOutOfCage(pinky);
+
+    }
+
+    public void releaseClyde(){
+        // need to move it 2 blocks to the left and then up
+        Ghost orangeGhost = ghosts[1];
+        int originalX = orangeGhost.getX();
+        while (orangeGhost.getX() > originalX - 3){
+            orangeGhost.updateXInPanel(-1);
+            try {
+                Thread.sleep(1000/gamePanel.getFPS());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ghostOutOfCage(orangeGhost);
+    }
+
+    public void releaseInky(){
+        // need to move it 3 block to right and then up
+        Ghost blueGhost = ghosts[2];
+        int originalX = blueGhost.getX();
+        while (blueGhost.getX() < originalX + 2){
+            blueGhost.updateXInPanel(1);
+            try {
+                Thread.sleep(1000/gamePanel.getFPS());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ghostOutOfCage(blueGhost);
     }
 
     protected void paintComponent(Graphics g) {

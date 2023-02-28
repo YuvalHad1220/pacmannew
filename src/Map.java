@@ -103,7 +103,6 @@ class Map {
     }
 
     public int[] atIntersection(Pacman p) {
-        System.out.println(Arrays.toString(p.getDir()));
         int block;
         int[] pacmanDir = p.getDir();
 
@@ -173,4 +172,14 @@ class Map {
         this.map = bm;
     }
 
+    public void removeCageDoors() {
+        map[13][14] = -2;
+        map[13][15] = -2;
+
+    }
+
+    public void addCageDoors(){
+        map[13][14] = 4;
+        map[13][15] = 4;
+    }
 }

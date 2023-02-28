@@ -18,6 +18,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     private int scale;
     private int FPS;
     private Pacman pacman;
+    private Ghost[] ghosts;
+    private Map map;
 
     private boolean isInGame;
 
@@ -25,70 +27,43 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         super();
         this.FPS = FPS;
         this.scale = scale;
-        this.isSuspend = false;
-        this.isInGame = true;
         this.mainFrame = mainFrame;
-        init(savedRecord);
-    }
-
-    private void init(Database savedRecord){
-        Map map = new Map(savedRecord.seed);
+        map = new Map(savedRecord.seed);
         map.setMap(savedRecord.bm);
         pacman = new Pacman(savedRecord.pacmanData[2], savedRecord.pacmanData[3], scale, savedRecord.pacmanData[0], savedRecord.pacmanData[1]);
-        Ghost[] ghosts = {
+        ghosts = new Ghost[]{
                 new GhostBlinky(savedRecord.ghostsData[0][0], savedRecord.ghostsData[0][1], scale),
                 new GhostClyde(savedRecord.ghostsData[1][0], savedRecord.ghostsData[1][1], scale),
                 new GhostInky(savedRecord.ghostsData[2][0], savedRecord.ghostsData[2][1], scale),
                 new GhostPinky(savedRecord.ghostsData[3][0], savedRecord.ghostsData[3][1], scale)
         };
-
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
-        mapPanel = new PanelMap(pacman, ghosts, map, this);
-        dataPanel = new JPanel();
-        dataPanel.setLayout(new GridLayout(1,0));
-        livesLabel = new PacmanJLabel("Lives: " + pacman.getLives(), pacmanFont.deriveFont(14f));
-        scoreLabel = new PacmanJLabel("Score: " + pacman.getScore(), pacmanFont.deriveFont(14f));
-
-        dataPanel.add(livesLabel);
-        dataPanel.add(scoreLabel);
-
-
-        setLayout(new BorderLayout());
-        add(mapPanel, BorderLayout.CENTER);
-        add(dataPanel, BorderLayout.PAGE_END);
-
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentShown(ComponentEvent e) {
-                super.componentShown(e);
-                Component src = (Component) e.getSource();
-                src.setFocusable(true);
-                src.requestFocusInWindow();
-            }
-        });
-
-        addKeyListener(this);
-
-        mainFrame.setSize(new Dimension((map.asByteArray().length + 3) * scale, (map.asByteArray()[0].length + 1) * scale + livesLabel.getHeight()));
-
-        // starting threads and such
-        mapPanel.afterInitThreads();
+        init();
     }
+    public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
+        super();
+        this.FPS = FPS;
+        this.scale = scale;
+        this.mainFrame = mainFrame;
 
-    private void init(String seed){
-        Map map = new Map(seed);
+        map = new Map(seed);
         map.ClassicMap();
 
         pacman = new Pacman(map.asByteArray().length / 2 - 3, 25, scale);
-        Ghost[] ghosts = {
-                new GhostBlinky(22, 4, scale),
+        ghosts = new Ghost[]{
+                new GhostBlinky(14, 11, scale),
                 new GhostClyde(16, 15, scale),
                 new GhostInky(12, 15, scale),
                 new GhostPinky(14, 15, scale)
         };
-        // Inky needs Blinky for its AI to work
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
+        init();
+    }
+
+    private void init(){
+        this.isSuspend = false;
+        this.isInGame = true;
         mapPanel = new PanelMap(pacman, ghosts, map, this);
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));
@@ -97,7 +72,6 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         dataPanel.add(livesLabel);
         dataPanel.add(scoreLabel);
-
 
         setLayout(new BorderLayout());
         add(mapPanel, BorderLayout.CENTER);
@@ -116,21 +90,11 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         addKeyListener(this);
 
         mainFrame.setSize(new Dimension((map.asByteArray()[0].length + 1) * scale, (map.asByteArray().length + 3) * scale + livesLabel.getHeight()));
-
         // starting threads and such
-        mapPanel.afterInitThreads();
+        mapPanel.startGame();
 
     }
-    public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
 
-        super();
-        this.FPS = FPS;
-        this.scale = scale;
-        this.isSuspend = false;
-        this.mainFrame = mainFrame;
-
-        init(seed);
-    }
 
     @Override
     public void keyTyped(KeyEvent e) {

@@ -51,7 +51,7 @@ public class PacmanThread extends Thread {
                     System.out.println("at intersection");
 
                     // that means that we decided to change dir
-                    if (pacman.setDirForIntersection(notAllowedToGoInDirection)){
+                    if (pacman.setDirForIntersection()){
                         pacmanDir = pacman.getDir();
                         System.out.println("not allowed to go in dir " + Arrays.toString(notAllowedToGoInDirection));
                         if (pacmanDir[0] == -1)
