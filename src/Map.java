@@ -182,4 +182,16 @@ class Map {
         map[13][14] = 4;
         map[13][15] = 4;
     }
+
+    public int[] isAtPath(Pacman p){
+        if (p.getX() + 2 == map[0].length && p.getY() == 15){
+            System.out.println("AT PATHHHH");
+            return new int[]{0, 15};
+        }
+
+        if (p.getXInPanel() == 0 && p.getY() == 15){
+            return new int[]{26,15};
+        }
+        return null;
+    }
 }

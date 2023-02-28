@@ -74,6 +74,11 @@ public class PacmanThread extends Thread {
             if (gamePanel.mapPanel.getMap().eatPoint(pacman))
                 gamePanel.updateScore();
 
+            System.out.println(pacman.getX() + " " +pacman.getY());
+
+            if (gamePanel.mapPanel.getMap().isAtPath(pacman) != null)
+                gamePanel.setSuspend(true);
+
             try {
                 Thread.sleep(1000/FPS);
             } catch (InterruptedException e) {
