@@ -25,7 +25,6 @@ public class GhostBlinky extends Ghost{
         this.setDir(new int[]{dx,dy});
     }
 
-    @Override
     public void Scatter(Pacman p) {
         // Implement Blinky's scatter AI here
         // Blinky will target the top-right corner of the map
@@ -43,7 +42,6 @@ public class GhostBlinky extends Ghost{
 
     }
 
-    @Override
     public void Frightened(Pacman p) {
         // Implement Blinky's frightened AI here
         // Blinky will move in a random direction

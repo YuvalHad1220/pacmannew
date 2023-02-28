@@ -16,7 +16,6 @@ public class Ghost extends Entity implements GhostAI{
     }
 
 
-    @Override
     public void Chase(Pacman p) {
 
     }
@@ -54,5 +53,21 @@ public class Ghost extends Entity implements GhostAI{
     @Override
     public void Paused(Pacman p) {
 
+    }
+
+    public void toCage(int cageCenterX, int cageBottomY){
+
+        int dx = 0, dy = 0;
+        // calculate the difference between pacman's position and blinky's position
+        int diffX = cageCenterX - this.getX();
+        int diffY = cageBottomY - this.getY();
+        // set the velocity of blinky to move it towards pacman
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            dx = diffX > 0 ? 1 : -1;
+        } else {
+            dy = diffY > 0 ? 1 : -1;
+        }
+
+        this.setDir(new int[]{dx,dy});
     }
 }

@@ -29,6 +29,7 @@ public class GhostThread extends Thread {
             ghost.updateXInPanel(ghostDir[0]);
             ghost.updateYInPanel(ghostDir[1]);
             ghost.Chase(p);
+            ghost.toCage(14, 15);
 
             try {
                 Thread.sleep(1000/FPS * GHOST_SLOWING);
