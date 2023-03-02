@@ -14,12 +14,11 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     PacmanJLabel scoreLabel;
     PacmanJLabel livesLabel;
 
+    final AdapterGame gameData;
+
     private boolean isSuspend;
     private int scale;
     private int FPS;
-    private Pacman pacman;
-    private Ghost[] ghosts;
-    private Map map;
 
     private boolean isInGame;
 
@@ -28,16 +27,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        map = new Map(savedRecord.seed);
-        map.setMap(savedRecord.bm);
-        pacman = new Pacman(savedRecord.pacmanData[2], savedRecord.pacmanData[3], scale, savedRecord.pacmanData[0], savedRecord.pacmanData[1]);
-        ghosts = new Ghost[]{
-                new GhostBlinky(savedRecord.ghostsData[0][0], savedRecord.ghostsData[0][1], scale),
-                new GhostClyde(savedRecord.ghostsData[1][0], savedRecord.ghostsData[1][1], scale),
-                new GhostInky(savedRecord.ghostsData[2][0], savedRecord.ghostsData[2][1], scale),
-                new GhostPinky(savedRecord.ghostsData[3][0], savedRecord.ghostsData[3][1], scale)
-        };
-        ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
+        this.gameData = AdapterGame.fromSave(savedRecord, scale);
         init();
     }
     public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
@@ -46,29 +36,18 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
 
-        map = new Map(seed);
-        map.ClassicMap();
-
-        pacman = new Pacman(map.asByteArray().length / 2 - 3, 25, scale);
-        ghosts = new Ghost[]{
-                new GhostBlinky(14, 11, scale),
-                new GhostClyde(16, 15, scale),
-                new GhostInky(12, 15, scale),
-                new GhostPinky(14, 15, scale)
-        };
-        ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
-
+        this.gameData = AdapterGame.fromSeed(seed, scale);
         init();
     }
 
     private void init(){
         this.isSuspend = false;
         this.isInGame = true;
-        mapPanel = new PanelMap(pacman, ghosts, map, this);
+        mapPanel = new PanelMap(this);
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));
-        livesLabel = new PacmanJLabel("Lives: " + pacman.getLives(), pacmanFont.deriveFont(14f));
-        scoreLabel = new PacmanJLabel("Score: " + pacman.getScore(), pacmanFont.deriveFont(14f));
+        livesLabel = new PacmanJLabel("Lives: " + gameData.getPacman().getLives(), pacmanFont.deriveFont(14f));
+        scoreLabel = new PacmanJLabel("Score: " + gameData.getPacman().getScore(), pacmanFont.deriveFont(14f));
 
         dataPanel.add(livesLabel);
         dataPanel.add(scoreLabel);
@@ -89,7 +68,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         addKeyListener(this);
 
-        mainFrame.setSize(new Dimension((map.asByteArray()[0].length + 1) * scale, (map.asByteArray().length + 3) * scale + livesLabel.getHeight()));
+        mainFrame.setSize(new Dimension((gameData.getMap().asByteArray()[0].length + 1) * scale, (gameData.getMap().asByteArray().length + 3) * scale + livesLabel.getHeight()));
         // starting threads and such
         mapPanel.startGame();
 
@@ -140,7 +119,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         }
         if (pacmanDir != null){
             System.out.println("added");
-            pacman.addDir(pacmanDir);
+            gameData.getPacman().addDir(pacmanDir);
 
         }
 
@@ -151,7 +130,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     }
 
     public void updateScore(){
-        scoreLabel.setText("Score: " + pacman.getScore());
+        scoreLabel.setText("Score: " + gameData.getPacman().getScore());
     }
     public int getScale() {
         return scale;

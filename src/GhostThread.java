@@ -15,6 +15,8 @@ public class GhostThread extends Thread {
     }
 
     public void run() {
+        Map map = gamePanel.gameData.getMap();
+
         while (true) {
             if (gamePanel.getSuspend()){
                 try {
@@ -30,11 +32,11 @@ public class GhostThread extends Thread {
             ghost.updateYInPanel(ghostDir[1]);
             switch (ghost.getGhostMode()){
                 case Ghost.CHASE -> ghost.Chase(p);
-                case Ghost.FRIGHTENED -> ghost.toCage(gamePanel.mapPanel.getMap().getCageCenterX(), gamePanel.mapPanel.getMap().getCageBottomY());
+                case Ghost.FRIGHTENED -> gamePanel.mapPanel.putGhostInCage(ghost);
 
             }
 
-            if (gamePanel.mapPanel.getMap().wallCollision(ghost) != null)
+            if (map.wallCollision(ghost) != null)
                 ghost.setDir(ghostDir);
 
             // if it is not a collision than we can change the path

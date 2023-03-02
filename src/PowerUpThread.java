@@ -5,17 +5,17 @@ import java.util.Random;
 public class PowerUpThread extends Thread{
     // in this thread we will tell gamePanel to draw specific powerups
     private ArrayList<int[]> availableCoordinates;
-    private PanelMap mapPanel;
+    private PanelGame gamePanel;
     private ArrayList<PowerUp> enabledPowerUps;
     private PowerUp[] powerUpsArray;
 
-    public PowerUpThread(PanelMap mapPanel){
-        this.mapPanel = mapPanel;
+    public PowerUpThread( PanelGame gamePanel){
+        this.gamePanel = gamePanel;
         init();
     }
 
     private ArrayList<int[]> getAvailableCoordinates(){
-        byte[][] map = mapPanel.getMap().asByteArray();
+        byte[][] map = gamePanel.gameData.getMap().asByteArray();
         ArrayList<int[]> toRet = new ArrayList<>();
 
         for (int i = 0; i<map.length; i++){

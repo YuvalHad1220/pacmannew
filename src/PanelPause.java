@@ -75,7 +75,7 @@ public class PanelPause extends PacmanJPanel implements ActionListener {
 
         if (clicked == saveBtn) {
             // we always remove the panel so its okay to create a new one
-            PanelDatabase saveGame = new PanelDatabase(mainFrame, "save", this.gamePanel.mapPanel);
+            PanelDatabase saveGame = new PanelDatabase(mainFrame, "save", this.gamePanel);
             mainFrame.addPanel(saveGame, "savePanel");
             mainFrame.showPanel("savePanel");
         }

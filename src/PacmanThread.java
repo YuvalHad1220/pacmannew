@@ -14,7 +14,8 @@ public class PacmanThread extends Thread {
 
     public void run() {
         int scale = gamePanel.getScale();
-        int[] notAllowedToGoInDirection = null;
+        int[] notAllowedToGoInDirection;
+        Map map = gamePanel.gameData.getMap();
 
         pacman.pollForFirstMovement(); // wont leave that polling function until gets first movement
         while (true) {
@@ -32,7 +33,7 @@ public class PacmanThread extends Thread {
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);
 
-            notAllowedToGoInDirection = gamePanel.mapPanel.getMap().wallCollision(pacman);
+            notAllowedToGoInDirection = map.wallCollision(pacman);
 
             if (notAllowedToGoInDirection != null){
                 pacman.setDirForCollision(notAllowedToGoInDirection); // when a collision happens it will fix pacmans dir
@@ -44,7 +45,7 @@ public class PacmanThread extends Thread {
             }
 
             else{
-                notAllowedToGoInDirection = gamePanel.mapPanel.getMap().atIntersection(pacman);
+                notAllowedToGoInDirection = map.atIntersection(pacman);
 
                 if (notAllowedToGoInDirection != null) {
                     // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
@@ -71,11 +72,11 @@ public class PacmanThread extends Thread {
                 }
             }
 
-            if (gamePanel.mapPanel.getMap().eatPoint(pacman, gamePanel.mapPanel.getGhosts()))
+            if (map.eatPoint(pacman, gamePanel.gameData.getGhosts()))
                 gamePanel.updateScore();
 
 
-            if (gamePanel.mapPanel.getMap().isAtPath(pacman) != null)
+            if (map.isAtPath(pacman) != null)
                 gamePanel.setSuspend(true);
 
             try {

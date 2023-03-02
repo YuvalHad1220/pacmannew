@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 public class PanelDatabase extends PacmanJPanel implements ActionListener {
     private static final String DATABASE_FOLDER = "./levels/";
-    private PanelMap mapPanel;
+    private PanelGame gamePanel;
     private JButton[] buttons;
     private JButton backButton;
     private ScreenMain mainFrame;
@@ -15,11 +15,11 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
     private PanelConfirmation confDialogue;
     private File[] listOfFiles;
 
-    public PanelDatabase(ScreenMain mainFrame, String type, PanelMap mapPanel){
+    public PanelDatabase(ScreenMain mainFrame, String type, PanelGame gamePanel){
         super();
         this.type = type;
         this.mainFrame = mainFrame;
-        this.mapPanel = mapPanel;
+        this.gamePanel = gamePanel;
 
         File directory = new File(DATABASE_FOLDER);
         if (!directory.exists())
@@ -112,14 +112,11 @@ public class PanelDatabase extends PacmanJPanel implements ActionListener {
         if (overwriteFilename != null)
             filename = overwriteFilename;
 
-        Database.writeFile(filename, mapPanel.getMap(),  mapPanel.getPacman(), mapPanel.getGhosts());
+        Database.writeFile(filename, gamePanel.gameData.getMap(),  gamePanel.gameData.getPacman(), gamePanel.gameData.getGhosts());
         mainFrame.showPanel("pausePanel");
         mainFrame.removePanel(this);
     }
 
-    private void load(){
-
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
