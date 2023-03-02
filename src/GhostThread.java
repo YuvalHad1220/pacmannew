@@ -30,10 +30,16 @@ public class GhostThread extends Thread {
             ghost.updateYInPanel(ghostDir[1]);
             switch (ghost.getGhostMode()){
                 case Ghost.CHASE -> ghost.Chase(p);
-
                 case Ghost.FRIGHTENED -> ghost.toCage(gamePanel.mapPanel.getMap().getCageCenterX(), gamePanel.mapPanel.getMap().getCageBottomY());
 
             }
+
+            if (gamePanel.mapPanel.getMap().wallCollision(ghost) != null)
+                ghost.setDir(ghostDir);
+
+            // if it is not a collision than we can change the path
+
+            // we changed the ghost direction, we need to make sure it doesnt collide with walls. if it collides with walls than we ignore the new dir, keep going until we see a intersection and then change the dir
 
             try {
                 Thread.sleep(1000/FPS * GHOST_SLOWING);

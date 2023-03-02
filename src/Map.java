@@ -80,33 +80,33 @@ class Map {
     }
 
     // returns a vector of which the collision is going to happen
-    public int[] wallCollision(Pacman p) {
+    public int[] wallCollision(Entity entity) {
         int block;
-        int[] pacmanDir = p.getDir();
-        if (pacmanDir[0] == 1){
+        int[] entityDir = entity.getDir();
+        if (entityDir[0] == 1){
             // right
-             block = map[p.getY()][p.getX() + 1];
+             block = map[entity.getY()][entity.getX() + 1];
              if (!(block == 2 || block == -2 || block == 3))
                  return new int[]{1,0};
         }
-        if (pacmanDir[0] == -1){
+        if (entityDir[0] == -1){
             // left
-            block = map[p.getY()][p.getX()];
+            block = map[entity.getY()][entity.getX()];
             if (!(block == 2 || block == -2 || block == 3))
                 return new int[]{-1,0};
         }
 
-        if (pacmanDir[1] == 1){
+        if (entityDir[1] == 1){
             // down
-            block = map[p.getY() + 1][p.getX()];
+            block = map[entity.getY() + 1][entity.getX()];
             if (!(block == 2 || block == -2 || block == 3))
                 return new int[]{0,1};
         }
 
 
-        if (pacmanDir[1] == -1){
+        if (entityDir[1] == -1){
             // up
-            block = map[p.getY()][p.getX()];
+            block = map[entity.getY()][entity.getX()];
             if (!(block == 2 || block == -2 || block == 3))
                 return new int[]{0,-1};
         }
@@ -115,48 +115,48 @@ class Map {
 
     }
 
-    public int[] atIntersection(Pacman p) {
+    public int[] atIntersection(Entity entity) {
         int block;
-        int[] pacmanDir = p.getDir();
+        int[] entityDir = entity.getDir();
 
-        if (pacmanDir[0] == 1) {
-            block = map[p.getY() + 1][p.getX()];
+        if (entityDir[0] == 1) {
+            block = map[entity.getY() + 1][entity.getX()];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{0, 1};
 
-            block = map[p.getY() - 1][p.getX()];
+            block = map[entity.getY() - 1][entity.getX()];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{0, -1};
 
             return null;
 
-        } else if (pacmanDir[0] == -1) {
-            block = map[p.getY() + 1][p.getX() + 1];
+        } else if (entityDir[0] == -1) {
+            block = map[entity.getY() + 1][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{0, 1};
 
-            block = map[p.getY() - 1][p.getX() + 1];
+            block = map[entity.getY() - 1][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{0, -1};
 
             return null;
 
-        } else if (pacmanDir[1] == 1) {
-            block = map[p.getY()][p.getX() + 1];
+        } else if (entityDir[1] == 1) {
+            block = map[entity.getY()][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{-1, 0};
 
-            block = map[p.getY()][p.getX() - 1];
+            block = map[entity.getY()][entity.getX() - 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{1, 0};
 
             return null;
-        } else if (pacmanDir[1] == -1) {
-            block = map[p.getY() + 1][p.getX() + 1];
+        } else if (entityDir[1] == -1) {
+            block = map[entity.getY() + 1][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{-1, 0};
 
-            block = map[p.getY() + 1][p.getX() - 1];
+            block = map[entity.getY() + 1][entity.getX() - 1];
             if (!(block == 0 || block == 1 || block == 4))
                 return new int[]{1, 0};
 
@@ -210,13 +210,12 @@ class Map {
         map[13][15] = 4;
     }
 
-    public int[] isAtPath(Pacman p){
-        if (p.getX() + 2 == map[0].length && p.getY() == 15){
-            System.out.println("AT PATHHHH");
+    public int[] isAtPath(Entity entity){
+        if (entity.getX() + 2 == map[0].length && entity.getY() == 15){
             return new int[]{0, 15};
         }
 
-        if (p.getXInPanel() == 0 && p.getY() == 15){
+        if (entity.getXInPanel() == 0 && entity.getY() == 15){
             return new int[]{26,15};
         }
         return null;
