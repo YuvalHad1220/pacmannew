@@ -190,6 +190,9 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
             closeServerDeleteFrame();
             mainFrame.showPanel("startPanel");
         } else if (clicked == continueButton) {
+            // connection is established. We need to create a game based on multiplayer connection - i.e if not connected than AI runs it.
+            // we will send all connection
+
 
         } else {
             if (previouslySelectedEntity == clicked)
