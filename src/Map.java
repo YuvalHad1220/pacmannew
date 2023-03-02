@@ -14,6 +14,9 @@ import java.util.Arrays;
 class Map {
     private byte[][] map;
     private String seed;
+    private int cageCenterX;
+    private int cageBottomY;
+
 
     public Map(String seed){
         this.seed = seed;
@@ -56,10 +59,20 @@ class Map {
                 {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
+        cageCenterX = 14;
+        cageBottomY = 15;
     }
 
     public byte[][] asByteArray(){
         return map;
+    }
+
+    public int getCageCenterX() {
+        return cageCenterX;
+    }
+
+    public int getCageBottomY() {
+        return cageBottomY;
     }
 
     public String getSeed() {
@@ -153,7 +166,7 @@ class Map {
         return null;
     }
 
-    public boolean eatPoint(Pacman p){
+    public boolean eatPoint(Pacman p, Ghost[] ghosts){
         // if pacman is on point (we need to decide how can we be on point as it is scaling related, contains related etc)
         if (map[p.getY()][p.getX()] == 2){
             map[p.getY()][p.getX()] = -2;
@@ -161,6 +174,20 @@ class Map {
             return true;
         }
         if (map[p.getY()][p.getX()] == 3){
+            for (Ghost g : ghosts)
+                g.setGhostMode(Ghost.FRIGHTENED);
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(7000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                for (Ghost g : ghosts)
+                    g.setGhostMode(Ghost.CHASE);
+
+            }).start();
+
             map[p.getY()][p.getX()] = -2;
             p.setScore(p.getScore() + 4);
             return true;

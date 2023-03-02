@@ -44,6 +44,10 @@ public class PanelMap extends JPanel {
         this.pacman = pacman;
     }
 
+    public void LetGhostsOut(){
+
+    }
+
     public void startGame() {
         /*
         procedure:

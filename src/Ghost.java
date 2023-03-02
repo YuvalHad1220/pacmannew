@@ -6,15 +6,28 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Ghost extends Entity implements GhostAI{
+    public static final int FRIGHTENED = 0;
+    public static final int CHASE = 1;
+    public static final int SCATTER = 2;
+
+    private int ghostMode;
 
     public Ghost(int startingX, int startingY, String ghostPath, int scale) {
         super(startingX, startingY, ghostPath, scale);
+        ghostMode = Ghost.CHASE;
     }
 
     public BufferedImage getGhostImage() {
         return image;
     }
 
+    public int getGhostMode() {
+        return ghostMode;
+    }
+
+    public void setGhostMode(int ghostMode) {
+        this.ghostMode = ghostMode;
+    }
 
     public void Chase(Pacman p) {
 

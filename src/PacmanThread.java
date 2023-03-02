@@ -71,10 +71,9 @@ public class PacmanThread extends Thread {
                 }
             }
 
-            if (gamePanel.mapPanel.getMap().eatPoint(pacman))
+            if (gamePanel.mapPanel.getMap().eatPoint(pacman, gamePanel.mapPanel.getGhosts()))
                 gamePanel.updateScore();
 
-            System.out.println(pacman.getX() + " " +pacman.getY());
 
             if (gamePanel.mapPanel.getMap().isAtPath(pacman) != null)
                 gamePanel.setSuspend(true);

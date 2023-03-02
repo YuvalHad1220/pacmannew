@@ -28,8 +28,12 @@ public class GhostThread extends Thread {
             int[] ghostDir = ghost.getDir();
             ghost.updateXInPanel(ghostDir[0]);
             ghost.updateYInPanel(ghostDir[1]);
-            ghost.Chase(p);
-            ghost.toCage(14, 15);
+            switch (ghost.getGhostMode()){
+                case Ghost.CHASE -> ghost.Chase(p);
+
+                case Ghost.FRIGHTENED -> ghost.toCage(gamePanel.mapPanel.getMap().getCageCenterX(), gamePanel.mapPanel.getMap().getCageBottomY());
+
+            }
 
             try {
                 Thread.sleep(1000/FPS * GHOST_SLOWING);
