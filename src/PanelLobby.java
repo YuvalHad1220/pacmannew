@@ -206,16 +206,16 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
             if (previouslySelectedEntity == null) {
                 // that means this is the first time we select an entity. we will update the client and server if needed
                 if (server != null)
-                    server.updateSelected(selectedEntity, null);
+                    server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.NONE);
                 if (client != null)
-                    client.updateSelected(selectedEntity, null);
+                    client.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.NONE);
             } else {
                 // need to update
                 previouslySelectedEntity.setBackground(Color.BLACK);
                 if (server != null)
-                    server.updateSelected(selectedEntity, previouslySelectedEntity.getText());
+                    server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
                 if (client != null)
-                    client.updateSelected(selectedEntity, previouslySelectedEntity.getText());
+                    server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
             }
 
             // always happens

@@ -16,12 +16,12 @@ Protocol:
 
 
 public class Multiplayer extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(Multiplayer.class.getName());
     public static final byte CONNECT = 2;
     public static final byte SELECTENTITY = 3;
     public static final byte SELECTENTITIES = 4;
-    public static final byte DESELECTENTITY = 5 ;
-    public static final byte NONE = 1;
+    public static final byte DESELECTENTITY = 5;
+
+    public static final byte NONE = -1;
 
     public static final byte PACMAN = 1;
     public static final byte INKY = 2;
@@ -30,8 +30,7 @@ public class Multiplayer extends Thread {
     public static final byte CLYDE = 5;
 
 
-
-    protected static final int MAX_LENGTH = 64;
+    protected static final int MAX_LENGTH = 5; // {msgType (1 bytes), payload (max 4 bytes)}
     protected DatagramSocket socket;
     protected PanelLobby panelLobby;
 
@@ -39,56 +38,77 @@ public class Multiplayer extends Thread {
         this.panelLobby = panelLobby;
     }
 
-    static String trimZeros(String str) {
-        int pos = str.indexOf(0);
-        return pos == -1 ? str : str.substring(0, pos);
+    public static byte stringChoicetoByte(String choice){
+        switch (choice){
+            case "Pacman" -> {
+                return PACMAN;
+            }
+            case "Clyde" -> {
+                return CLYDE;
+            }
+            case "Inky" -> {
+                return INKY;
+            }
+
+            case "Pinky" -> {
+                return PINKY;
+            }
+
+            case "Blinky" -> {
+                return BINKY;
+            }
+        }
+        return NONE;
     }
+//    static String trimZeros(String str) {
+//        int pos = str.indexOf(0);
+//        return pos == -1 ? str : str.substring(0, pos);
+//    }
 
     static byte[] connectMessage() {
         return new byte[]{CONNECT};
     }
 
-    static byte[] chooseEntityMessage(String choice) {
-        String msg = SELECTENTITY + " " + choice;
-        return msg.getBytes(StandardCharsets.UTF_8);
+    static byte[] chooseEntityMessage(byte choice) {
+        return new byte[]{SELECTENTITY, choice};
     }
 
-//    static String getEntityFromMessage(byte[] msg) {
-//        return trimZeros(new String(msg).split(" ")[1]);
-//    }
-//
-//    static byte[] sendAllChosenMessage(String[] chosen) {
-//        if (chosen == null) {
-//            return (SELECTENTITIES + " " + NONE).getBytes();
-//        }
-//
-//        String allChosen = SELECTENTITIES+ " " +String.join(",", chosen);
-//        LOGGER.info("Sending message: " +allChosen);
-//        return allChosen.getBytes();
-//    }
-//
-//    static String[] receiveAllChosenMessage(byte[] message) {
-//        String allChosenMessage = new String(message);
-//        allChosenMessage = trimZeros(allChosenMessage);
-//        String[] messageParts = allChosenMessage.split(" ");
-//
-//        LOGGER.info("Message: " +allChosenMessage);
-//        // we either got a string with no elements, only one element, or multiple elements
-//        if (messageParts[1].equals("NONE"))
-//            return new String[]{};
-//
-//        // if we have one element - it will return only it in array, if we have multiple - we will return every element
-//        return messageParts[1].split(",");
-//    }
-//
-//    static byte[] deselectEntityMessage(String chosen) {
-//        String msg = DESELECTENTITY + " " + chosen;
-//        return msg.getBytes();
-//    }
-//
-//    static String getDeselectedEntity(byte[] msg) {
-//        return trimZeros(new String(msg).split(" ")[1]);
-//    }
-//
-//
-//}
+    static byte getEntityFromMessage(byte[] msg) {
+        return msg[1];
+    }
+
+    static byte[] sendAllChosenMessage(byte[] chosen) {
+        if (chosen == null)
+            return new byte[]{SELECTENTITIES};
+
+        byte[] chosenMessage = new byte[1 + chosen.length];
+        chosenMessage[0] = SELECTENTITIES;
+        for (int i = 1; i<chosenMessage.length; i++)
+            chosenMessage[i] = chosen[i-1];
+
+        return chosenMessage;
+    }
+
+    static byte[] receiveAllChosenMessage(byte[] message) {
+        if (message.length - 1 == 0)
+            return new byte[]{};
+
+        byte[] toReturn = new byte[message.length - 1];
+        for (int i = 0; i<toReturn.length; i++)
+            toReturn[i] = message[i+1];
+
+        return toReturn;
+
+    }
+
+
+    static byte[] deselectEntityMessage(byte chosen) {
+        return new byte[]{DESELECTENTITY, chosen};
+    }
+
+    static byte getDeselectedEntity(byte[] msg) {
+        return msg[1];
+    }
+
+
+}

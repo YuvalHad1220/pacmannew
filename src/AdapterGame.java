@@ -20,7 +20,9 @@ public class AdapterGame {
 
 
     public static AdapterGame fromMultiplayerAsServer(MultiplayerServer mps){
+        switch (mps.getOwnChoice()){
 
+        }
         return null;
     }
 
@@ -60,13 +62,22 @@ public class AdapterGame {
         return new AdapterGame(pacman, ghosts, map, pacman, ghosts);
     }
 
-
-    public AdapterGame(Pacman pacman, Ghost[] ghosts, Map map, Entity controlledEntity, Entity[] otherEntities) {
+    private AdapterGame(Pacman pacman, Ghost[] ghosts, Map map, Entity controlledEntity, Entity[] otherEntities) {
         this.pacman = pacman;
         this.controlledEntity = controlledEntity;
         this.otherEntities = otherEntities;
         this.ghosts = ghosts;
         this.map = map;
+        this.mpc = null;
+        this.mps = null;
+    }
+
+    public void setMps(MultiplayerServer mps) {
+        this.mps = mps;
+    }
+
+    public void setMpc(MultiplayerClient mpc) {
+        this.mpc = mpc;
     }
 
     public Pacman getPacman() {

@@ -1,16 +1,22 @@
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 public class MultiplayerServer extends Multiplayer{
-    private static final Logger LOGGER = Logger.getLogger(MultiplayerServer.class.getName());
-
     private String serverIP;
     private int serverPort;
-    private HashMap<MultiplayerConnection, String> connectionsAndChoices;
-    private String ownChoice;
+    private HashMap<MultiplayerConnection, Byte> connectionsAndChoices;
+    private byte ownChoice;
     private final int MAX_CONNECTED = 4;
+
+    public HashMap<MultiplayerConnection, Byte> getConnectionsAndChoices() {
+        return connectionsAndChoices;
+    }
+
+    public byte getOwnChoice() {
+        return ownChoice;
+    }
 
     public MultiplayerServer(PanelLobby panelLobby) {
         super(panelLobby);
@@ -30,13 +36,13 @@ public class MultiplayerServer extends Multiplayer{
         }
     }
 
-    public void updateSelected(String newChoice, String oldChoice){
+    public void updateSelected(byte newChoice, byte oldChoice){
         ownChoice = newChoice;
         byte[] msg = deselectEntityMessage(oldChoice);
         // for each connection we will send an update
         for (MultiplayerConnection mpc : connectionsAndChoices.keySet()) {
             try {
-                if (oldChoice != null)
+                if (oldChoice != Multiplayer.NONE)
                     socket.send(new DatagramPacket(msg, msg.length, InetAddress.getByName(mpc.getIp()), mpc.getPort()));
 
                 msg = chooseEntityMessage(newChoice);
@@ -48,21 +54,21 @@ public class MultiplayerServer extends Multiplayer{
         }
     }
 
-    private String[] choices(){
-        if (ownChoice == null && connectionsAndChoices.isEmpty()) {
-            return null;
+    private byte[] choices(){
+        if (ownChoice == NONE && connectionsAndChoices.isEmpty()) {
+            return new byte[]{};
         }
         int size = connectionsAndChoices.size();
-        if (ownChoice != null) {
+        if (ownChoice != NONE) {
             size++;
         }
-        String[] maxChoices = new String[size];
+        byte[] maxChoices = new byte[size];
         int index = 0;
-        if (ownChoice != null) {
+        if (ownChoice != NONE) {
             maxChoices[index] = ownChoice;
             index++;
         }
-        for (String peerChoice : connectionsAndChoices.values()) {
+        for (byte peerChoice : connectionsAndChoices.values()) {
             maxChoices[index] = peerChoice;
             index++;
         }
@@ -71,17 +77,17 @@ public class MultiplayerServer extends Multiplayer{
 
     public byte[] handleMessage(DatagramPacket incomingPacket) {
         byte[] message = incomingPacket.getData();
-        String messageStr = trimZeros(new String(message));
-        messageStr = messageStr.split(" ")[0];
-        switch (messageStr) {
+
+        byte msgAction = message[0];
+        switch (msgAction) {
             // just a ping message to validate
             case CONNECT: {
                 return sendAllChosenMessage(choices());
             }
 
             case SELECTENTITY: {
-                String chosen = getEntityFromMessage(message);
-                LOGGER.warning("Need to set \"" + chosen + "\" as chosen in lobby and announce about its selection to every peer");
+                byte chosen = getEntityFromMessage(message);
+                System.out.println("Need to set \"" + chosen + "\" as chosen in lobby and announce about its selection to every peer");
                 for (MultiplayerConnection mpc : connectionsAndChoices.keySet())
                     if (mpc.getIp().equals(incomingPacket.getAddress().getHostAddress()) && mpc.getPort() == incomingPacket.getPort())
                         connectionsAndChoices.replace(mpc, chosen);
@@ -98,8 +104,8 @@ public class MultiplayerServer extends Multiplayer{
 
 
             case DESELECTENTITY: {
-                String unchosen = getDeselectedEntity(message);
-                LOGGER.warning("Need to set \"" + unchosen + "\" as unchosen in lobby and announce about its selection to every peer");
+                byte unchosen = getDeselectedEntity(message);
+                System.out.println("Need to set \"" + unchosen + "\" as unchosen in lobby and announce about its selection to every peer");
                 for (MultiplayerConnection mpc : connectionsAndChoices.keySet())
                     if (mpc.getIp().equals(incomingPacket.getAddress().getHostAddress()) && mpc.getPort() == incomingPacket.getPort())
                         connectionsAndChoices.replace(mpc, null);
@@ -128,18 +134,18 @@ public class MultiplayerServer extends Multiplayer{
 
     public boolean addConnected(DatagramPacket incomingPacket){
         if (connectionsAndChoices.size() == MAX_CONNECTED){
-            LOGGER.warning("4 players already connected and there's the host, cant add more");
+            System.out.println("4 players already connected and there's the host, cant add more");
             return false;
         }
         try {
             for (MultiplayerConnection mpc : connectionsAndChoices.keySet()) {
                 if (mpc.getIp().equals(incomingPacket.getAddress().getHostAddress()) && mpc.getPort() == incomingPacket.getPort()) {
-                    LOGGER.warning("Address already exists, not adding to hashmap, but it is a valid request thus we will handle it");
+                    System.out.println("Address already exists, not adding to hashmap, but it is a valid request thus we will handle it");
                     return true;
                 }
             }
             connectionsAndChoices.put(new MultiplayerConnection(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()), null);
-            LOGGER.info("added connection succesfully");
+            System.out.println("added connection succesfully");
         }
         catch (Exception e){
         }
@@ -149,14 +155,14 @@ public class MultiplayerServer extends Multiplayer{
 
 
     public void run(){
-        LOGGER.info("Server started:    " + serverIP + ":" + serverPort);
+        System.out.println("Server started:    " + serverIP + ":" + serverPort);
         // receive packets from clients
         try {
             while (true) {
                 byte[] incomingData = new byte[MAX_LENGTH];
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
-                LOGGER.info("Got an incoming connection from " +incomingPacket.getAddress().getHostAddress() +":" + incomingPacket.getPort());
+                System.out.println("Got an incoming connection from " +incomingPacket.getAddress().getHostAddress() +":" + incomingPacket.getPort());
 
                 if (!addConnected(incomingPacket))
                     continue;
@@ -164,7 +170,7 @@ public class MultiplayerServer extends Multiplayer{
 
                 byte[] toSend = handleMessage(incomingPacket);
                 if (toSend != null) {
-                    LOGGER.info("sending to client: " + new String(toSend));
+                    System.out.println("sending to client: " + Arrays.toString(toSend));
                     DatagramPacket outgoingPacket = new DatagramPacket(toSend, toSend.length, incomingPacket.getAddress(), incomingPacket.getPort());
                     socket.send(outgoingPacket);
                 }
@@ -174,7 +180,7 @@ public class MultiplayerServer extends Multiplayer{
         catch (Exception e){
             if (!socket.isClosed())
                 socket.close();
-            LOGGER.severe("EXCEPTION: " +e.getMessage());
+            System.out.println("EXCEPTION: " +e.getMessage());
             return;
         }
 
