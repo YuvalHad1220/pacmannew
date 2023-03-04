@@ -32,6 +32,19 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
     String selectedEntity;
 
+    PanelGame game;
+
+    private JTextField scaleField;
+    private JTextField seedField;
+    private JTextField FPSField;
+    private PacmanJLabel scaleLabel;
+    private PacmanJLabel seedLabel;
+    private PacmanJLabel FPSLabel;
+
+    private final int FPS = 144;
+    private final int scale = 20;
+    private final int seed = -1;
+
     public PanelLobby(String type, ScreenMain mainFrame) {
         this.mainFrame = mainFrame;
         this.type = type;
@@ -111,7 +124,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
         IPLabel = new PacmanJLabel("Enter IP:", pacmanFont.deriveFont(16f));
 
-        IPtextField = new JTextField("172.25.224.1");
+        IPtextField = new JTextField();
         IPtextField.setForeground(Color.WHITE);
         IPtextField.setFont(pacmanFont.deriveFont(18f));
         IPtextField.setBackground(Color.GRAY);
@@ -151,13 +164,13 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
         int port = Integer.parseInt(portTextField.getText());
 
         client = new MultiplayerClient(ip, port, this);
-        String[] selectedEntities = client.connect();
+        byte[] selectedEntities = client.connect();
         for (PacmanJButton entityBtn : entitiesButtons)
             entityBtn.setEnabled(true);
 
         if (selectedEntities != null) {
-            for (String selected : selectedEntities)
-                setTaken(selected);
+            for (byte selected : selectedEntities)
+                setTaken(Multiplayer.byteToString(selected));
 
             client.start(); // now once we will start than we will update selected as we go
 
@@ -193,6 +206,10 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
             // connection is established. We need to create a game based on multiplayer connection - i.e if not connected than AI runs it.
             // we will send all connection
 
+            game = new PanelGame(scale, seed, mainFrame, FPS, server, client);
+            mainFrame.addPanel(game, "gamePanel");
+            mainFrame.showPanel("gamePanel");
+
 
         } else {
             if (previouslySelectedEntity == clicked)
@@ -215,7 +232,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
                 if (server != null)
                     server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
                 if (client != null)
-                    server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
+                    client.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
             }
 
             // always happens

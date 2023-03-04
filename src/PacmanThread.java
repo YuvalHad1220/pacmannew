@@ -4,12 +4,15 @@ public class PacmanThread extends Thread {
     private Pacman pacman;
     private PanelGame gamePanel;
     private int FPS;
+    private boolean isControlledByAI;
 
 
-    public PacmanThread(PanelGame gamePanel, Pacman pacman) {
+
+    public PacmanThread(PanelGame gamePanel, Pacman pacman, boolean isControlledByAI) {
         this.pacman = pacman;
         this.gamePanel = gamePanel;
         this.FPS = gamePanel.getFPS();
+        this.isControlledByAI = isControlledByAI;
     }
 
     public void run() {

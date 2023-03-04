@@ -111,4 +111,26 @@ public class Multiplayer extends Thread {
     }
 
 
+    protected static String byteToString(byte chosen) {
+        switch (chosen){
+            case PACMAN -> {
+                return "Pacman";
+        }
+            case CLYDE -> {
+                return "Clyde";
+        }
+            case INKY -> {
+                return "Inky";
+        }
+
+            case PINKY -> {
+                return "Pinky";
+        }
+
+            case BINKY -> {
+                return "Blinky";
+        }
+    }
+        return null;
+    }
 }

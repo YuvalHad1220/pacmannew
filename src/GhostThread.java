@@ -1,4 +1,5 @@
 public class GhostThread extends Thread {
+    private final boolean isControlledByAI;
     private Ghost ghost;
     private Pacman p;
     private PanelGame gamePanel;
@@ -6,10 +7,11 @@ public class GhostThread extends Thread {
     private static final int GHOST_SLOWING = 2;
 
 
-    public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p) {
+    public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p, boolean isControlledByAI) {
         this.ghost = ghost;
         this.gamePanel = gamePanel;
         this.p = p;
+        this.isControlledByAI = isControlledByAI;
         this.FPS = gamePanel.getFPS();
 
     }

@@ -41,20 +41,20 @@ public class PanelMap extends JPanel {
          */
 
         new Thread(() -> {
-            gamePanel.gameData.startBlinky();
-            gamePanel.gameData.startPacman();
+            gamePanel.gameData.startBlinky(gamePanel);
+            gamePanel.gameData.startPacman(gamePanel);
 
             sleep(7000);
             releasePinky();
-            gamePanel.gameData.startPinky();
+            gamePanel.gameData.startPinky(gamePanel);
 
             sleep(17000 - 7000);
             releaseInky();
-            gamePanel.gameData.startInky();
+            gamePanel.gameData.startInky(gamePanel);
 
             sleep(32000 - 17000 - 7000);
             releaseClyde();
-            gamePanel.gameData.startClyde();
+            gamePanel.gameData.startClyde(gamePanel);
         }).start();
 
     }
@@ -65,9 +65,7 @@ public class PanelMap extends JPanel {
 
     public void putGhostInCage(Ghost g){
 
-
     }
-
 
     public void ghostOutOfCage(Ghost g){
         int originalY = g.getY(); // lets say its 5. we need to run the for loop until it turns 4

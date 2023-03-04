@@ -3,7 +3,7 @@ import java.io.*;
 public class Database implements Serializable {
     // map related
     public byte[][] bm;
-    public String seed;
+    public int seed;
 
     // entities related
     public int[] pacmanData; // (score, lives, xInMap, yInMap)
@@ -12,7 +12,7 @@ public class Database implements Serializable {
     // class related
     public static final String DATABASE_FOLDER = "./levels/";
 
-    public Database(byte[][] bm, String seed, Pacman p, Ghost[] ghosts){
+    public Database(byte[][] bm, int seed, Pacman p, Ghost[] ghosts){
         this.bm = bm;
         this.seed = seed;
         this.pacmanData = new int[]{p.getScore(), p.getLives(), p.getX(), p.getY()};

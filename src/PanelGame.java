@@ -30,13 +30,26 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.gameData = AdapterGame.fromSave(savedRecord, scale);
         init();
     }
-    public PanelGame(int scale, String seed, ScreenMain mainFrame, int FPS){
+    public PanelGame(int scale, int seed, ScreenMain mainFrame, int FPS){
         super();
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
 
         this.gameData = AdapterGame.fromSeed(seed, scale);
+        init();
+    }
+
+    public PanelGame(int scale, int seed, ScreenMain mainFrame, int FPS, MultiplayerServer mps, MultiplayerClient mpc){
+        super();
+        this.FPS = FPS;
+        this.scale = scale;
+        this.mainFrame = mainFrame;
+        if (mps == null)
+            this.gameData = AdapterGame.fromMultiplayerAsClient(mpc);
+        else
+            this.gameData = AdapterGame.fromMultiplayerAsServer(mps, seed, scale);
+
         init();
     }
 
@@ -83,26 +96,26 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        int[] pacmanDir = null;
+        int[] controlledEntityDir = null;
         switch(keyCode) {
             case KeyEvent.VK_W:
             case KeyEvent.VK_UP:
-                pacmanDir = new int[]{0,-1};
+                controlledEntityDir = new int[]{0,-1};
                 break;
 
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
-                pacmanDir = new int[]{-1,0};
+                controlledEntityDir = new int[]{-1,0};
                 break;
 
             case KeyEvent.VK_S:
             case KeyEvent.VK_DOWN:
-                pacmanDir = new int[]{0,1};
+                controlledEntityDir = new int[]{0,1};
                 break;
 
             case KeyEvent.VK_D:
             case KeyEvent.VK_RIGHT:
-                pacmanDir = new int[]{1,0};
+                controlledEntityDir = new int[]{1,0};
                 break;
 
             case KeyEvent.VK_ESCAPE:
@@ -117,9 +130,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
             }
 
         }
-        if (pacmanDir != null){
-            System.out.println("added");
-            gameData.getPacman().addDir(pacmanDir);
+        if (controlledEntityDir != null){
+            gameData.addControlledEntityDir(controlledEntityDir);
 
         }
 

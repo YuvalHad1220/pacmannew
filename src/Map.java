@@ -13,13 +13,15 @@ import java.util.Arrays;
 
 class Map {
     private byte[][] map;
-    private String seed;
+    private int seed;
     private int cageCenterX;
     private int cageBottomY;
 
 
-    public Map(String seed){
+    public Map(int seed){
         this.seed = seed;
+        if (this.seed == -1)
+            ClassicMap();
     }
 
     public void ClassicMap(){
@@ -75,7 +77,7 @@ class Map {
         return cageBottomY;
     }
 
-    public String getSeed() {
+    public int getSeed() {
         return seed;
     }
 

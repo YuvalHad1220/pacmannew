@@ -29,9 +29,7 @@ public class MultiplayerServer extends Multiplayer{
             this.panelLobby = panelLobby;
 
 
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
+        } catch (SocketException | UnknownHostException e) {
             e.printStackTrace();
         }
     }
@@ -68,7 +66,9 @@ public class MultiplayerServer extends Multiplayer{
             maxChoices[index] = ownChoice;
             index++;
         }
-        for (byte peerChoice : connectionsAndChoices.values()) {
+        for (Byte peerChoice : connectionsAndChoices.values()) {
+            if (peerChoice == null)
+                continue;
             maxChoices[index] = peerChoice;
             index++;
         }
@@ -98,7 +98,7 @@ public class MultiplayerServer extends Multiplayer{
                         e.printStackTrace();
                     }
                 }
-                panelLobby.setTaken(chosen);
+                panelLobby.setTaken(Multiplayer.byteToString(chosen));
                 break;
             }
 
@@ -116,7 +116,7 @@ public class MultiplayerServer extends Multiplayer{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    panelLobby.cancelChosen(unchosen);
+                    panelLobby.cancelChosen(Multiplayer.byteToString(unchosen));
 
                 }
             }
@@ -178,6 +178,7 @@ public class MultiplayerServer extends Multiplayer{
             }
         }
         catch (Exception e){
+            System.out.println(e.getStackTrace()[0].getLineNumber());
             if (!socket.isClosed())
                 socket.close();
             System.out.println("EXCEPTION: " +e.getMessage());

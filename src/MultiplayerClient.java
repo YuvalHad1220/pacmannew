@@ -7,7 +7,7 @@ public class MultiplayerClient extends Multiplayer {
     private static final Logger LOGGER = Logger.getLogger(MultiplayerClient.class.getName());
     int serverPort;
     private String serverIP;
-    private String selected;
+    private byte selected;
 
     public MultiplayerClient(String ip, int port, PanelLobby panelLobby) {
         super(panelLobby);
@@ -16,27 +16,23 @@ public class MultiplayerClient extends Multiplayer {
     }
 
 
-    public String[] handleMessage(DatagramPacket incomingPacket) {
+    public byte[] handleMessage(DatagramPacket incomingPacket) {
         byte[] message = incomingPacket.getData();
-
-        String messageStr = trimZeros(new String(message));
-        messageStr = messageStr.split(" ")[0];
-        LOGGER.info("Got a message of type: " +messageStr +" From server.");
-        switch (messageStr) {
+        switch (message[0]) {
             case SELECTENTITIES: {
                 // that means we first connected with the server. we need to set selected entities in our lobypanel
                 return receiveAllChosenMessage(message);
             }
 
             case DESELECTENTITY: {
-                String unchosen = getDeselectedEntity(message);
-                panelLobby.cancelChosen(unchosen);
+                byte unchosen = getDeselectedEntity(message);
+                panelLobby.cancelChosen(Multiplayer.byteToString(unchosen));
                 break;
             }
 
             case SELECTENTITY: {
-                String chosen = getEntityFromMessage(message);
-                panelLobby.setTaken(chosen);
+                byte chosen = getEntityFromMessage(message);
+                panelLobby.setTaken(Multiplayer.byteToString(chosen));
 
             }
 
@@ -44,7 +40,7 @@ public class MultiplayerClient extends Multiplayer {
         return null;
     }
 
-    public String[] connect() {
+    public byte[] connect() {
         InetAddress serverAddress;
         try {
             socket = new DatagramSocket();
@@ -58,7 +54,7 @@ public class MultiplayerClient extends Multiplayer {
             byte[] recv = new byte[MAX_LENGTH];
             packet = new DatagramPacket(recv, recv.length);
             socket.receive(packet);
-            String[] chosenEntities = handleMessage(packet);
+            byte[] chosenEntities = handleMessage(packet);
             LOGGER.info("Connected. Response we got from server: " + Arrays.toString(chosenEntities));
             return chosenEntities;
 
@@ -107,12 +103,12 @@ public class MultiplayerClient extends Multiplayer {
     }
 
 
-    public void updateSelected(String newChoice, String oldChoice) {
+    public void updateSelected(byte newChoice, byte oldChoice) {
         LOGGER.info("We selected an entity. We need to send the server a deselect message of old entity and a select message of new entity");
         selected = newChoice;
         byte[] msg = deselectEntityMessage(oldChoice);
         try {
-            if (oldChoice != null) {
+            if (oldChoice != NONE) {
                 socket.send(new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort));
                 LOGGER.info("sent deselect of " +oldChoice +" to server");
             }
@@ -122,16 +118,6 @@ public class MultiplayerClient extends Multiplayer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void updateLobbyScreen() {
-        // a timer that will run every second that asks for server about available entities
-    }
-
-    public void updateGame() {
-        // here we will have all the data to ask for from the server
-        // for now - everytime we get an dx,dy change, we will also ask to have the x,y cordinates to make sure that we are syncronised
-
     }
 
 
