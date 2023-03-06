@@ -15,6 +15,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     PacmanJLabel livesLabel;
 
     final AdapterGame gameData;
+    public PowerUpManager pwm;
 
     private boolean isSuspend;
     private int scale;
@@ -56,6 +57,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     private void init(){
         this.isSuspend = false;
         this.isInGame = true;
+        pwm = new PowerUpManager(this);
         mapPanel = new PanelMap(this);
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));
@@ -84,6 +86,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         mainFrame.setSize(new Dimension((gameData.getMap().asByteArray()[0].length + 1) * scale, (gameData.getMap().asByteArray().length + 3) * scale + livesLabel.getHeight()));
         // starting threads and such
         mapPanel.startGame();
+        pwm.start();
 
     }
 
@@ -132,7 +135,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         }
         if (controlledEntityDir != null){
             gameData.addControlledEntityDir(controlledEntityDir);
-
+            System.out.println("added");
         }
 
     }

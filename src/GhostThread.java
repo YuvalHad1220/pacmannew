@@ -1,55 +1,59 @@
-public class GhostThread extends Thread {
-    private final boolean isControlledByAI;
+public class GhostThread extends Thread implements Sleepable{
+    private int controlledBy;
     private Ghost ghost;
     private Pacman p;
     private PanelGame gamePanel;
     private int FPS;
+    private Map map;
     private static final int GHOST_SLOWING = 2;
 
 
-    public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p, boolean isControlledByAI) {
+    public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p, int controlledBy) {
         this.ghost = ghost;
         this.gamePanel = gamePanel;
         this.p = p;
-        this.isControlledByAI = isControlledByAI;
+        this.controlledBy = controlledBy;
         this.FPS = gamePanel.getFPS();
+        this.map = gamePanel.gameData.getMap();
 
     }
 
-    public void run() {
-        Map map = gamePanel.gameData.getMap();
+    private void updateLocation(){
+        int[] ghostDir = ghost.getDir();
+        ghost.updateXInPanel(ghostDir[0]);
+        ghost.updateYInPanel(ghostDir[1]);
+    }
 
+    private void decideMode(){
+        switch (ghost.getGhostMode()) {
+            case Ghost.CHASE -> ghost.Chase(p);
+            case Ghost.FRIGHTENED -> gamePanel.mapPanel.putGhostInCage(ghost);
+        }
+    }
+
+    private void fixCollision(){
+        int[] newDir = map.wallCollision(ghost);
+        if (newDir != null)
+            ghost.setDir(newDir);
+    }
+
+    public void run() {
         while (true) {
             if (gamePanel.getSuspend()){
-                try {
-                    Thread.sleep(1000/FPS * GHOST_SLOWING);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                sleep(1000/FPS * GHOST_SLOWING);
                 continue;
             }
-
-            int[] ghostDir = ghost.getDir();
-            ghost.updateXInPanel(ghostDir[0]);
-            ghost.updateYInPanel(ghostDir[1]);
-            switch (ghost.getGhostMode()){
-                case Ghost.CHASE -> ghost.Chase(p);
-                case Ghost.FRIGHTENED -> gamePanel.mapPanel.putGhostInCage(ghost);
-
+            updateLocation();
+            if (true){
+                decideMode();
+                fixCollision();
             }
 
-            if (map.wallCollision(ghost) != null)
-                ghost.setDir(ghostDir);
-
-            // if it is not a collision than we can change the path
-
-            // we changed the ghost direction, we need to make sure it doesnt collide with walls. if it collides with walls than we ignore the new dir, keep going until we see a intersection and then change the dir
-
-            try {
-                Thread.sleep(1000/FPS * GHOST_SLOWING);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            else {
+                // than we either poll for our movement
             }
+
+            sleep(1000/FPS * GHOST_SLOWING);
         }
 
     }

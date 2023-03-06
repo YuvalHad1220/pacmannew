@@ -3,9 +3,12 @@ by using this class we would update the main entity and start threads where need
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AdapterGame {
+    public static final int COMPUTER = 0;
+    public static final int PEER = 1;
+    public static final int SELF = 2;
+
     private Entity controlledEntity;
     private Entity[] otherEntities;
     private Pacman pacman;
@@ -13,12 +16,18 @@ public class AdapterGame {
     private Map map;
 
     // when server
-    private MultiplayerServer mps;
+    private MultiplayerServer mps = null;
 
     // when client
-    private MultiplayerClient mpc;
+    private MultiplayerClient mpc = null;
 
+    private boolean contains(Entity[] arr, Entity item){
+        for (Entity arrItem : arr)
+            if (arrItem == item)
+                return true;
 
+        return false;
+    }
 
     public static AdapterGame fromMultiplayerAsServer(MultiplayerServer mps, int seed, int scale){
         /*
@@ -64,9 +73,12 @@ public class AdapterGame {
                 break;
         }
 
+        System.out.println("own choice: " +Multiplayer.byteToString(mps.getOwnChoice()));
         for (Byte peerChoice : mps.getConnectionsAndChoices().values()) {
             if (peerChoice == null)
                 continue;
+
+            System.out.println("other choice: " +Multiplayer.byteToString(peerChoice));
 
             switch (peerChoice){
                 case Multiplayer.BINKY:
@@ -176,52 +188,69 @@ public class AdapterGame {
         this.map = map;
     }
 
-    public void startBlinky(PanelGame gp) {
-        if (mpc == null && mps == null)
-            // single player game, must start blinky
-            new GhostThread(gp, ghosts[0], pacman).start();
-
-        if (mps != null && controlledEntity != ghosts[0])
-            new GhostThread(gp, ghosts[0], pacman).start();
-
-    }
-
     public void startPacman(PanelGame gp) {
         if (mpc == null && mps == null)
             // single player game, must start blinky
-            new PacmanThread(gp, pacman).start();
+            new PacmanThread(gp, pacman, SELF).start();
 
-        if (mps != null && controlledEntity != pacman)
-            new PacmanThread(gp, pacman).start();
+            // mp game but we controll this entity
+        if (controlledEntity == pacman)
+            new PacmanThread(gp, pacman, SELF).start();
+
+        if (contains(otherEntities, pacman))
+            new PacmanThread(gp, pacman, PEER).start();
+
+    }
+    public void startBlinky(PanelGame gp) {
+        // single player game
+        if (mpc == null && mps == null)
+            // single player game, must start blinky
+            new GhostThread(gp, ghosts[0], pacman, COMPUTER).start();
+
+            // mp game but we controll this entity
+        if (controlledEntity == ghosts[0])
+            new GhostThread(gp, ghosts[0], pacman, SELF).start();
+
+        if (contains(otherEntities, ghosts[0]))
+            new GhostThread(gp, ghosts[0], pacman, PEER).start();
+
+
     }
 
     public void startPinky(PanelGame gp) {
         if (mpc == null && mps == null)
             // single player game, must start blinky
-            new GhostThread(gp, ghosts[3], pacman).start();
-        if (mps != null && controlledEntity != ghosts[3])
-            new GhostThread(gp, ghosts[3], pacman).start();
+            new GhostThread(gp, ghosts[3], pacman, COMPUTER).start();
+        if (controlledEntity == ghosts[3])
+            new GhostThread(gp, ghosts[3], pacman, SELF).start();
+        if (contains(otherEntities, ghosts[3]))
+            new GhostThread(gp, ghosts[3], pacman, PEER).start();
+
     }
 
     public void startInky(PanelGame gp) {
         if (mpc == null && mps == null)
             // single player game, must start blinky
-            new GhostThread(gp, ghosts[2], pacman).start();
+            new GhostThread(gp, ghosts[2], pacman, COMPUTER).start();
 
-        if (mps != null && controlledEntity != ghosts[2])
-            new GhostThread(gp, ghosts[2], pacman).start();
+        if (controlledEntity == ghosts[2])
+            new GhostThread(gp, ghosts[2], pacman, SELF).start();
+
+        if (contains(otherEntities, ghosts[2]))
+            new GhostThread(gp, ghosts[2], pacman, PEER).start();
     }
 
     public void startClyde(PanelGame gp) {
         if (mpc == null && mps == null)
             // single player game, must start blinky
-            new GhostThread(gp, ghosts[1], pacman).start();
+            new GhostThread(gp, ghosts[1], pacman, COMPUTER).start();
 
-        if (mps != null && controlledEntity != ghosts[1])
-            new GhostThread(gp, ghosts[1], pacman).start();
+        if (controlledEntity == ghosts[1])
+            new GhostThread(gp, ghosts[1], pacman, SELF).start();
 
-        if (mps != null && controlledEntity == ghosts[1])
-            new GhostThread(gp, ghosts[1], pacman, false).start();
+        if (contains(otherEntities, ghosts[1]))
+            new GhostThread(gp, ghosts[1], pacman, PEER).start();
+
     }
 
     public void addControlledEntityDir(int[] entityDir) {

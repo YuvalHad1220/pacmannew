@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class PanelMap extends JPanel {
     private PanelGame gamePanel;
@@ -174,6 +175,10 @@ public class PanelMap extends JPanel {
     }
 
     protected void drawPowerUps(Graphics g){
+        for (PowerUp pw : gamePanel.pwm.getEnabledPowerUps()){
 
+        }
     }
+
+
 }
