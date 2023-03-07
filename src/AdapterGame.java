@@ -189,16 +189,15 @@ public class AdapterGame {
     }
 
     public void startPacman(PanelGame gp) {
-        if (mpc == null && mps == null)
-            // single player game, must start blinky
+        if (mpc == null && mps == null || controlledEntity == pacman){
             new PacmanThread(gp, pacman, SELF).start();
+        }
 
-            // mp game but we controll this entity
-        if (controlledEntity == pacman)
-            new PacmanThread(gp, pacman, SELF).start();
 
-        if (contains(otherEntities, pacman))
+        if (contains(otherEntities, pacman)){
             new PacmanThread(gp, pacman, PEER).start();
+            System.out.println("third if");
+        }
 
     }
     public void startBlinky(PanelGame gp) {

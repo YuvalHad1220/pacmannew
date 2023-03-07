@@ -5,14 +5,6 @@ public class PowerUpGhostSlow extends PowerUp{
     }
 
     public void run(){
-        while (true){
-            sleep(gamePanel.getFPS() / 1000);
-
-            if (collision(gamePanel.gameData.getPacman())){
-                System.out.println("COLLISION WITH POWERUP");
-            }
-
-
-        }
+        super.run();
     }
 }

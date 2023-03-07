@@ -44,4 +44,13 @@ public class PowerUp extends Thread implements Sleepable{
     public int getYInPanel(){
         return powerUpLocation[0] * gamePanel.getScale();
     }
+
+    public void run(){
+        while (true){
+            sleep(1000 / gamePanel.getFPS());
+            if (collision(gamePanel.gameData.getPacman())){
+                System.out.println("COLLISION WITH POWERUP");
+            }
+        }
+    }
 }

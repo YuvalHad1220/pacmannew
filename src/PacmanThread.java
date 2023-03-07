@@ -39,10 +39,16 @@ public class PacmanThread extends Thread implements Sleepable{
                     pacman.updateYInPanel(scale / 5);
                 if (pacmanDir[0] == -1)
                     pacman.updateXInPanel(scale / 5);
-            } else {
+            }
+
+
+
+
+            else {
                 notAllowedToGoInDirection = map.atIntersection(pacman);
                 if (notAllowedToGoInDirection != null) {
                     // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
+                    System.out.println("at intersection");
 
                     // that means that we decided to change dir
                     if (pacman.setDirForIntersection()) {
@@ -78,6 +84,7 @@ public class PacmanThread extends Thread implements Sleepable{
             int[] pacmanDir = pacman.getDir();
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);
+
         }
     }
 

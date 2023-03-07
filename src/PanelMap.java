@@ -2,20 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class PanelMap extends JPanel {
+public class PanelMap extends JPanel implements Sleepable{
     private PanelGame gamePanel;
 
     public PanelMap(PanelGame gamePanel) {
         setBackground(Color.BLACK);
         this.gamePanel = gamePanel;
-    }
-
-    public static void sleep(int time){
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public void startRepaintingThread(){
@@ -27,8 +19,6 @@ public class PanelMap extends JPanel {
         startRepaintingThread();
 
         // by using the adapterGame we will know which threads to start; anyways, we will start all the timers to release the ghosts from cage
-        Pacman pacman = gamePanel.gameData.getPacman();
-        Ghost[] ghosts = gamePanel.gameData.getGhosts();
         Map map = gamePanel.gameData.getMap();
 
         // first we will remove cage doors
