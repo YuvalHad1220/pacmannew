@@ -7,6 +7,12 @@ import java.util.Queue;
 import javax.imageio.ImageIO;
 
 public class Entity {
+    public static final int LEFT = 3;
+    public static final int RIGHT = 2;
+    public static final int UP = 1;
+    public static final int DOWN = 0;
+    public static final int[][] DIRECTION_VECTORS = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+
     protected int scale;
     protected int xInMap;
     protected int yInMap;
