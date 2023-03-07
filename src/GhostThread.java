@@ -25,7 +25,7 @@ public class GhostThread extends Thread implements Sleepable{
     private void decideMode(){
         switch (ghost.getGhostMode()) {
             case Ghost.CHASE -> ghost.Chase(p);
-            case Ghost.FRIGHTENED -> gamePanel.mapPanel.putGhostInCage(ghost);
+//            case Ghost.FRIGHTENED -> gamePanel.mapPanel.putGhostInCage(ghost);
         }
     }
 

@@ -168,8 +168,12 @@ public class PanelMap extends JPanel implements Sleepable{
     protected void drawGhosts(Graphics g) {
         int ghostSize = gamePanel.getScale() * 2;
         Ghost[] ghosts = gamePanel.gameData.getGhosts();
-        for (Ghost ghost : ghosts)
+        for (Ghost ghost : ghosts){
+            g.setColor(Color.RED);
             g.drawImage(ghost.getGhostImage(), ghost.getXInPanel(), ghost.getYinPanel(), ghostSize, ghostSize, this);
+            g.fillRect(ghost.getXInPanel(), ghost.getYinPanel(), ghost.getWidth() / 2 - (ghost.getScale() / 10), ghost.getHeight() / 2 - (ghost.getScale() / 10));
+
+        }
     }
 
     protected void drawPowerUps(Graphics g){

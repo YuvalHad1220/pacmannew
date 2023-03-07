@@ -11,7 +11,6 @@ public class PowerUpGhostFreeze extends PowerUp{
             if (!collision(gamePanel.gameData.getPacman()))
                 continue;
 
-            System.out.println("need to freeze");
             gamePanel.pwm.removePowerUp(this);
             gamePanel.gameData.alterGhostSpeed(100000000);
             sleep(powerUpTimeInSeconds);
