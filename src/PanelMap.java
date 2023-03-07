@@ -125,6 +125,7 @@ public class PanelMap extends JPanel {
         drawMap(g);
         drawGhosts(g);
         drawPacman(g);
+        drawPowerUps(g);
     }
     private void drawMap(Graphics g){
         int scale = gamePanel.getScale();
@@ -175,8 +176,9 @@ public class PanelMap extends JPanel {
     }
 
     protected void drawPowerUps(Graphics g){
+        int powerUpSize = (int) (gamePanel.getScale() * 1.5);
         for (PowerUp pw : gamePanel.pwm.getEnabledPowerUps()){
-
+            g.drawImage(pw.powerUpImage, pw.getXInPanel(), pw.getYInPanel(), powerUpSize, powerUpSize, this);
         }
     }
 

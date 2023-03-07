@@ -32,30 +32,32 @@ public class PowerUpManager extends Thread implements Sleepable{
 
     }
 
+    private PowerUp genRandomPowerUp() {
+        int powerUpTypeLocation = random.nextInt(powerUpTypes.length);
+        int[] powerUpLocation = availableTiles.get(random.nextInt(availableTiles.size()));
+        PowerUp chosen = null;
+        try {
+            chosen = (PowerUp) powerUpTypes[powerUpTypeLocation].getDeclaredConstructor(int[].class, PanelGame.class).newInstance(powerUpLocation, gamePanel);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        return chosen;
+    }
+
     public void run(){
         while (true){
-            sleep(random.nextInt(30 * 1000)); // a power up will be spawned randomly within 10 seconds
+            sleep(random.nextInt(5 * 1000)); // a power up will be spawned randomly within 10 seconds
 
-            int powerUpTypeLocation = random.nextInt(powerUpTypes.length);
-            int[] powerUpLocation = availableTiles.get(random.nextInt(availableTiles.size()));
-            PowerUp chosen = null;
+            PowerUp generated = null;
+            while (generated == null)
+                 generated = genRandomPowerUp();
 
-            try {
-                chosen = (PowerUp) powerUpTypes[powerUpTypeLocation].getDeclaredConstructor().newInstance(powerUpLocation, gamePanel);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            generated.start();
+            enabledPowerUps.add(generated);
+            System.out.println(Arrays.toString(generated.powerUpLocation));
 
-            if (chosen != null){
-                // by adding it, than the panel will draw it
-                enabledPowerUps.add(chosen);
-            }
+
 
         }
     }
@@ -64,9 +66,8 @@ public class PowerUpManager extends Thread implements Sleepable{
         return enabledPowerUps;
     }
 
-    // invoked when pacman runs over powerup
-    public void removePowerUp(){
-
+    public void removePowerUp(PowerUp p){
+        enabledPowerUps.remove(p);
     }
     private void init(){
         availableTiles = getAvailableTiles();

@@ -3,12 +3,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-public class PowerUp extends Thread{
+public class PowerUp extends Thread implements Sleepable{
 
-    private BufferedImage powerUpImage;
-    private int[] powerUpLocation;
-    private PanelGame gamePanel;
-    private int powerUpTime;
+    protected BufferedImage powerUpImage;
+    protected int[] powerUpLocation;
+    protected PanelGame gamePanel;
+    protected int powerUpTime;
 
     public PowerUp(String powerUpImagePath, int[] powerUpLocation, PanelGame gamePanel, int powerUpTime) {
         this.powerUpImage = loadImage(powerUpImagePath);
@@ -29,13 +29,19 @@ public class PowerUp extends Thread{
         return null;
     }
 
-//    public void run(int[] locationInMap, PanelGame gp){
-//
-//        while (true){
-//
-//        }
-//
-//    }
+    protected boolean collision(Pacman p){
+        if (p.getY() == powerUpLocation[0] && p.getX() == powerUpLocation[1])
+            return true;
+        return false;
 
+    }
 
+    public int getXInPanel(){
+        return powerUpLocation[1] * gamePanel.getScale();
+
+    }
+
+    public int getYInPanel(){
+        return powerUpLocation[0] * gamePanel.getScale();
+    }
 }
