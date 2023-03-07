@@ -12,9 +12,9 @@ public class PowerUpGhostFreeze extends PowerUp{
                 continue;
 
             gamePanel.pwm.removePowerUp(this);
-            gamePanel.gameData.alterGhostSpeed(100000000);
+            gamePanel.gameData.alterGhostSpeed(500);
             sleep(powerUpTimeInSeconds);
-            gamePanel.gameData.alterGhostSpeed(1.0 / 100000000);
+            gamePanel.gameData.alterGhostSpeed(1.0 / 500);
         }
     }
 }

@@ -135,7 +135,6 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         }
         if (controlledEntityDir != null){
             gameData.addControlledEntityDir(controlledEntityDir);
-            System.out.println("added");
         }
 
     }

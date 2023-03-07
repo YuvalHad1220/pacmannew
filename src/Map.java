@@ -89,20 +89,20 @@ class Map {
             // right
              block = map[entity.getY()][entity.getX() + 1];
              if (!(block == 2 || block == -2 || block == 3))
-                 return new int[]{1,0};
+                 return Entity.DIRECTION_VECTORS[Entity.RIGHT];
         }
         if (entityDir[0] == -1){
             // left
             block = map[entity.getY()][entity.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return new int[]{-1,0};
+                return Entity.DIRECTION_VECTORS[Entity.LEFT];
         }
 
         if (entityDir[1] == 1){
             // down
             block = map[entity.getY() + 1][entity.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return new int[]{0,1};
+                return Entity.DIRECTION_VECTORS[Entity.DOWN];
         }
 
 
@@ -110,7 +110,7 @@ class Map {
             // up
             block = map[entity.getY()][entity.getX()];
             if (!(block == 2 || block == -2 || block == 3))
-                return new int[]{0,-1};
+                return Entity.DIRECTION_VECTORS[Entity.UP];
         }
 
         return null;
@@ -124,43 +124,43 @@ class Map {
         if (entityDir[0] == 1) {
             block = map[entity.getY() + 1][entity.getX()];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{0, 1};
+                return Entity.DIRECTION_VECTORS[Entity.DOWN];
 
             block = map[entity.getY() - 1][entity.getX()];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{0, -1};
+                return Entity.DIRECTION_VECTORS[Entity.UP];
 
             return null;
 
         } else if (entityDir[0] == -1) {
             block = map[entity.getY() + 1][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{0, 1};
+                return Entity.DIRECTION_VECTORS[Entity.DOWN];
 
             block = map[entity.getY() - 1][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{0, -1};
+                return Entity.DIRECTION_VECTORS[Entity.UP];
 
             return null;
 
         } else if (entityDir[1] == 1) {
             block = map[entity.getY()][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{-1, 0};
+                return Entity.DIRECTION_VECTORS[Entity.LEFT];
 
             block = map[entity.getY()][entity.getX() - 1];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{1, 0};
+                return Entity.DIRECTION_VECTORS[Entity.RIGHT];
 
             return null;
         } else if (entityDir[1] == -1) {
             block = map[entity.getY() + 1][entity.getX() + 1];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{-1, 0};
+                return Entity.DIRECTION_VECTORS[Entity.LEFT];
 
             block = map[entity.getY() + 1][entity.getX() - 1];
             if (!(block == 0 || block == 1 || block == 4))
-                return new int[]{1, 0};
+                return Entity.DIRECTION_VECTORS[Entity.RIGHT];
 
             return null;
         }
@@ -222,4 +222,5 @@ class Map {
         }
         return null;
     }
+
 }
