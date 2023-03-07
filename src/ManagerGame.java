@@ -15,6 +15,8 @@ public class ManagerGame {
     private Ghost[] ghosts;
     private Map map;
 
+    private double alteredGhostSpeed;
+
     // when server
     private MultiplayerServer mps = null;
 
@@ -151,6 +153,7 @@ public class ManagerGame {
         this.otherEntities = otherEntities;
         this.ghosts = ghosts;
         this.map = map;
+        this.alteredGhostSpeed = 1;
     }
 
     public ManagerGame setMps(MultiplayerServer mps) {
@@ -259,7 +262,7 @@ public class ManagerGame {
         for (Ghost g : ghosts)
             g.alterOffset(byHowMuch);
 
-
+        alteredGhostSpeed = byHowMuch;
     }
 
 
@@ -272,4 +275,7 @@ public class ManagerGame {
     }
 
 
+    public double getAlteredGhostSpeed() {
+        return alteredGhostSpeed;
+    }
 }

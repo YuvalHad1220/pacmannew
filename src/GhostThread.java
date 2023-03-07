@@ -37,11 +37,14 @@ public class GhostThread extends Thread implements Sleepable{
 
     public void run() {
         while (true) {
-            if (gamePanel.getSuspend()){
-                sleep((int) (1000/FPS * ghost.getOffset()));
+            sleep((int) (1000/FPS * ghost.getOffset()));
+
+            if (gamePanel.getSuspend())
                 continue;
-            }
+
+
             updateLocation();
+
             if (true){
                 decideMode();
                 fixCollision();
@@ -51,10 +54,6 @@ public class GhostThread extends Thread implements Sleepable{
                 // than we either poll for our movement
             }
 
-            sleep((int) (1000/FPS * ghost.getOffset()));
         }
-
     }
-
-
 }

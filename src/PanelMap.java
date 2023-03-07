@@ -11,8 +11,14 @@ public class PanelMap extends JPanel implements Sleepable{
     }
 
     public void startRepaintingThread(){
-        Timer timer = new Timer(1000 / gamePanel.getFPS(), e -> this.repaint());
-        timer.start();
+        new Thread(() -> {
+            while (true){
+                // so ghosts wont be jittery if they are faster
+                double alteredSpeed = gamePanel.gameData.getAlteredGhostSpeed() < 1 ? gamePanel.gameData.getAlteredGhostSpeed() : 1;
+                this.repaint();
+                sleep((int) (1000 / gamePanel.getFPS() * alteredSpeed));
+            }
+        }).start();
     }
 
     public void startGame(){

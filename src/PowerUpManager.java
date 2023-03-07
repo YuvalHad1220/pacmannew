@@ -47,15 +47,13 @@ public class PowerUpManager extends Thread implements Sleepable{
         while (true){
             sleep(random.nextInt(3 * 1000)); // a power up will be spawned randomly within 30 seconds
 
-            PowerUp generated = null;
-            while (generated == null)
-                 generated = genRandomPowerUp();
+            if (gamePanel.getSuspend())
+                continue;
 
-            generated.start();
+            PowerUp generated = genRandomPowerUp();
             enabledPowerUps.add(generated);
             System.out.println(Arrays.toString(generated.powerUpLocation));
-
-
+            generated.start();
 
         }
     }

@@ -5,15 +5,17 @@ public class PowerUpGhostSlow extends PowerUp{
     }
 
     public void run(){
-        super.run();
+        while (true){
+            sleep(1000 / gamePanel.getFPS());
+            if (gamePanel.getSuspend())
+                continue;
+            if (!collision(gamePanel.gameData.getPacman()))
+                continue;
+
+            gamePanel.pwm.removePowerUp(this);
+            gamePanel.gameData.alterGhostSpeed(4);
+            sleep(powerUpTimeInSeconds);
+            gamePanel.gameData.alterGhostSpeed(1.0/4);
+        }
     }
-//        while (true){
-//            sleep(1000 / gamePanel.getFPS());
-//            if (collision(gamePanel.gameData.getPacman()))
-//                gamePanel.gameData.alterGhostSpeed(4);
-//            sleep(powerUpTimeInSeconds);
-//            gamePanel.gameData.alterGhostSpeed(1/4);
-//            gamePanel.pwm.removePowerUp(this);
-//        }
-//    }
 }

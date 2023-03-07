@@ -22,10 +22,11 @@ public class PacmanThread extends Thread implements Sleepable{
     public void selfLoop() {
         pacman.pollForFirstMovement();
         while (true) {
-            if (gamePanel.getSuspend()) {
-                sleep(1000 / FPS);
+            sleep(1000 / FPS);
+
+            if (gamePanel.getSuspend())
                 continue;
-            }
+
 
             pacman.pollDirForReversedMovement();
             int[] pacmanDir = pacman.getDir();
@@ -41,19 +42,14 @@ public class PacmanThread extends Thread implements Sleepable{
                     pacman.updateXInPanel(scale / 5);
             }
 
-
-
-
             else {
                 notAllowedToGoInDirection = map.atIntersection(pacman);
                 if (notAllowedToGoInDirection != null) {
                     // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
-                    System.out.println("at intersection");
 
                     // that means that we decided to change dir
                     if (pacman.setDirForIntersection()) {
                         pacmanDir = pacman.getDir();
-                        System.out.println("not allowed to go in dir " + Arrays.toString(notAllowedToGoInDirection));
                         if (pacmanDir[0] == -1)
                             pacman.updateYInPanel(scale / 5);
 
@@ -75,7 +71,6 @@ public class PacmanThread extends Thread implements Sleepable{
             if (map.isAtPath(pacman) != null)
                 gamePanel.setSuspend(true);
 
-            sleep(1000 / FPS);
         }
     }
 
