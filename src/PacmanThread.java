@@ -89,7 +89,7 @@ public class PacmanThread extends Thread implements Sleepable{
     }
 
     public void run() {
-        if (controlledBy == AdapterGame.SELF)
+        if (controlledBy == ManagerGame.SELF)
             selfLoop();
         else
             serverLoop();

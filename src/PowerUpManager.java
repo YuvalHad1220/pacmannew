@@ -18,12 +18,10 @@ public class PowerUpManager extends Thread implements Sleepable{
     private ArrayList<int[]> getAvailableTiles(){
         byte[][] map = gamePanel.gameData.getMap().asByteArray();
         ArrayList<int[]> toRet = new ArrayList<>();
-
         for (int i = 0; i<map.length; i++){
             for (int j = 0; j<map[i].length; j++){
                 if (map[i][j] == 2 || map[i][j] == -2 || map[i][j] == 3){
                     toRet.add(new int[]{i,j});
-                    System.out.println(Arrays.toString(new int[]{i,j}));
                 }
             }
         }
@@ -47,7 +45,7 @@ public class PowerUpManager extends Thread implements Sleepable{
 
     public void run(){
         while (true){
-            sleep(random.nextInt(5 * 1000)); // a power up will be spawned randomly within 10 seconds
+            sleep(random.nextInt(3 * 1000)); // a power up will be spawned randomly within 30 seconds
 
             PowerUp generated = null;
             while (generated == null)

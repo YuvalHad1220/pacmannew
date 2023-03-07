@@ -19,6 +19,7 @@ public class PanelMap extends JPanel implements Sleepable{
         startRepaintingThread();
 
         // by using the adapterGame we will know which threads to start; anyways, we will start all the timers to release the ghosts from cage
+
         Map map = gamePanel.gameData.getMap();
 
         // first we will remove cage doors
@@ -166,6 +167,12 @@ public class PanelMap extends JPanel implements Sleepable{
     }
 
     protected void drawPowerUps(Graphics g){
+//        int scale = gamePanel.getScale();
+//        int powerUpSize = (int) (scale * 1.2);
+//        for (PowerUp pw : gamePanel.pwm.getEnabledPowerUps()){
+//            g.drawImage(pw.powerUpImage, (pw.getXInPanel() + 1) * scale, (pw.getYInPanel() + 1) * scale, powerUpSize, powerUpSize, this);
+
+
         int powerUpSize = (int) (gamePanel.getScale() * 1.5);
         for (PowerUp pw : gamePanel.pwm.getEnabledPowerUps()){
             g.drawImage(pw.powerUpImage, pw.getXInPanel(), pw.getYInPanel(), powerUpSize, powerUpSize, this);

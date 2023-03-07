@@ -4,7 +4,7 @@ by using this class we would update the main entity and start threads where need
 
 import java.util.ArrayList;
 
-public class AdapterGame {
+public class ManagerGame {
     public static final int COMPUTER = 0;
     public static final int PEER = 1;
     public static final int SELF = 2;
@@ -29,7 +29,7 @@ public class AdapterGame {
         return false;
     }
 
-    public static AdapterGame fromMultiplayerAsServer(MultiplayerServer mps, int seed, int scale){
+    public static ManagerGame fromMultiplayerAsServer(MultiplayerServer mps, int seed, int scale){
         /*
         we need to retrieve:
         1. ourselves
@@ -104,18 +104,18 @@ public class AdapterGame {
         }
 
         // outcome: ownChoice will start a thread. otherChoices won't start a thread. everything else: will start a thread.
-        return new AdapterGame(pacman, ghosts, map, ownChoice,otherChoices.toArray(new Entity[otherChoices.size()])).setMps(mps);
+        return new ManagerGame(pacman, ghosts, map, ownChoice,otherChoices.toArray(new Entity[otherChoices.size()])).setMps(mps);
 
     }
 
-    public static AdapterGame fromMultiplayerAsClient(MultiplayerClient mpc){
+    public static ManagerGame fromMultiplayerAsClient(MultiplayerClient mpc){
         /*
         we need to retrieve our selves. all other entities will be moved by server
          */
         return null;
     }
 
-    public static AdapterGame fromSeed(int seed, int scale){
+    public static ManagerGame fromSeed(int seed, int scale){
         Map map = new Map(seed);
 
         Pacman pacman = new Pacman(map.asByteArray().length / 2 - 3, 25, scale);
@@ -127,10 +127,10 @@ public class AdapterGame {
         };
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-        return new AdapterGame(pacman, ghosts, map, pacman, ghosts);
+        return new ManagerGame(pacman, ghosts, map, pacman, ghosts);
     }
 
-    public static AdapterGame fromSave(Database savedRecord, int scale){
+    public static ManagerGame fromSave(Database savedRecord, int scale){
         Map map = new Map(savedRecord.seed);
         map.setMap(savedRecord.bm);
         Pacman pacman = new Pacman(savedRecord.pacmanData[2], savedRecord.pacmanData[3], scale, savedRecord.pacmanData[0], savedRecord.pacmanData[1]);
@@ -142,10 +142,10 @@ public class AdapterGame {
         };
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-        return new AdapterGame(pacman, ghosts, map, pacman, ghosts);
+        return new ManagerGame(pacman, ghosts, map, pacman, ghosts);
     }
 
-    private AdapterGame(Pacman pacman, Ghost[] ghosts, Map map, Entity controlledEntity, Entity[] otherEntities) {
+    private ManagerGame(Pacman pacman, Ghost[] ghosts, Map map, Entity controlledEntity, Entity[] otherEntities) {
         this.pacman = pacman;
         this.controlledEntity = controlledEntity;
         this.otherEntities = otherEntities;
@@ -153,13 +153,12 @@ public class AdapterGame {
         this.map = map;
     }
 
-
-    public AdapterGame setMps(MultiplayerServer mps) {
+    public ManagerGame setMps(MultiplayerServer mps) {
         this.mps = mps;
         return this;
     }
 
-    public AdapterGame setMpc(MultiplayerClient mpc) {
+    public ManagerGame setMpc(MultiplayerClient mpc) {
         this.mpc = mpc;
         return this;
     }
@@ -200,6 +199,7 @@ public class AdapterGame {
         }
 
     }
+
     public void startBlinky(PanelGame gp) {
         // single player game
         if (mpc == null && mps == null)
@@ -251,6 +251,17 @@ public class AdapterGame {
             new GhostThread(gp, ghosts[1], pacman, PEER).start();
 
     }
+
+    public void alterGhostSpeed(double byHowMuch){
+        // less than 1 - faster
+        // more than 1 - slower
+
+        for (Ghost g : ghosts)
+            g.alterOffset(byHowMuch);
+
+
+    }
+
 
     public void addControlledEntityDir(int[] entityDir) {
         this.controlledEntity.addDir(entityDir);

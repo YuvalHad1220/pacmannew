@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Ghost extends Entity implements GhostAI{
+    private double ghostOffset;
     public static final int FRIGHTENED = 0;
     public static final int CHASE = 1;
     public static final int SCATTER = 2;
@@ -15,6 +16,7 @@ public class Ghost extends Entity implements GhostAI{
     public Ghost(int startingX, int startingY, String ghostPath, int scale) {
         super(startingX, startingY, ghostPath, scale);
         ghostMode = Ghost.CHASE;
+        ghostOffset = 2.5;
     }
 
     public BufferedImage getGhostImage() {
@@ -82,5 +84,13 @@ public class Ghost extends Entity implements GhostAI{
         }
 
         this.setDir(new int[]{dx,dy});
+    }
+
+    public double getOffset() {
+        return ghostOffset;
+    }
+
+    public void alterOffset(double offset){
+        ghostOffset *= offset;
     }
 }

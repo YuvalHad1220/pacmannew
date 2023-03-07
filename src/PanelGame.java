@@ -14,7 +14,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     PacmanJLabel scoreLabel;
     PacmanJLabel livesLabel;
 
-    final AdapterGame gameData;
+    final ManagerGame gameData;
     public PowerUpManager pwm;
 
     private boolean isSuspend;
@@ -28,7 +28,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        this.gameData = AdapterGame.fromSave(savedRecord, scale);
+        this.gameData = ManagerGame.fromSave(savedRecord, scale);
         init();
     }
     public PanelGame(int scale, int seed, ScreenMain mainFrame, int FPS){
@@ -37,7 +37,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
 
-        this.gameData = AdapterGame.fromSeed(seed, scale);
+        this.gameData = ManagerGame.fromSeed(seed, scale);
         init();
     }
 
@@ -47,9 +47,9 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
         if (mps == null)
-            this.gameData = AdapterGame.fromMultiplayerAsClient(mpc);
+            this.gameData = ManagerGame.fromMultiplayerAsClient(mpc);
         else
-            this.gameData = AdapterGame.fromMultiplayerAsServer(mps, seed, scale);
+            this.gameData = ManagerGame.fromMultiplayerAsServer(mps, seed, scale);
 
         init();
     }

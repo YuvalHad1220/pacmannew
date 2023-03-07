@@ -8,13 +8,13 @@ public class PowerUp extends Thread implements Sleepable{
     protected BufferedImage powerUpImage;
     protected int[] powerUpLocation;
     protected PanelGame gamePanel;
-    protected int powerUpTime;
+    protected int powerUpTimeInSeconds;
 
     public PowerUp(String powerUpImagePath, int[] powerUpLocation, PanelGame gamePanel, int powerUpTime) {
         this.powerUpImage = loadImage(powerUpImagePath);
         this.powerUpLocation = powerUpLocation;
         this.gamePanel = gamePanel;
-        this.powerUpTime = powerUpTime;
+        this.powerUpTimeInSeconds = powerUpTime * 1000;
     }
 
 
@@ -46,10 +46,11 @@ public class PowerUp extends Thread implements Sleepable{
     }
 
     public void run(){
-        while (true){
+        while (true) {
             sleep(1000 / gamePanel.getFPS());
-            if (collision(gamePanel.gameData.getPacman())){
-                System.out.println("COLLISION WITH POWERUP");
+            if (collision(gamePanel.gameData.getPacman())) {
+                System.out.println("POWER UP COLL");
+                gamePanel.pwm.removePowerUp(this);
             }
         }
     }

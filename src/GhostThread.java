@@ -5,8 +5,6 @@ public class GhostThread extends Thread implements Sleepable{
     private PanelGame gamePanel;
     private int FPS;
     private Map map;
-    private static final int GHOST_SLOWING = 2;
-
 
     public GhostThread(PanelGame gamePanel, Ghost ghost, Pacman p, int controlledBy) {
         this.ghost = ghost;
@@ -40,7 +38,7 @@ public class GhostThread extends Thread implements Sleepable{
     public void run() {
         while (true) {
             if (gamePanel.getSuspend()){
-                sleep(1000/FPS * GHOST_SLOWING);
+                sleep((int) (1000/FPS * ghost.getOffset()));
                 continue;
             }
             updateLocation();
@@ -53,7 +51,7 @@ public class GhostThread extends Thread implements Sleepable{
                 // than we either poll for our movement
             }
 
-            sleep(1000/FPS * GHOST_SLOWING);
+            sleep((int) (1000/FPS * ghost.getOffset()));
         }
 
     }
