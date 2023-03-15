@@ -74,8 +74,8 @@ public class GhostThread extends Thread implements Sleepable {
 
             ghost.Chase(p);
             int[] ghostDir = ghost.getDir();
-            int[] notAllowedToGoInDirection = map.wallCollision(ghost);
-            if (notAllowedToGoInDirection != null) {
+            int notAllowedToGoInDirection = map.wallCollision(ghost);
+            if (notAllowedToGoInDirection != -1) {
                 // that means the direction we are going is not ok.
                 // we will see using a posVector which are the routes we can take and sort from best route to worst route
                 // than with a for loop we will iterate over all routes, and once we get a possible route we will choose it and break the loop
@@ -132,10 +132,10 @@ public class GhostThread extends Thread implements Sleepable {
                 for (int[] dirVec : vectors){
                     System.out.println(Arrays.toString(dirVec));
                     ghost.setDir(dirVec);
-                    if (map.wallCollision(ghost) == null){
-
-                    }
-                        break;
+//                    if (map.wallCollision(ghost) == null){
+//
+//                    }
+//                        break;
                 }
                 System.out.println("---");
 
