@@ -73,110 +73,28 @@ public class GhostThread extends Thread implements Sleepable {
 
 
             ghost.Chase(p);
-            int[] ghostDir = ghost.getDir();
+            int[] newGhostDir = ghost.getDir();
             int[] notAllowedToGoInDirection = map.wallCollision(ghost);
             if (notAllowedToGoInDirection != null) {
-                // that means the direction we are going is not ok.
-                // we will see using a posVector which are the routes we can take and sort from best route to worst route
-                // than with a for loop we will iterate over all routes, and once we get a possible route we will choose it and break the loop
+                System.out.println(ghost.getClass().getSimpleName() + Arrays.toString(notAllowedToGoInDirection));
+                if (Arrays.equals(notAllowedToGoInDirection,newGhostDir)){
+                    System.out.println("Collision, need to find new path");
+                    int[] optimalNewDir = map.getOptimalDir(ghost, p);
 
-                int[] posVector = {ghost.getX() - p.getX(), ghost.getY() - p.getY()};
-                // if [0] is positive than ghost's x is higher than pacman's x -> ghost need to go left
-                // if [0] is negative than ghost's x is lower than pacman's x -> ghost need to go right
-                // if [1] is positive than ghosts'y is higher than pacman's y -> ghost need to go lower
-                // if [1] is negative than ghosts y is lower than pacmans y -> ghost need to go higher
-
-
-                ArrayList<int[]> vectors = new ArrayList<>();
-
-                // we need to see first which distance vector is bigger
-                if (Math.abs(posVector[0]) > Math.abs(posVector[1])) {
-                    // than we need to treat the x first
-                    if (posVector[0] > 0) {
-                        vectors.add(new int[]{1, 0});
-                        vectors.add(new int[]{-1, 0});
-                    } else {
-                        vectors.add(new int[]{-1, 0});
-                        vectors.add(new int[]{1, 0});
-
-                    }
-
-                    // now we add y vector
-
-                    if (posVector[1] > 0) {
-                        vectors.add(new int[]{0, 1});
-                        vectors.add(new int[]{0, -1});
-                    } else {
-                        vectors.add(new int[]{0, -1});
-                        vectors.add(new int[]{0, 1});
-                    }
-                } else {
-                    if (posVector[1] > 0) {
-                        vectors.add(new int[]{0, 1});
-                        vectors.add(new int[]{0, -1});
-                    } else {
-                        vectors.add(new int[]{0, -1});
-                        vectors.add(new int[]{0, 1});
-                    }
-                    if (posVector[0] > 0) {
-                        vectors.add(new int[]{1, 0});
-                        vectors.add(new int[]{-1, 0});
-                    } else {
-                        vectors.add(new int[]{-1, 0});
-                        vectors.add(new int[]{1, 0});
-
-                    }
+                    // ghost.setDir(optimalNewDir);
 
                 }
-
-                for (int[] dirVec : vectors){
-                    System.out.println(Arrays.toString(dirVec));
-                    ghost.setDir(dirVec);
-                    if (map.wallCollision(ghost) == null){
-
-                    }
-                        break;
+                else {
+                    ghost.updateXInPanel(newGhostDir[0]);
+                    ghost.updateYInPanel(newGhostDir[1]);
                 }
-                System.out.println("---");
-
-
+            }
+            else {
+                ghost.updateXInPanel(newGhostDir[0]);
+                ghost.updateYInPanel(newGhostDir[1]);
             }
 
-            ghost.updateXInPanel(ghostDir[0]);
-            ghost.updateYInPanel(ghostDir[1]);
 
-//
-//            if (notAllowedToGoInDirection != null) {
-//                int[] directionToGoTo = map.chasePacman(ghost, p);
-//
-//
-//                ghost.setDir(directionToGoTo);
-//                if (ghostDir[1] == -1)
-//                    ghost.updateYInPanel(scale / 5);
-//                if (ghostDir[0] == -1)
-//                    ghost.updateXInPanel(scale / 5);
-//            }
-
-//            else {
-//                notAllowedToGoInDirection = map.atIntersection(pacman);
-//                if (notAllowedToGoInDirection != null) {
-//                    // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
-//
-//                    // that means that we decided to change dir
-//                    if (pacman.setDirForIntersection()) {
-//                        pacmanDir = pacman.getDir();
-//                        if (pacmanDir[0] == -1)
-//                            pacman.updateYInPanel(scale / 5);
-//
-//                        if (pacmanDir[0] == 1)
-//                            pacman.updateYInPanel(scale / 5);
-//
-//                        if (pacmanDir[1] == 1)
-//                            pacman.updateXInPanel(scale / 5);
-//
-//                        if (pacmanDir[1] == -1)
-//                            pacman.updateXInPanel(scale / 5);
-//                    }
 
         }
     }

@@ -223,4 +223,64 @@ class Map {
         return null;
     }
 
+    public int[] getOptimalDir(Ghost ghost, Pacman p) {
+        int pacmanY = p.getY();
+        int pacmanX = p.getX();
+
+        int ghostX = ghost.getX();
+        int ghostY = ghost.getY();
+
+        int horzDistance = pacmanX - ghostX;
+        int vertDistnace = pacmanY - ghostY;
+
+        int[] dirVector;
+
+
+        if (Math.abs(horzDistance) >= Math.abs(vertDistnace)){
+            // then we need to go X axis
+
+            if (horzDistance > 0){
+                // need to go left
+                dirVector = Entity.DIRECTION_VECTORS[Entity.LEFT];
+
+            }
+
+            else {
+                // need to go right
+                dirVector = Entity.DIRECTION_VECTORS[Entity.RIGHT];
+
+            }
+
+        }
+
+        else {
+            // need to go Y axis
+            if (vertDistnace > 0){
+                // need to go down
+                dirVector = Entity.DIRECTION_VECTORS[Entity.DOWN];
+            }
+            else {
+                // need to go up
+                dirVector = Entity.DIRECTION_VECTORS[Entity.UP];
+
+            }
+        }
+
+
+        // now we need to see if dirVector collided
+
+        ghost.setDir(dirVector);
+        int[][] newDirs = Entity.DIRECTION_VECTORS.clone();
+        while (wallCollision(ghost) != null){
+            int selected = (int) (Math.random() * 4);
+            if (newDirs[selected] == null)
+                continue;
+            dirVector = newDirs[selected];
+            ghost.setDir(dirVector);
+            newDirs[selected] = null;
+        }
+
+        return dirVector;
+
+    }
 }
