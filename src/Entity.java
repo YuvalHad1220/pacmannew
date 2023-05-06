@@ -116,11 +116,11 @@ public class Entity {
         this.currDir = dir;
     }
 
-    public void setDirForCollision(int notAllowedToGoInDirectionIndex) {
+    public void setDirForCollision(int[] notAllowedToGoInDirection) {
         int[] dir;
         while (true){
             dir = directionQueue.poll();
-            if (dir != null && !Arrays.equals(DIRECTION_VECTORS[notAllowedToGoInDirectionIndex], dir)){
+            if (dir != null && !Arrays.equals(notAllowedToGoInDirection, dir)){
                 currDir = dir;
                 break;
             }

@@ -16,7 +16,7 @@ public class PowerUpManager extends Thread implements Sleepable{
         init();
     }
     private ArrayList<int[]> getAvailableTiles(){
-        byte[][] map = gamePanel.gameData.getMap().asByteArray();
+        int[][] map = gamePanel.gameData.getMap().asIntArray();
         ArrayList<int[]> toRet = new ArrayList<>();
         for (int i = 0; i<map.length; i++){
             for (int j = 0; j<map[i].length; j++){
@@ -66,6 +66,6 @@ public class PowerUpManager extends Thread implements Sleepable{
     private void init(){
         availableTiles = getAvailableTiles();
         enabledPowerUps = new ArrayList<>();
-        powerUpTypes = new Class[]{PowerUpGhostFast.class, PowerUpGhostFreeze.class, PowerUpGhostSlow.class, PowerUpGhostsMultiply.class};
+        powerUpTypes = new Class[]{PowerUpGhostFast.class, PowerUpGhostFreeze.class, PowerUpGhostSlow.class};
     }
 }

@@ -83,7 +83,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
         addKeyListener(this);
 
-        mainFrame.setSize(new Dimension((gameData.getMap().asByteArray()[0].length + 1) * scale, (gameData.getMap().asByteArray().length + 3) * scale + livesLabel.getHeight()));
+        mainFrame.setSize(new Dimension((gameData.getMap().asIntArray()[0].length + 1) * scale, (gameData.getMap().asIntArray().length + 3) * scale + livesLabel.getHeight()));
         // starting threads and such
         mapPanel.startGame();
         pwm.start();

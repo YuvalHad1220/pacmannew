@@ -126,7 +126,7 @@ public class PanelMap extends JPanel implements Sleepable{
     }
     private void drawMap(Graphics g){
         int scale = gamePanel.getScale();
-        byte[][] my_map = gamePanel.gameData.getMap().asByteArray();
+        int[][] my_map = gamePanel.gameData.getMap().asIntArray();
         for (int row = 0; row < my_map.length; row++) {
             for (int col = 0; col < my_map[row].length; col++) {
                 int value = my_map[row][col];

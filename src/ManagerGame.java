@@ -40,7 +40,7 @@ public class ManagerGame {
          */
         Map map = new Map(seed);
 
-        Pacman pacman = new Pacman(map.asByteArray().length / 2 - 3, 25, scale);
+        Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
         Ghost[] ghosts = new Ghost[]{
                 new GhostBlinky(14, 11, scale),
                 new GhostClyde(16, 15, scale),
@@ -120,7 +120,7 @@ public class ManagerGame {
     public static ManagerGame fromSeed(int seed, int scale){
         Map map = new Map(seed);
 
-        Pacman pacman = new Pacman(map.asByteArray().length / 2 - 3, 25, scale);
+        Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
         Ghost[] ghosts = new Ghost[]{
                 new GhostBlinky(14, 11, scale),
                 new GhostClyde(16, 15, scale),

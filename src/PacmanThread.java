@@ -33,9 +33,9 @@ public class PacmanThread extends Thread implements Sleepable{
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);
 
-            int notAllowedToGoInDirectionIndex = map.wallCollision(pacman);
-            if (notAllowedToGoInDirectionIndex != -1) {
-                pacman.setDirForCollision(notAllowedToGoInDirectionIndex); // when a collision happens it will fix pacmans dir
+            int[] notAllowedToGoInDirection = map.wallCollision(pacman);
+            if (notAllowedToGoInDirection != null) {
+                pacman.setDirForCollision(notAllowedToGoInDirection); // when a collision happens it will fix pacmans dir
                 if (pacmanDir[1] == -1)
                     pacman.updateYInPanel(scale / 5);
                 if (pacmanDir[0] == -1)
@@ -43,8 +43,8 @@ public class PacmanThread extends Thread implements Sleepable{
             }
 
             else {
-                notAllowedToGoInDirectionIndex = map.atIntersection(pacman);
-                if (notAllowedToGoInDirectionIndex != -1) {
+                notAllowedToGoInDirection = map.atIntersection(pacman);
+                if (notAllowedToGoInDirection != null) {
                     // if we have an update to an x or to a y direction then we change the direction, else we will do nothing
 
                     // that means that we decided to change dir
