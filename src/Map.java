@@ -9,10 +9,12 @@ https://carminati.altervista.org/PROJECTS/PYTHON3/PACMAN/pacman.html
 
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class Map {
-    private byte[][] map;
+    private int[][] map;
     private int seed;
     private int cageCenterX;
     private int cageBottomY;
@@ -25,7 +27,7 @@ class Map {
     }
 
     public void ClassicMap(){
-        map = new byte[][]{
+        map = new int[][]{
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
                 {0, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 0, 0, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 0},
@@ -65,7 +67,7 @@ class Map {
         cageBottomY = 15;
     }
 
-    public byte[][] asByteArray(){
+    public int[][] asIntArray(){
         return map;
     }
 
@@ -197,7 +199,7 @@ class Map {
         return false;
     }
 
-    public void setMap(byte[][] bm) {
+    public void setMap(int[][] bm) {
         this.map = bm;
     }
 
@@ -223,64 +225,46 @@ class Map {
         return null;
     }
 
-    public int[] getOptimalDir(Ghost ghost, Pacman p) {
-        int pacmanY = p.getY();
-        int pacmanX = p.getX();
+    public boolean getOptimalDir(Ghost ghost, Pacman p) {
 
-        int ghostX = ghost.getX();
-        int ghostY = ghost.getY();
+        ArrayList<int[]> blocked = new ArrayList<>();
 
-        int horzDistance = pacmanX - ghostX;
-        int vertDistnace = pacmanY - ghostY;
-
-        int[] dirVector;
-
-
-        if (Math.abs(horzDistance) >= Math.abs(vertDistnace)){
-            // then we need to go X axis
-
-            if (horzDistance > 0){
-                // need to go left
-                dirVector = Entity.DIRECTION_VECTORS[Entity.LEFT];
-
-            }
-
-            else {
-                // need to go right
-                dirVector = Entity.DIRECTION_VECTORS[Entity.RIGHT];
-
-            }
-
-        }
-
-        else {
-            // need to go Y axis
-            if (vertDistnace > 0){
-                // need to go down
-                dirVector = Entity.DIRECTION_VECTORS[Entity.DOWN];
-            }
-            else {
-                // need to go up
-                dirVector = Entity.DIRECTION_VECTORS[Entity.UP];
+        for (int i = 0; i< map.length; i++){
+            for (int j = 0; j<map[0].length; j++){
+                if (map[i][j] == 0 || map[i][j] == 1 || map[i][j] == 4)
+                    blocked.add(new int[]{i,j});
 
             }
         }
+        int[][] blockedMat = new int[blocked.size()][];
+        for (int i = 0; i < blocked.size(); i++)
+            blockedMat[i] = blocked.get(i);
 
 
-        // now we need to see if dirVector collided
+        Node start = new Node(ghost.getY(), ghost.getX());
+        Node end = new Node(p.getY(), p.getX());
 
-        ghost.setDir(dirVector);
-        int[][] newDirs = Entity.DIRECTION_VECTORS.clone();
-        while (wallCollision(ghost) != null){
-            int selected = (int) (Math.random() * 4);
-            if (newDirs[selected] == null)
-                continue;
-            dirVector = newDirs[selected];
-            ghost.setDir(dirVector);
-            newDirs[selected] = null;
+        AStar search = new AStar(map.length, map[0].length, start, end);
+        search.setBlocks(blockedMat);
+        List<Node> res = search.findPath();
+
+        if (res.size() > 1){
+            Node goTo = res.get(1);
+            int[] dir = new int[]{goTo.getCol() - start.getCol(), goTo.getRow() - start.getRow()};
+
+            for (int i = 0; i < Entity.DIRECTION_VECTORS.length; i++){
+                if (Arrays.equals(Entity.DIRECTION_VECTORS[i], dir)){
+                    dir = Entity.DIRECTION_VECTORS[i];
+                    break;
+                }
+            }
+
+
+            ghost.setDir(dir);
+            System.out.println(Arrays.toString(dir));
+            return true;
         }
 
-        return dirVector;
-
+        return false;
     }
 }

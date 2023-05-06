@@ -2,7 +2,7 @@ import java.io.*;
 
 public class Database implements Serializable {
     // map related
-    public byte[][] bm;
+    public int[][] bm;
     public int seed;
 
     // entities related
@@ -12,7 +12,7 @@ public class Database implements Serializable {
     // class related
     public static final String DATABASE_FOLDER = "./levels/";
 
-    public Database(byte[][] bm, int seed, Pacman p, Ghost[] ghosts){
+    public Database(int[][] bm, int seed, Pacman p, Ghost[] ghosts){
         this.bm = bm;
         this.seed = seed;
         this.pacmanData = new int[]{p.getScore(), p.getLives(), p.getX(), p.getY()};
@@ -23,7 +23,7 @@ public class Database implements Serializable {
     }
 
     public static void writeFile(String filename, Map map, Pacman p, Ghost[] ghosts){
-        Database toFile = new Database(map.asByteArray(), map.getSeed(),p, ghosts);
+        Database toFile = new Database(map.asIntArray(), map.getSeed(),p, ghosts);
 
         try {
             FileOutputStream fileOut = new FileOutputStream(DATABASE_FOLDER + filename);

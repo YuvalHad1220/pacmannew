@@ -20,47 +20,6 @@ public class GhostThread extends Thread implements Sleepable {
         this.scale = gamePanel.getScale();
 
     }
-//
-//    private void updateLocation(){
-//        int[] ghostDir = ghost.getDir();
-//        ghost.updateXInPanel(ghostDir[0]);
-//        ghost.updateYInPanel(ghostDir[1]);
-//    }
-//
-//    private void decideMode(){
-//        switch (ghost.getGhostMode()) {
-//            case Ghost.CHASE -> ghost.Chase(p);
-////            case Ghost.FRIGHTENED -> gamePanel.mapPanel.putGhostInCage(ghost);
-//        }
-//    }
-//
-//    private void fixCollision(){
-//        int[] newDir = map.wallCollision(ghost);
-//        if (newDir != null)
-//            ghost.setDir(newDir);
-//    }
-//
-//    public void run() {
-//        while (true) {
-//            sleep();
-//
-//            if (gamePanel.getSuspend())
-//                continue;
-//
-//
-//            updateLocation();
-//
-//            if (true){
-//                decideMode();
-//                fixCollision();
-//            }
-//
-//            else {
-//                // than we either poll for our movement
-//            }
-//
-//        }
-//    }
 
     public void run() {
         // chase pacman to get new x,y
@@ -71,27 +30,10 @@ public class GhostThread extends Thread implements Sleepable {
             if (gamePanel.getSuspend())
                 continue;
 
-
-            ghost.Chase(p);
-            int[] newGhostDir = ghost.getDir();
-            int[] notAllowedToGoInDirection = map.wallCollision(ghost);
-            if (notAllowedToGoInDirection != null) {
-                System.out.println(ghost.getClass().getSimpleName() + Arrays.toString(notAllowedToGoInDirection));
-                if (Arrays.equals(notAllowedToGoInDirection,newGhostDir)){
-                    System.out.println("Collision, need to find new path");
-                    int[] optimalNewDir = map.getOptimalDir(ghost, p);
-
-                    // ghost.setDir(optimalNewDir);
-
-                }
-                else {
-                    ghost.updateXInPanel(newGhostDir[0]);
-                    ghost.updateYInPanel(newGhostDir[1]);
-                }
-            }
-            else {
-                ghost.updateXInPanel(newGhostDir[0]);
-                ghost.updateYInPanel(newGhostDir[1]);
+            if (map.getOptimalDir(ghost, p)){
+                int[] ghostDir = ghost.getDir();
+                ghost.updateXInPanel(ghostDir[0]);
+                ghost.updateYInPanel(ghostDir[1]);
             }
 
 
