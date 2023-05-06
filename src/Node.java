@@ -15,10 +15,10 @@ public class Node {
     private Node parent;
 
     public Node(int row, int col) {
-        super();
         this.row = row;
         this.col = col;
     }
+
 
     public void calculateHeuristic(Node finalNode) {
         this.h = Math.abs(finalNode.getRow() - getRow()) + Math.abs(finalNode.getCol() - getCol());

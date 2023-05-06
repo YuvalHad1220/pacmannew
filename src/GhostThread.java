@@ -30,14 +30,20 @@ public class GhostThread extends Thread implements Sleepable {
             if (gamePanel.getSuspend())
                 continue;
 
-            if (map.getOptimalDir(ghost, p)){
-                int[] ghostDir = ghost.getDir();
-                ghost.updateXInPanel(ghostDir[0]);
-                ghost.updateYInPanel(ghostDir[1]);
+            if (ghost.getGhostMode() == Ghost.CHASE) {
+                if (map.getOptimalDir(ghost, p)) {
+                    int[] ghostDir = ghost.getDir();
+                    ghost.updateXInPanel(ghostDir[0]);
+                    ghost.updateYInPanel(ghostDir[1]);
+
+                }
+            } else {
+                if (map.toCageDir(ghost)) {
+                    int[] ghostDir = ghost.getDir();
+                    ghost.updateXInPanel(ghostDir[0]);
+                    ghost.updateYInPanel(ghostDir[1]);
+                }
             }
-
-
-
         }
     }
 }

@@ -1,22 +1,20 @@
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 public class Ghost extends Entity implements GhostAI{
-    private double ghostOffset;
+    private double ghostSpeed;
     public static final int FRIGHTENED = 0;
     public static final int CHASE = 1;
     public static final int SCATTER = 2;
 
     private int ghostMode;
-
+    private int locationInCageX;
+    private int locationInCageY;
     public Ghost(int startingX, int startingY, String ghostPath, int scale) {
         super(startingX, startingY, ghostPath, scale);
         ghostMode = Ghost.CHASE;
-        ghostOffset = 2.5;
+        ghostSpeed = 2.5;
+        this.locationInCageX = startingX;
+        this.locationInCageY = startingY;
     }
 
     public BufferedImage getGhostImage() {
@@ -70,27 +68,23 @@ public class Ghost extends Entity implements GhostAI{
 
     }
 
-    public void toCage(int cageCenterX, int cageBottomY){
+    public double getGhostSpeed() {
+        return ghostSpeed;
+    }
 
-        int dx = 0, dy = 0;
-        // calculate the difference between pacman's position and blinky's position
-        int diffX = cageCenterX - this.getX();
-        int diffY = cageBottomY - this.getY();
-        // set the velocity of blinky to move it towards pacman
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-            dx = diffX > 0 ? 1 : -1;
-        } else {
-            dy = diffY > 0 ? 1 : -1;
-        }
+    public int getLocationInCageX() {
+        return locationInCageX;
+    }
 
-        this.setDir(new int[]{dx,dy});
+    public int getLocationInCageY() {
+        return locationInCageY;
     }
 
     public double getOffset() {
-        return ghostOffset;
+        return ghostSpeed;
     }
 
     public void alterOffset(double offset){
-        ghostOffset *= offset;
+        ghostSpeed *= offset;
     }
 }

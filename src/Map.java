@@ -71,13 +71,6 @@ class Map {
         return map;
     }
 
-    public int getCageCenterX() {
-        return cageCenterX;
-    }
-
-    public int getCageBottomY() {
-        return cageBottomY;
-    }
 
     public int getSeed() {
         return seed;
@@ -225,6 +218,46 @@ class Map {
         return null;
     }
 
+    public boolean toCageDir(Ghost ghost) {
+
+        ArrayList<int[]> blocked = new ArrayList<>();
+
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if (map[i][j] == 0 || map[i][j] == 1)
+                    blocked.add(new int[]{i, j});
+            }
+        }
+        int[][] blockedMat = new int[blocked.size()][];
+        for (int i = 0; i < blocked.size(); i++)
+            blockedMat[i] = blocked.get(i);
+
+
+        Node start = new Node(ghost.getY(), ghost.getX());
+        Node end = new Node(ghost.getLocationInCageY(), ghost.getLocationInCageX());
+
+        AStar search = new AStar(map.length, map[0].length, start, end);
+        search.setBlocks(blockedMat);
+        List<Node> res = search.findPath();
+
+        if (res.size() > 1) {
+            Node goTo = res.get(1);
+            int[] dir = new int[]{goTo.getCol() - start.getCol(), goTo.getRow() - start.getRow()};
+
+            for (int i = 0; i < Entity.DIRECTION_VECTORS.length; i++) {
+                if (Arrays.equals(Entity.DIRECTION_VECTORS[i], dir)) {
+                    dir = Entity.DIRECTION_VECTORS[i];
+                    break;
+                }
+            }
+
+
+            ghost.setDir(dir);
+            return true;
+        }
+
+        return false;
+    }
     public boolean getOptimalDir(Ghost ghost, Pacman p) {
 
         ArrayList<int[]> blocked = new ArrayList<>();
@@ -233,7 +266,6 @@ class Map {
             for (int j = 0; j<map[0].length; j++){
                 if (map[i][j] == 0 || map[i][j] == 1 || map[i][j] == 4)
                     blocked.add(new int[]{i,j});
-
             }
         }
         int[][] blockedMat = new int[blocked.size()][];
@@ -261,7 +293,6 @@ class Map {
 
 
             ghost.setDir(dir);
-            System.out.println(Arrays.toString(dir));
             return true;
         }
 
