@@ -1,11 +1,5 @@
 import java.util.*;
 
-/**
- * A Star Algorithm
- *
- * @author Marcelo Surriabre
- * @version 2.1, 2017-02-23
- */
 public class AStar {
     private static int DEFAULT_HV_COST = 10; // Horizontal - Vertical Cost
     private static int DEFAULT_DIAGONAL_COST = 14;
@@ -23,12 +17,7 @@ public class AStar {
         setInitialNode(initialNode);
         setFinalNode(finalNode);
         this.searchArea = new Node[rows][cols];
-        this.openList = new PriorityQueue<Node>(new Comparator<Node>() {
-            @Override
-            public int compare(Node node0, Node node1) {
-                return Integer.compare(node0.getF(), node1.getF());
-            }
-        });
+        this.openList = new PriorityQueue<>(Comparator.comparingInt(Node::getF));
         setNodes();
         this.closedSet = new HashSet<>();
     }

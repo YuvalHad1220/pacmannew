@@ -3,7 +3,6 @@ import java.io.*;
 public class Database implements Serializable {
     // map related
     public int[][] bm;
-    public int seed;
 
     // entities related
     public int[] pacmanData; // (score, lives, xInMap, yInMap)

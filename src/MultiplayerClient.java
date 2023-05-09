@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class MultiplayerClient extends Multiplayer {
-    private static final Logger LOGGER = Logger.getLogger(MultiplayerClient.class.getName());
     int serverPort;
     private String serverIP;
     private byte selected;
+    public ManagerGame gamemanager;
 
     public MultiplayerClient(String ip, int port, PanelLobby panelLobby) {
         super(panelLobby);

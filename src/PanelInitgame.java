@@ -6,12 +6,10 @@ import javax.swing.*;
 public class PanelInitgame extends PacmanJPanel implements ActionListener {
     ScreenMain mainFrame;
     private JTextField scaleField;
-    private JTextField seedField;
     private JTextField FPSField;
     private JButton backButton;
     private JButton startButton;
     private PacmanJLabel scaleLabel;
-    private PacmanJLabel seedLabel;
     private PacmanJLabel FPSLabel;
     private Database savedRecord;
     public PanelInitgame(Database savedRecord, ScreenMain mainFrame){

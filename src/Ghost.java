@@ -1,11 +1,12 @@
 import java.awt.image.BufferedImage;
 
 public class Ghost extends Entity implements GhostAI{
-    private double ghostSpeed;
     public static final int FRIGHTENED = 0;
     public static final int CHASE = 1;
     public static final int SCATTER = 2;
 
+
+    private double ghostSpeed;
     private int ghostMode;
     private int locationInCageX;
     private int locationInCageY;

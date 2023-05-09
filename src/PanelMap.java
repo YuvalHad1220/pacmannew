@@ -57,13 +57,7 @@ public class PanelMap extends JPanel implements Sleepable{
 
     }
 
-    public void releaseGhostFromCage(Ghost g){
 
-    }
-
-    public void putGhostInCage(Ghost g){
-
-    }
 
     public void ghostOutOfCage(Ghost g){
         int originalY = g.getY(); // lets say its 5. we need to run the for loop until it turns 4

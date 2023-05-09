@@ -6,10 +6,6 @@ import java.awt.event.ActionListener;
 public class PanelStart extends PacmanJPanel implements ActionListener {
     ScreenMain mainFrame;
     PanelInitgame defaultInit;
-    PanelInitgame seedInit;
-
-
-
 
     private JButton[] buttons;
 

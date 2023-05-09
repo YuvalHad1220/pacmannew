@@ -60,10 +60,6 @@ public class Multiplayer extends Thread {
         }
         return NONE;
     }
-//    static String trimZeros(String str) {
-//        int pos = str.indexOf(0);
-//        return pos == -1 ? str : str.substring(0, pos);
-//    }
 
     static byte[] connectMessage() {
         return new byte[]{CONNECT};

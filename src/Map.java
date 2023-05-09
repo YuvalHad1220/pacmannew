@@ -15,10 +15,6 @@ import java.util.List;
 
 class Map {
     private int[][] map;
-    private int seed;
-    private int cageCenterX;
-    private int cageBottomY;
-
 
     public Map(int seed){
         this.seed = seed;
