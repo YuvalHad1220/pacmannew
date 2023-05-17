@@ -31,14 +31,14 @@ public class ManagerGame {
         return false;
     }
 
-    public static ManagerGame fromMultiplayerAsServer(MultiplayerServer mps, int seed, int scale){
+    public static ManagerGame fromMultiplayerAsServer(MultiplayerServer mps, int scale){
         /*
         we need to retrieve:
         1. ourselves
         2. activated other entities
         3. AI-driven entities
          */
-        Map map = new Map(seed);
+        Map map = new Map();
 
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
         Ghost[] ghosts = new Ghost[]{
@@ -53,26 +53,12 @@ public class ManagerGame {
         ArrayList<Entity> otherChoices = new ArrayList<>();
 
 
-        switch (mps.getOwnChoice()){
-            case Multiplayer.BINKY:
-                ownChoice = ghosts[0];
-                break;
-
-            case Multiplayer.CLYDE:
-                ownChoice = ghosts[1];
-                break;
-
-            case Multiplayer.INKY:
-                ownChoice = ghosts[2];
-                break;
-
-            case Multiplayer.PINKY:
-                ownChoice = ghosts[3];
-                break;
-
-            case Multiplayer.PACMAN:
-                ownChoice = pacman;
-                break;
+        switch (mps.getOwnChoice()) {
+            case Multiplayer.BINKY -> ownChoice = ghosts[0];
+            case Multiplayer.CLYDE -> ownChoice = ghosts[1];
+            case Multiplayer.INKY -> ownChoice = ghosts[2];
+            case Multiplayer.PINKY -> ownChoice = ghosts[3];
+            case Multiplayer.PACMAN -> ownChoice = pacman;
         }
 
         System.out.println("own choice: " +Multiplayer.byteToString(mps.getOwnChoice()));
@@ -106,7 +92,7 @@ public class ManagerGame {
         }
 
         // outcome: ownChoice will start a thread. otherChoices won't start a thread. everything else: will start a thread.
-        return new ManagerGame(pacman, ghosts, map, ownChoice,otherChoices.toArray(new Entity[otherChoices.size()])).setMps(mps);
+        return new ManagerGame(pacman, ghosts, map, ownChoice,otherChoices.toArray(new Entity[0])).setMps(mps);
 
     }
 
@@ -117,8 +103,8 @@ public class ManagerGame {
         return null;
     }
 
-    public static ManagerGame fromSeed(int seed, int scale){
-        Map map = new Map(seed);
+    public static ManagerGame Default(int scale){
+        Map map = new Map();
 
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
         Ghost[] ghosts = new Ghost[]{
@@ -133,7 +119,7 @@ public class ManagerGame {
     }
 
     public static ManagerGame fromSave(Database savedRecord, int scale){
-        Map map = new Map(savedRecord.seed);
+        Map map = new Map();
         map.setMap(savedRecord.bm);
         Pacman pacman = new Pacman(savedRecord.pacmanData[2], savedRecord.pacmanData[3], scale, savedRecord.pacmanData[0], savedRecord.pacmanData[1]);
         Ghost[] ghosts = new Ghost[]{

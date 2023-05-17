@@ -22,7 +22,6 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
 
         buttons = new JButton[] {
                 new JButton("Start Game"),
-                new JButton("Start Game From Seed"),
                 new JButton("Load Game"),
                 new JButton("Create Multiplayer Game"),
                 new JButton("Join Multiplayer Game")
@@ -61,32 +60,21 @@ public class PanelStart extends PacmanJPanel implements ActionListener {
             mainFrame.showPanel("initGameDefault");
         }
 
-        // start game with seed
-        if (clicked == buttons[1]){
-            if (seedInit == null){
-                seedInit = new PanelInitgame("Seed", mainFrame);
-                mainFrame.addPanel(seedInit, "initGameSeed");
-            }
-            mainFrame.showPanel("initGameSeed");
-
-        }
-
-
         // load from file
-        if (clicked == buttons[2]){
+        if (clicked == buttons[1]){
             PanelDatabase dbp = new PanelDatabase(mainFrame, "load", null);
             mainFrame.addPanel(dbp, "LoadPanel");
             mainFrame.showPanel("LoadPanel");
 
         }
 
-        if (clicked == buttons[3]){
+        if (clicked == buttons[2]){
             PanelLobby serverPanel = new PanelLobby("server", mainFrame);
             mainFrame.addPanel(serverPanel, "serverPanel");
             mainFrame.showPanel("serverPanel");
         }
 
-        if (clicked == buttons[4]){
+        if (clicked == buttons[3]){
             PanelLobby clientPanel = new PanelLobby("client", mainFrame);
             mainFrame.addPanel(clientPanel, "clientPanel");
             mainFrame.showPanel("clientPanel");

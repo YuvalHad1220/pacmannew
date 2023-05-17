@@ -206,7 +206,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
             // connection is established. We need to create a game based on multiplayer connection - i.e if not connected than AI runs it.
             // we will send all connection
 
-            game = new PanelGame(scale, seed, mainFrame, FPS, server, client);
+            game = new PanelGame(scale, mainFrame, FPS, server, client);
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.showPanel("gamePanel");
 

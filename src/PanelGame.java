@@ -31,17 +31,17 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.gameData = ManagerGame.fromSave(savedRecord, scale);
         init();
     }
-    public PanelGame(int scale, int seed, ScreenMain mainFrame, int FPS){
+    public PanelGame(int scale, ScreenMain mainFrame, int FPS){
         super();
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
 
-        this.gameData = ManagerGame.fromSeed(seed, scale);
+        this.gameData = ManagerGame.Default(scale);
         init();
     }
 
-    public PanelGame(int scale, int seed, ScreenMain mainFrame, int FPS, MultiplayerServer mps, MultiplayerClient mpc){
+    public PanelGame(int scale, ScreenMain mainFrame, int FPS, MultiplayerServer mps, MultiplayerClient mpc){
         super();
         this.FPS = FPS;
         this.scale = scale;
@@ -49,7 +49,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         if (mps == null)
             this.gameData = ManagerGame.fromMultiplayerAsClient(mpc);
         else
-            this.gameData = ManagerGame.fromMultiplayerAsServer(mps, seed, scale);
+            this.gameData = ManagerGame.fromMultiplayerAsServer(mps, scale);
 
         init();
     }

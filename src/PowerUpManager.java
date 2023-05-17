@@ -12,7 +12,7 @@ public class PowerUpManager extends Thread implements Sleepable{
 
     public PowerUpManager(PanelGame gamePanel){
         this.gamePanel = gamePanel;
-        this.random = new Random(gamePanel.gameData.getMap().getSeed());
+        this.random = new Random();
         init();
     }
     private ArrayList<int[]> getAvailableTiles(){

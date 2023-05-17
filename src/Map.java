@@ -16,13 +16,7 @@ import java.util.List;
 class Map {
     private int[][] map;
 
-    public Map(int seed){
-        this.seed = seed;
-        if (this.seed == -1)
-            ClassicMap();
-    }
-
-    public void ClassicMap(){
+    public Map(){
         map = new int[][]{
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
@@ -59,8 +53,6 @@ class Map {
                 {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
-        cageCenterX = 14;
-        cageBottomY = 15;
     }
 
     public int[][] asIntArray(){
@@ -68,9 +60,6 @@ class Map {
     }
 
 
-    public int getSeed() {
-        return seed;
-    }
 
     // returns a vector of which the collision is going to happen
     public int[] wallCollision(Entity entity) {

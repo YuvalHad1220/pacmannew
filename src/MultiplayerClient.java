@@ -48,14 +48,14 @@ public class MultiplayerClient extends Multiplayer {
             byte[] connectMsg = connectMessage();
             DatagramPacket packet = new DatagramPacket(connectMsg, connectMsg.length, serverAddress, serverPort);
             socket.send(packet);
-            LOGGER.info("Sent a connect message to server " + serverIP +":" +serverPort +"  Expecting a message back");
+            System.out.println("Sent a connect message to server " + serverIP +":" +serverPort +"  Expecting a message back");
             socket.setSoTimeout(2000);
 
             byte[] recv = new byte[MAX_LENGTH];
             packet = new DatagramPacket(recv, recv.length);
             socket.receive(packet);
             byte[] chosenEntities = handleMessage(packet);
-            LOGGER.info("Connected. Response we got from server: " + Arrays.toString(chosenEntities));
+            System.out.println("Connected. Response we got from server: " + Arrays.toString(chosenEntities));
             return chosenEntities;
 
         } catch (SocketException e) {
@@ -75,10 +75,10 @@ public class MultiplayerClient extends Multiplayer {
 
     public void run() {
         // here we will always listen for messages that may come such as enable\disable entities
-        LOGGER.info("Starting listener");
+        System.out.println("Starting listener");
         try {
             socket.setSoTimeout(0);
-            LOGGER.info("set timeout to infinite");
+            System.out.println("set timeout to infinite");
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -104,17 +104,17 @@ public class MultiplayerClient extends Multiplayer {
 
 
     public void updateSelected(byte newChoice, byte oldChoice) {
-        LOGGER.info("We selected an entity. We need to send the server a deselect message of old entity and a select message of new entity");
+        System.out.println("We selected an entity. We need to send the server a deselect message of old entity and a select message of new entity");
         selected = newChoice;
         byte[] msg = deselectEntityMessage(oldChoice);
         try {
             if (oldChoice != NONE) {
                 socket.send(new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort));
-                LOGGER.info("sent deselect of " +oldChoice +" to server");
+                System.out.println("sent deselect of " +oldChoice +" to server");
             }
             msg = chooseEntityMessage(newChoice);
             socket.send(new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort));
-            LOGGER.info("sent select of " + newChoice + " to server");
+            System.out.println("sent select of " + newChoice + " to server");
         } catch (IOException e) {
             e.printStackTrace();
         }

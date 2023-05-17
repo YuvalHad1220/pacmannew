@@ -32,28 +32,6 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         setBackground(Color.BLACK);
         JPanel fields = new JPanel();
         fields.setLayout(new GridLayout(0,1));
-        seedLabel = new PacmanJLabel("Seed", pacmanFont);
-        fields.add(seedLabel);
-
-        seedField = new JTextField();
-        if (type.equals("Default")){
-            seedField.setForeground(Color.GRAY);
-            seedField.setEditable(false);
-            seedField.setText("CLASSIC_MAP");
-        }
-
-        else if (type.equals("fromSave")){
-            seedField.setForeground(Color.GRAY);
-            seedField.setEditable(false);
-            seedField.setText(Integer.toString(savedRecord.seed));
-        }
-
-        else {
-            seedField.setForeground(Color.WHITE);
-        }
-        seedField.setFont(pacmanFont);
-        seedField.setBackground(Color.BLACK);
-        fields.add(seedField);
 
         scaleLabel = new PacmanJLabel("Scale", pacmanFont);
         fields.add(scaleLabel);
@@ -103,16 +81,11 @@ public class PanelInitgame extends PacmanJPanel implements ActionListener {
         if (clicked == startButton){
             int scale = Integer.parseInt(scaleField.getText());
             int FPS = Integer.parseInt(FPSField.getText());
-            int seed;
-            if (seedField.getText().equals("CLASSIC_MAP"))
-                seed = -1;
-            else
-                seed = Integer.parseInt(seedField.getText());
             PanelGame game;
             if (savedRecord != null)
                 game = new PanelGame(scale, mainFrame, FPS, savedRecord);
             else
-                game = new PanelGame(scale, seed, mainFrame, FPS);
+                game = new PanelGame(scale, mainFrame, FPS);
 
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.showPanel("gamePanel");
