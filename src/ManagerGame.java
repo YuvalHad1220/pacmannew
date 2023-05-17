@@ -32,12 +32,8 @@ public class ManagerGame {
     }
 
     public static ManagerGame fromMultiplayerAsServer(MultiplayerServer mps, int scale){
-        /*
-        we need to retrieve:
-        1. ourselves
-        2. activated other entities
-        3. AI-driven entities
-         */
+        System.out.println("started multiplayer game, as server");
+
         Map map = new Map();
 
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
@@ -68,35 +64,26 @@ public class ManagerGame {
 
             System.out.println("other choice: " +Multiplayer.byteToString(peerChoice));
 
-            switch (peerChoice){
-                case Multiplayer.BINKY:
-                    otherChoices.add(ghosts[0]);
-                    break;
-
-                case Multiplayer.CLYDE:
-                    otherChoices.add(ghosts[1]);
-                    break;
-
-                case Multiplayer.INKY:
-                    otherChoices.add(ghosts[2]);
-                    break;
-
-                case Multiplayer.PINKY:
-                    otherChoices.add(ghosts[3]);
-                    break;
-
-                case Multiplayer.PACMAN:
-                    otherChoices.add(pacman);
-                    break;
+            switch (peerChoice) {
+                case Multiplayer.BINKY -> otherChoices.add(ghosts[0]);
+                case Multiplayer.CLYDE -> otherChoices.add(ghosts[1]);
+                case Multiplayer.INKY -> otherChoices.add(ghosts[2]);
+                case Multiplayer.PINKY -> otherChoices.add(ghosts[3]);
+                case Multiplayer.PACMAN -> otherChoices.add(pacman);
             }
         }
 
         // outcome: ownChoice will start a thread. otherChoices won't start a thread. everything else: will start a thread.
+
+
+
+
         return new ManagerGame(pacman, ghosts, map, ownChoice,otherChoices.toArray(new Entity[0])).setMps(mps);
 
     }
 
     public static ManagerGame fromMultiplayerAsClient(MultiplayerClient mpc){
+        System.out.println("started multiplayer game, as client");
         /*
         we need to retrieve our selves. all other entities will be moved by server
          */
@@ -104,6 +91,7 @@ public class ManagerGame {
     }
 
     public static ManagerGame Default(int scale){
+        System.out.println("started single player game from default");
         Map map = new Map();
 
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
@@ -115,10 +103,12 @@ public class ManagerGame {
         };
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
+
         return new ManagerGame(pacman, ghosts, map, pacman, ghosts);
     }
 
     public static ManagerGame fromSave(Database savedRecord, int scale){
+        System.out.println("started singleplayer game from save");
         Map map = new Map();
         map.setMap(savedRecord.bm);
         Pacman pacman = new Pacman(savedRecord.pacmanData[2], savedRecord.pacmanData[3], scale, savedRecord.pacmanData[0], savedRecord.pacmanData[1]);

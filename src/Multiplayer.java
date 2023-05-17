@@ -16,6 +16,13 @@ Protocol:
 
 
 public class Multiplayer extends Thread {
+
+    public static final byte GO_DOWN = 6;
+    public static final byte GO_UP = 7;
+    public static final byte GO_LEFT = 8;
+    public static final byte GO_RIGHT = 9;
+
+
     public static final byte CONNECT = 2;
     public static final byte SELECTENTITY = 3;
     public static final byte SELECTENTITIES = 4;

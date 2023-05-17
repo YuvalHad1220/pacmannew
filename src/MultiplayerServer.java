@@ -144,6 +144,7 @@ public class MultiplayerServer extends Multiplayer{
                     return true;
                 }
             }
+            System.out.println("Got an incoming connection from " +incomingPacket.getAddress().getHostAddress() +":" + incomingPacket.getPort());
             connectionsAndChoices.put(new MultiplayerConnection(incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()), null);
             System.out.println("added connection succesfully");
         }
@@ -156,13 +157,11 @@ public class MultiplayerServer extends Multiplayer{
 
     public void run(){
         System.out.println("Server started:    " + serverIP + ":" + serverPort);
-        // receive packets from clients
         try {
             while (true) {
                 byte[] incomingData = new byte[MAX_LENGTH];
                 DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
                 socket.receive(incomingPacket);
-                System.out.println("Got an incoming connection from " +incomingPacket.getAddress().getHostAddress() +":" + incomingPacket.getPort());
 
                 if (!addConnected(incomingPacket))
                     continue;
@@ -182,7 +181,6 @@ public class MultiplayerServer extends Multiplayer{
             if (!socket.isClosed())
                 socket.close();
             System.out.println("EXCEPTION: " +e.getMessage());
-            return;
         }
 
     }
