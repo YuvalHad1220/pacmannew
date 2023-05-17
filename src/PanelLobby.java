@@ -34,16 +34,9 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
     PanelGame game;
 
-    private JTextField scaleField;
-    private JTextField seedField;
-    private JTextField FPSField;
-    private PacmanJLabel scaleLabel;
-    private PacmanJLabel seedLabel;
-    private PacmanJLabel FPSLabel;
 
     private final int FPS = 144;
     private final int scale = 20;
-    private final int seed = -1;
 
     public PanelLobby(String type, ScreenMain mainFrame) {
         this.mainFrame = mainFrame;
