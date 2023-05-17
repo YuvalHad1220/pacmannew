@@ -41,18 +41,18 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         init();
     }
 
-    public PanelGame(int scale, ScreenMain mainFrame, int FPS, MultiplayerServer mps, MultiplayerClient mpc){
-        super();
-        this.FPS = FPS;
-        this.scale = scale;
-        this.mainFrame = mainFrame;
-        if (mps == null)
-            this.gameData = ManagerGame.fromMultiplayerAsClient(mpc);
-        else
-            this.gameData = ManagerGame.fromMultiplayerAsServer(mps, scale);
-
-        init();
-    }
+//    public PanelGame(int scale, ScreenMain mainFrame, int FPS, MultiplayerServer mps, MultiplayerClient mpc){
+//        super();
+//        this.FPS = FPS;
+//        this.scale = scale;
+//        this.mainFrame = mainFrame;
+//        if (mps == null)
+//            this.gameData = ManagerGame.fromMultiplayerAsClient(mpc);
+//        else
+//            this.gameData = ManagerGame.fromMultiplayerAsServer(mps, scale);
+//
+//        init();
+//    }
 
     private void init(){
         this.isSuspend = false;

@@ -1,7 +1,7 @@
-public class Server implements Transportable{
+public class Server implements Connectable {
 
-    private ManagerGame gameManager = null;
-    private PanelLobby gameLobby = null;
+    private final ManagerGame gameManager = null;
+    private final PanelLobby gameLobby = null;
     private boolean isInLobby;
 
     private boolean isInGame;
@@ -18,6 +18,8 @@ public class Server implements Transportable{
     }
 
 
+    @Override
+    public void run() {
 
-
+    }
 }
