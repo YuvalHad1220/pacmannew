@@ -4,6 +4,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 public class PanelGame extends PacmanJPanel implements KeyListener{
     ScreenMain mainFrame;
@@ -36,8 +37,24 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-
         this.gameData = ManagerGame.singlePlayerGameDefault(scale);
+        init();
+    }
+
+    public PanelGame(int scale, ScreenMain mainFrame, int FPS, Client client, String selfChoice, ArrayList<String> allChoices){
+        super();
+        this.FPS = FPS;
+        this.scale = scale;
+        this.mainFrame = mainFrame;
+        this.gameData = ManagerGame.clientGame(scale, client, selfChoice, allChoices);
+        init();
+    }
+    public PanelGame(int scale, ScreenMain mainFrame, int FPS, Server server, String selfChoice, ArrayList<String> allChoices){
+        super();
+        this.FPS = FPS;
+        this.scale = scale;
+        this.mainFrame = mainFrame;
+        this.gameData = ManagerGame.serverGame(scale, server, selfChoice, allChoices);
         init();
     }
 

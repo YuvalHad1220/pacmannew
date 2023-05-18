@@ -177,6 +177,9 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
             }
 
         }
+
+        if (server != null && allChoices.size() > 1)
+            continueButton.setEnabled(true);
     }
 
     public void selectEntity(String entityName){
@@ -214,15 +217,33 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
         }
 
         else if (clicked == continueButton){
+            if (server != null)
+                onContinue();
 
         }
-
         else {
             // that means that this is an entityButton
             selectEntity(clicked.getText());
-            clicked.setBackground(Color.LIGHT_GRAY);
         }
 
+    }
+
+    public void onContinue() {
+        if (client != null) {
+            PanelGame game;
+            game = new PanelGame(scale, mainFrame, FPS, client, ourChoice, selectedEntities);
+            mainFrame.addPanel(game, "gamePanel");
+            mainFrame.showPanel("gamePanel");
+        }
+
+        if (server != null) {
+            PanelGame game;
+            game = new PanelGame(scale, mainFrame, FPS, server, ourChoice, selectedEntities);
+            mainFrame.addPanel(game, "gamePanel");
+            mainFrame.showPanel("gamePanel");
+
+            server.sendContinueMessage();
+        }
     }
 
     public void enableButtons() {
@@ -230,3 +251,4 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
             entityBtn.setEnabled(true);
     }
 }
+

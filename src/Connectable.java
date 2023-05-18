@@ -20,6 +20,7 @@ public interface Connectable {
 
     byte SET_DIRECTION = 13;
     byte SEED = 14;
+    byte CONTINUE = 15;
 
     default byte[] strToBytes(String msg){
         byte[] arrMsg = new byte[msg.length()];
@@ -69,7 +70,9 @@ public interface Connectable {
         }
         return choices;
     }
-
+    default byte[] construct_start_game_msg() {
+        return new byte[]{CONTINUE};
+    }
 
     default byte stringChoiceToByte(String choice) {
         switch (choice) {

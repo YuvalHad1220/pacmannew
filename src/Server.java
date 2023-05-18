@@ -137,4 +137,25 @@ public class Server extends Thread implements Connectable {
             }
         }
     }
+
+    public void setGameManager(ManagerGame gm) {
+        this.gameManager = gm;
+    }
+
+    public void sendContinueMessage() {
+        System.out.println("sending startgame message!!");
+        for (String conn : connectionsAndChoice.keySet()) {
+            String[] ipandport = conn.split(":");
+            try {
+                byte[] msg = construct_start_game_msg();
+                InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
+                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(ipandport[1])));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
 }

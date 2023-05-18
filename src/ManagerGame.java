@@ -2,6 +2,8 @@
 by using this class we would update the main entity and start threads where needed
  */
 
+import java.util.ArrayList;
+
 public class ManagerGame {
 
     private Entity controlledEntity;
@@ -14,12 +16,39 @@ public class ManagerGame {
     private Server server;
     private Client client;
 
-    public static ManagerGame serverGame(int scale, Server serverConn){
+    public static ManagerGame serverGame(int scale, Server serverConn, String selfChoice, ArrayList<String> allChoices){
+        System.out.println("started multiplayer game as server");
+        Map map = new Map();
+        Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
+        Ghost[] ghosts = new Ghost[]{
+                new GhostBlinky(14, 11, scale),
+                new GhostClyde(16, 15, scale),
+                new GhostInky(12, 15, scale),
+                new GhostPinky(14, 15, scale)
+        };
+        ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-        return null;
+
+        /*
+        When we get to this stage, the client socket should already be running! and now because we set gameManager, we will now start threads for every entity needed, hoping the AI will act the same across the board.
+
+        Obviously, the clientSocket will update the entites where necessary.
+
+         */
+        ManagerGame gm = new ManagerGame(pacman, ghosts, map, pacman, ghosts);
+        serverConn.setGameManager(gm);
+        gm.setServer(serverConn);
+
+        gm.startThreadsWhereNeeded();
+
+        return gm;
     }
 
-    public static ManagerGame clientGame(int scale, Client clientConn, String selfChoice, String[] otherChoices, String[] gameThreads){
+    private void setServer(Server serverConn) {
+        this.server = serverConn;
+    }
+
+    public static ManagerGame clientGame(int scale, Client clientConn, String selfChoice, ArrayList<String> allChoices){
         System.out.println("started multiplayer game as client");
         Map map = new Map();
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);

@@ -84,12 +84,13 @@ public class Client extends Thread implements Connectable {
             // Extract received message and process it
             byte[] receivedData = packet.getData();
             byte msg_id = receivedData[0];
-            System.out.println(msg_id);
             switch (msg_id) {
                 case SELECTENTITIES -> {
                     ArrayList<String> choices = parse_multiple_entities_msg(receivedData);
                     gameLobby.onEntityList(choices);
                 }
+
+                case CONTINUE -> gameLobby.onContinue();
             }
         }
 
