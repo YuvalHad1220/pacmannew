@@ -178,13 +178,15 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
         }
 
-        if (server != null && allChoices.size() > 1)
+        if (server != null && selectedEntities.size() > 1)
             continueButton.setEnabled(true);
     }
 
     public void selectEntity(String entityName){
         if (selectedEntities.contains(entityName))
             return;
+        if (server != null && selectedEntities.size() > 1)
+            continueButton.setEnabled(true);
 
         selectedEntities.remove(this.ourChoice);
         selectedEntities.add(entityName);
