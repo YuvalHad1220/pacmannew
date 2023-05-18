@@ -1,6 +1,11 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public interface Connectable {
 
     void run();
+    void kill();
     byte NONE = 0;
     byte PACMAN = 1;
     byte INKY = 2;
@@ -16,8 +21,16 @@ public interface Connectable {
     byte SET_DIRECTION = 13;
     byte SEED = 14;
 
+    default byte[] strToBytes(String msg){
+        byte[] arrMsg = new byte[msg.length()];
+        for (int i = 0; i<msg.length(); i++){
+            arrMsg[i] = (byte) (msg.charAt(i) - '0');
+        }
+        return arrMsg;
+    }
+
     default byte[] construct_seed_msg(long seed) {
-        return (Byte.toString(SEED) + seed).getBytes();
+        return strToBytes((Byte.toString(SEED) + seed));
     }
 
     default long get_seed_from_msg(byte[] msg) {
@@ -25,24 +38,13 @@ public interface Connectable {
         return Long.parseLong(seedStr);
     }
 
-    default byte[] construct_connect_msg(String chosen) {
-        return (Byte.toString(CONNECT) + stringChoiceToByte(chosen)).getBytes();
-    }
-
     default byte[] construct_connect_msg() {
         return new byte[]{CONNECT};
     }
 
-    default String parse_connect_msg(byte[] msg) {
-        if (msg.length > 1)
-            return byteToStringChoice(msg[1]);
-
-        return null;
-    }
-
     default byte[] construct_direction_msg(String chosenEntity, int[] dir){
         String msg = Byte.toString(SET_DIRECTION) + stringChoiceToByte(chosenEntity) + dir[0] + dir[1];
-        return msg.getBytes();
+        return strToBytes(msg);
     }
 
     default Object[] parse_direction_msg(byte[] msg){
@@ -50,19 +52,21 @@ public interface Connectable {
         int[] dir = new int[]{msg[1], msg[2]};
         return new Object[]{chosenEntity, dir};
     }
-    default byte[] construct_select_multiple_entities_msg(String[] chosen){
-        StringBuilder msg = new StringBuilder(Byte.toString(SELECTENTITIES) + chosen.length);
-        for (String choice  : chosen)
-            msg.append(stringChoiceToByte(choice));
-        return msg.toString().getBytes();
+    default byte[] construct_select_multiple_entities_msg(ArrayList<String> chosen){
+        String msg = Byte.toString(SELECTENTITIES);
+        for (String choice : chosen)
+            msg += Byte.toString(stringChoiceToByte(choice));
+
+        return strToBytes(msg);
     }
 
-    default String[] parse_multiple_entities_msg(byte[] msg){
-        int choices_len = msg[1];
-        String[] choices = new String[choices_len];
-        for (int i = 0; i < choices_len; i++)
-            choices[i] = byteToStringChoice(msg[i + 1]);
-
+    default ArrayList<String> parse_multiple_entities_msg(byte[] msg){
+        ArrayList<String> choices = new ArrayList<>();
+        for (int i = 1; i < msg.length; i++){
+            if (msg[i] == 0)
+                break;
+            choices.add(byteToStringChoice(msg[i]));
+        }
         return choices;
     }
 

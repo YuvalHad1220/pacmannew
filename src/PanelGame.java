@@ -28,7 +28,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        this.gameData = ManagerGame.fromSave(savedRecord, scale);
+        this.gameData = ManagerGame.singlePlayerGameFromSave(savedRecord, scale);
         init();
     }
     public PanelGame(int scale, ScreenMain mainFrame, int FPS){
@@ -37,22 +37,10 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
 
-        this.gameData = ManagerGame.Default(scale);
+        this.gameData = ManagerGame.singlePlayerGameDefault(scale);
         init();
     }
 
-//    public PanelGame(int scale, ScreenMain mainFrame, int FPS, MultiplayerServer mps, MultiplayerClient mpc){
-//        super();
-//        this.FPS = FPS;
-//        this.scale = scale;
-//        this.mainFrame = mainFrame;
-//        if (mps == null)
-//            this.gameData = ManagerGame.fromMultiplayerAsClient(mpc);
-//        else
-//            this.gameData = ManagerGame.fromMultiplayerAsServer(mps, scale);
-//
-//        init();
-//    }
 
     private void init(){
         this.isSuspend = false;

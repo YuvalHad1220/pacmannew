@@ -74,19 +74,7 @@ public class PacmanThread extends Thread implements Sleepable{
         }
     }
 
-    public void serverLoop(){
-        while (true) {
-            int[] pacmanDir = pacman.getDir();
-            pacman.updateXInPanel(pacmanDir[0]);
-            pacman.updateYInPanel(pacmanDir[1]);
-
-        }
-    }
-
     public void run() {
-        if (controlledBy == ManagerGame.SELF)
-            selfLoop();
-        else
-            serverLoop();
+        selfLoop();
     }
 }

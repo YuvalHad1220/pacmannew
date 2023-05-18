@@ -1,58 +1,70 @@
 import javax.swing.*;
+import javax.xml.stream.FactoryConfigurationError;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-/*
-
-we show this panel either by:
-1. choosing to be a host
-2. choosing to be a client
-
-1. display ip
-2. display port
-3.
- */
 public class PanelLobby extends PacmanJPanel implements ActionListener {
     static final String[] entitiesNames = {"Pacman", "Clyde", "Inky", "Pinky", "Blinky"};
     ScreenMain mainFrame;
-//    String type;
-//    MultiplayerClient client;
-//    MultiplayerServer server;
 
     PacmanJButton connectButton;
     PacmanJButton goBackButton, continueButton;
     PacmanJButton[] entitiesButtons;
-//    PacmanJButton previouslySelectedEntity;
 
     PacmanJLabel IPLabel, portLabel;
 
     JTextField IPtextField, portTextField;
 
-//    String selectedEntity;
-
-//    PanelGame game;
-
 
     private final int FPS = 144;
     private final int scale = 20;
 
-    public PanelLobby(String type, ScreenMain mainFrame) {
-        this.mainFrame = mainFrame;
-//        this.type = type;
+    private final String instanceType;
+    private Server server;
+    private Client client;
 
+    ArrayList<String> selectedEntities;
+    String ourChoice;
+
+    public JButton getButton(String entityName){
+        for (JButton entityBtn : entitiesButtons)
+            if (entityBtn.getText().equals(entityName))
+                return entityBtn;
+
+        return null;
+    }
+
+    public PanelLobby(String instanceType, ScreenMain mainFrame) {
+        this.mainFrame = mainFrame;
+        this.instanceType = instanceType;
+        this.selectedEntities = new ArrayList<>();
         initConnPanel();
         initEntitiesPanel();
         initMetaPanel();
 
-//        if (type.equals("server")) {
-//            // inititate a server and then show ip and port, also make "connect" button greyed out
-//            server = new MultiplayerServer(this);
-//            server.start();
-//            setAsServer();
-//
-//        }
+        if (this.instanceType.equals("server")){
+            startServer();
+        }
 
+        initFieldsAccordingToType();
+
+    }
+
+    private void initFieldsAccordingToType() {
+        if (this.instanceType.equals("server")){
+            connectButton.setEnabled(false);
+            IPtextField.setText(server.getSelfIP());
+            portTextField.setText(Integer.toString(server.getSelfPort()));
+            portTextField.setEnabled(false);
+            IPtextField.setEnabled(false);
+        }
+    }
+
+    private void startServer(){
+        server = new Server(this);
+        server.start();
     }
 
     private void initMetaPanel() {
@@ -86,23 +98,6 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
         add(entitiesPanel, BorderLayout.CENTER);
     }
-//
-//    private void setAsServer() {
-//        connectButton.setEnabled(false);
-//        IPLabel.setText("IP:");
-//        portLabel.setText("PORT:");
-////        IPtextField.setText(server.getIP());
-//        IPtextField.setEnabled(false);
-//        IPtextField.setBackground(Color.DARK_GRAY);
-////        portTextField.setText(Integer.toString(server.getPort()));
-//        portTextField.setEnabled(false);
-//        portTextField.setBackground(Color.DARK_GRAY);
-//
-//        for (PacmanJButton entityBtn : entitiesButtons)
-//            entityBtn.setEnabled(true);
-//
-//
-//    }
 
     public void initConnPanel() {
         PacmanJPanel IPPanel = new PacmanJPanel();
@@ -151,100 +146,87 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void connectToServer(String ip, int port){
+        client = new Client(ip, port, this);
+        if (!client.connectToServer())
+            return;
+
+        client.start();
+
+        connectButton.setEnabled(false);
+        System.out.println("Connected to server");
+        for (JButton entityBtn: entitiesButtons)
+            entityBtn.setEnabled(true);
 
     }
 
-//    public void onConnectClick() {
-//        String ip = IPtextField.getText();
-//        int port = Integer.parseInt(portTextField.getText());
-//
-//        client = new MultiplayerClient(ip, port, this);
-//        byte[] selectedEntities = client.connect();
-//        for (PacmanJButton entityBtn : entitiesButtons)
-//            entityBtn.setEnabled(true);
-//
-//        if (selectedEntities != null) {
-//            for (byte selected : selectedEntities)
-//                setTaken(Multiplayer.byteToString(selected));
-//
-//            client.start(); // now once we will start than we will update selected as we go
-//
-//        }
-//    }
-//
-//    public void setTaken(String choice) {
-//        System.out.println("need to set " + choice + " as taken");
-//        for (PacmanJButton entityBtn : entitiesButtons) {
-//            if (entityBtn.getText().equals(choice)) {
-//                entityBtn.setEnabled(false);
-//                return;
-//            }
-//        }
-//    }
-//
-//
-//    public void closeServerDeleteFrame() {
-//        mainFrame.removePanel(this);
-//        if (server != null)
-//            server.stopServer();
-//    }
-//
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        JButton clicked = (JButton) e.getSource();
-//        if (clicked == connectButton) {
-//            onConnectClick();
-//        } else if (clicked == goBackButton) {
-//            closeServerDeleteFrame();
-//            mainFrame.showPanel("startPanel");
-//        } else if (clicked == continueButton) {
-//            // connection is established. We need to create a game based on multiplayer connection - i.e if not connected than AI runs it.
-//            // we will send all connection
-//
-//            game = new PanelGame(scale, mainFrame, FPS, server, client);
-//            mainFrame.addPanel(game, "gamePanel");
-//            mainFrame.showPanel("gamePanel");
-//
-//
-//        } else {
-//            if (previouslySelectedEntity == clicked)
-//                return;
-//
-//            // here we are an entityButton
-//            clicked.setBackground(Color.DARK_GRAY);
-//            continueButton.setEnabled(true);
-//            selectedEntity = clicked.getText();
-//
-//            if (previouslySelectedEntity == null) {
-//                // that means this is the first time we select an entity. we will update the client and server if needed
-//                if (server != null)
-//                    server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.NONE);
-//                if (client != null)
-//                    client.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.NONE);
-//            } else {
-//                // need to update
-//                previouslySelectedEntity.setBackground(Color.BLACK);
-//                if (server != null)
-//                    server.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
-//                if (client != null)
-//                    client.updateSelected(Multiplayer.stringChoicetoByte(selectedEntity), Multiplayer.stringChoicetoByte(previouslySelectedEntity.getText()));
-//            }
-//
-//            // always happens
-//            previouslySelectedEntity = (PacmanJButton) clicked;
-//
-//        }
-//
-//    }
-//
-//    public void cancelChosen(String old) {
-//        for (PacmanJButton chosen : entitiesButtons) {
-//            if (chosen.getText().equals(old)) {
-//                chosen.setEnabled(true);
-//                break;
-//            }
-//        }
-//    }
+    public void onEntityList(ArrayList<String> allChoices){
+        for (JButton entityBtn : entitiesButtons){
+            entityBtn.setEnabled(true);
+            entityBtn.setBackground(Color.BLACK);
+        }
+
+        for (String choice: allChoices) {
+            JButton chosenBtn = getButton(choice);
+            if (choice.equals(ourChoice))
+                chosenBtn.setBackground(Color.LIGHT_GRAY);
+            else{
+                chosenBtn.setEnabled(false);
+                if (!selectedEntities.contains(choice))
+                    selectedEntities.add(choice);
+            }
+
+        }
+    }
+
+    public void selectEntity(String entityName){
+        if (selectedEntities.contains(entityName))
+            return;
+
+        selectedEntities.remove(this.ourChoice);
+        selectedEntities.add(entityName);
+
+        this.ourChoice = entityName;
+
+        if (client != null)
+            client.sendUpdateChoiceMessage(selectedEntities);
+
+        if (server != null){
+            server.sendUpdateChoiceMessage(selectedEntities);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton clicked = (JButton) e.getSource();
+        if (clicked == connectButton){
+            String ip = IPtextField.getText();
+            int port = Integer.parseInt(portTextField.getText());
+            connectToServer(ip, port);
+        }
+
+        else if (clicked == goBackButton){
+            mainFrame.showPanel("startPanel");
+            if (server != null)
+                server.kill();
+            if (client != null)
+                client.kill();
+        }
+
+        else if (clicked == continueButton){
+
+        }
+
+        else {
+            // that means that this is an entityButton
+            selectEntity(clicked.getText());
+            clicked.setBackground(Color.LIGHT_GRAY);
+        }
+
+    }
+
+    public void enableButtons() {
+        for (JButton entityBtn: entitiesButtons)
+            entityBtn.setEnabled(true);
+    }
 }

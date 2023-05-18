@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class PanelMap extends JPanel implements Sleepable{
     private PanelGame gamePanel;
@@ -14,7 +13,7 @@ public class PanelMap extends JPanel implements Sleepable{
         new Thread(() -> {
             while (true){
                 // so ghosts wont be jittery if they are faster
-                double alteredSpeed = gamePanel.gameData.getAlteredGhostSpeed() < 1 ? gamePanel.gameData.getAlteredGhostSpeed() : 1;
+                double alteredSpeed = gamePanel.gameData.getGhostSpeedMultiplier() < 1 ? gamePanel.gameData.getGhostSpeedMultiplier() : 1;
                 this.repaint();
                 sleep((int) (1000 / gamePanel.getFPS() * alteredSpeed));
             }
@@ -37,23 +36,23 @@ public class PanelMap extends JPanel implements Sleepable{
         inky after 17 seconds (need to release)
         clyde after 32 seconds (need to release)
          */
-
-        new Thread(() -> {
-            gamePanel.gameData.startBlinky(gamePanel);
-            gamePanel.gameData.startPacman(gamePanel);
-
-            sleep(7000);
-            releasePinky();
-            gamePanel.gameData.startPinky(gamePanel);
-
-            sleep(17000 - 7000);
-            releaseInky();
-            gamePanel.gameData.startInky(gamePanel);
-
-            sleep(32000 - 17000 - 7000);
-            releaseClyde();
-            gamePanel.gameData.startClyde(gamePanel);
-        }).start();
+//
+//        new Thread(() -> {
+//            gamePanel.gameData.startBlinky(gamePanel);
+//            gamePanel.gameData.startPacman(gamePanel);
+//
+//            sleep(7000);
+//            releasePinky();
+//            gamePanel.gameData.startPinky(gamePanel);
+//
+//            sleep(17000 - 7000);
+//            releaseInky();
+//            gamePanel.gameData.startInky(gamePanel);
+//
+//            sleep(32000 - 17000 - 7000);
+//            releaseClyde();
+//            gamePanel.gameData.startClyde(gamePanel);
+//        }).start();
 
     }
 

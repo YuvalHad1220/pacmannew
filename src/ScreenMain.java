@@ -37,7 +37,7 @@ public class ScreenMain extends JFrame {
 
     public void addPanel(JPanel panel, String panelName){
         add(panel, panelName);
-        System.out.println("added card " +panelName);
+//        System.out.println("added card " +panelName);
     }
 
     public void removePanel(JPanel panel){
