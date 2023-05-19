@@ -82,7 +82,7 @@ public class Server extends Thread implements Connectable {
     @Override
     public void run() {
         System.out.println("started server");
-        byte[] buffer = new byte[1024]; // Buffer to store received data
+        byte[] buffer = new byte[LONGEST_MSG_LENGTH]; // Buffer to store received data
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         while (true) {
             try {

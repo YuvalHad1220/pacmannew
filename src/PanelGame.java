@@ -92,6 +92,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         // starting threads and such
         mapPanel.startGame();
         pwm.start();
+        gameData.startThreadsWhereNeeded(this);
+
 
     }
 

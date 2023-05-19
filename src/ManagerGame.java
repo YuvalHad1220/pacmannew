@@ -3,11 +3,18 @@ by using this class we would update the main entity and start threads where need
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ManagerGame {
 
+    public final int AI = 0;
+    public final static int SERVER = 0;
+    public final static int CLIENT = 0;
+
     private Entity controlledEntity;
-    private Entity[] otherEntities;
+    private Entity[] otherControlledEntities;
+    private Entity[] AIControlledEntities;
     private Pacman pacman;
     private Ghost[] ghosts;
     private Map map;
@@ -28,20 +35,57 @@ public class ManagerGame {
         };
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-
         /*
         When we get to this stage, the client socket should already be running! and now because we set gameManager, we will now start threads for every entity needed, hoping the AI will act the same across the board.
 
         Obviously, the clientSocket will update the entites where necessary.
 
          */
-        ManagerGame gm = new ManagerGame(pacman, ghosts, map, pacman, ghosts);
+        ManagerGame gm = new ManagerGame(pacman, ghosts, map);
+
+        gm.controlledEntity = gm.determineControlledEntity(selfChoice);
+        gm.otherControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
         serverConn.setGameManager(gm);
         gm.setServer(serverConn);
 
-        gm.startThreadsWhereNeeded();
-
         return gm;
+    }
+
+    private Entity[] determineOtherControlledEntities(ArrayList<String> allChoices, String selfChoice) {
+        Entity[] choices = new Entity[allChoices.size() - 1];
+        int cntr = 0;
+        for (String choice : allChoices){
+            if (choice.equals(selfChoice))
+                continue;
+
+            choices[cntr] = determineControlledEntity(choice);
+            cntr++;
+
+        }
+
+        return choices;
+    }
+
+    private Entity determineControlledEntity(String selfChoice) {
+        System.out.println(selfChoice);
+        switch (selfChoice){
+            case "Pacman" -> {
+                return pacman;
+            }
+            case "Blinky" -> {
+                return ghosts[0];
+            }
+            case "Clyde" -> {
+                return ghosts[1];
+            }
+            case "Inky" -> {
+                return ghosts[2];
+            }
+            case "Pinky" -> {
+                return ghosts[3];
+            }
+        }
+        return null;
     }
 
     private void setServer(Server serverConn) {
@@ -67,16 +111,61 @@ public class ManagerGame {
         Obviously, the clientSocket will update the entites where necessary.
 
          */
-        ManagerGame gm = new ManagerGame(pacman, ghosts, map, pacman, ghosts);
+        ManagerGame gm = new ManagerGame(pacman, ghosts, map);
+        gm.controlledEntity = gm.determineControlledEntity(selfChoice);
+        gm.otherControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
+        gm.AIControlledEntities = gm.determineAI();
         clientConn.setGameManager(gm);
         gm.setClient(clientConn);
-
-        gm.startThreadsWhereNeeded();
 
         return gm;
     }
 
-    private void startThreadsWhereNeeded() {
+    private Entity[] determineAI() {
+        List<Entity> validEntities = new ArrayList<>();
+
+        for (Ghost g : ghosts) {
+            boolean valid = true;
+            for (Entity entity : otherControlledEntities) {
+                if (entity == g) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid && g != controlledEntity) {
+                validEntities.add(g);
+            }
+        }
+
+        return validEntities.toArray(new Entity[0]);
+    }
+    public void startThreadsWhereNeeded(PanelGame gp) {
+        System.out.println("Controlled Entity: " +this.controlledEntity);
+        System.out.println("Other Controlled Entities:" + Arrays.toString(this.otherControlledEntities));
+        System.out.println("AI Controlled Entities:" + Arrays.toString(this.AIControlledEntities));
+
+
+        if (pacman.equals(controlledEntity)) {
+            new PacmanThread(gp, pacman, CLIENT).start();
+        }
+        if (ghosts[0] == controlledEntity) {
+            new GhostThread(gp, ghosts[0], pacman, CLIENT).start();
+
+        }
+        if (ghosts[1] == controlledEntity) {
+            new GhostThread(gp, ghosts[1], pacman, CLIENT).start();
+
+        }
+        if (ghosts[2] == controlledEntity) {
+            new GhostThread(gp, ghosts[2], pacman, CLIENT).start();
+
+        }
+        if (ghosts[3] == controlledEntity) {
+            new GhostThread(gp, ghosts[3], pacman, CLIENT).start();
+
+        }
+
     }
 
 
@@ -94,7 +183,12 @@ public class ManagerGame {
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
 
-        return new ManagerGame(pacman, ghosts, map, pacman, ghosts);
+        ManagerGame gm =  new ManagerGame(pacman, ghosts, map);
+        gm.controlledEntity = pacman;
+        gm.AIControlledEntities = ghosts;
+        gm.otherControlledEntities = null;
+        return gm;
+
     }
 
 
@@ -112,13 +206,20 @@ public class ManagerGame {
         };
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-        return new ManagerGame(pacman, ghosts, map, pacman, ghosts);
+        ManagerGame gm =  new ManagerGame(pacman, ghosts, map);
+        gm.controlledEntity = pacman;
+        gm.AIControlledEntities = ghosts;
+        gm.otherControlledEntities = null;
+
+        return gm;
+
     }
 
-    private ManagerGame(Pacman pacman, Ghost[] ghosts, Map map, Entity controlledEntity, Entity[] otherEntities) {
+    private ManagerGame(Pacman pacman, Ghost[] ghosts, Map map) {
         this.pacman = pacman;
-        this.controlledEntity = controlledEntity;
-        this.otherEntities = otherEntities;
+        this.controlledEntity = null;
+        this.otherControlledEntities = null;
+        this.AIControlledEntities = null;
         this.ghosts = ghosts;
         this.map = map;
         this.ghostSpeedMultiplier = 1;

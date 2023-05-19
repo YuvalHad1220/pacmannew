@@ -73,7 +73,7 @@ public class Client extends Thread implements Connectable {
         System.out.println("Started client socket");
 
         while (true) {
-            byte[] buffer = new byte[1024]; // Buffer to store received data
+            byte[] buffer = new byte[LONGEST_MSG_LENGTH]; // Buffer to store received data
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             try {
                 clientSocket.receive(packet); // Receive incoming datagram

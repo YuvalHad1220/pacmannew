@@ -22,6 +22,8 @@ public interface Connectable {
     byte SEED = 14;
     byte CONTINUE = 15;
 
+    int LONGEST_MSG_LENGTH = 16;
+
     default byte[] strToBytes(String msg){
         byte[] arrMsg = new byte[msg.length()];
         for (int i = 0; i<msg.length(); i++){

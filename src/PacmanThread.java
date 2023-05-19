@@ -10,7 +10,7 @@ public class PacmanThread extends Thread implements Sleepable{
 
 
 
-    public PacmanThread(PanelGame gamePanel, Pacman pacman,  int controlledBy) {
+    public PacmanThread(PanelGame gamePanel, Pacman pacman, int controlledBy) {
         this.pacman = pacman;
         this.gamePanel = gamePanel;
         this.FPS = gamePanel.getFPS();
@@ -75,6 +75,10 @@ public class PacmanThread extends Thread implements Sleepable{
     }
 
     public void run() {
-        selfLoop();
+        if (controlledBy == ManagerGame.CLIENT){
+            System.out.println("started pacman as client");
+            selfLoop();
+
+        }
     }
 }
