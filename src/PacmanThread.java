@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class PacmanThread extends Thread implements Sleepable{
     private Pacman pacman;
     private PanelGame gamePanel;
@@ -22,19 +20,21 @@ public class PacmanThread extends Thread implements Sleepable{
     public void selfLoop() {
         pacman.pollForFirstMovement();
         while (true) {
+            boolean dirChange = true;
             sleep(1000 / FPS);
 
             if (gamePanel.getSuspend())
                 continue;
 
 
-            pacman.pollDirForReversedMovement();
+//            dirChange = pacman.pollDirForReversedMovement();
             int[] pacmanDir = pacman.getDir();
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);
 
             int[] notAllowedToGoInDirection = map.wallCollision(pacman);
             if (notAllowedToGoInDirection != null) {
+//                dirChange = dirChange ||
                 pacman.setDirForCollision(notAllowedToGoInDirection); // when a collision happens it will fix pacmans dir
                 if (pacmanDir[1] == -1)
                     pacman.updateYInPanel(scale / 5);
@@ -49,6 +49,7 @@ public class PacmanThread extends Thread implements Sleepable{
 
                     // that means that we decided to change dir
                     if (pacman.setDirForIntersection()) {
+//                        dirChange = true;
                         pacmanDir = pacman.getDir();
                         if (pacmanDir[0] == -1)
                             pacman.updateYInPanel(scale / 5);
@@ -64,6 +65,8 @@ public class PacmanThread extends Thread implements Sleepable{
                     }
                 }
             }
+            if (dirChange && controlledBy == ManagerGame.LOCAL)
+                gamePanel.gameData.updateDir();
 
             if (map.eatPoint(pacman, gamePanel.gameData.getGhosts()))
                 gamePanel.updateScore();
@@ -74,11 +77,26 @@ public class PacmanThread extends Thread implements Sleepable{
         }
     }
 
-    public void run() {
-        if (controlledBy == ManagerGame.CLIENT){
-            System.out.println("started pacman as client");
-            selfLoop();
+    public void remoteLoop() {
+        while (true) {
+            sleep(1000 / FPS);
+            if (gamePanel.getSuspend())
+                continue;
+            int[] pacmanDir = pacman.getDir();
+            pacman.updateXInPanel(pacmanDir[0]);
+            pacman.updateYInPanel(pacmanDir[1]);
+        }
+    }
 
+    public void run() {
+        if (controlledBy == ManagerGame.LOCAL){
+            System.out.println("started pacman as local");
+            selfLoop();
+        }
+
+        if (controlledBy == ManagerGame.REMOTE){
+            System.out.println("started pacman as remote");
+            remoteLoop();
         }
     }
 }

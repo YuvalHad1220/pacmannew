@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Server extends Thread implements Connectable {
@@ -94,6 +95,7 @@ public class Server extends Thread implements Connectable {
             // Extract received message and process it
             byte[] receivedData = packet.getData();
             byte msg_id = receivedData[0];
+            System.out.println(Arrays.toString(receivedData));
             switch (msg_id) {
                 case CONNECT -> {
                     System.out.println("got connect");
@@ -109,16 +111,40 @@ public class Server extends Thread implements Connectable {
                     gameLobby.enableButtons();
 
                 }
-
                 case SELECTENTITIES -> {
                     System.out.println("get select entities");
                     onSelectEntity(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
+                }
+                case SET_DIRECTION -> {
+                    onDir(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
                 }
             }
         }
 
     }
 
+    public void onDir(byte[] msg, String address, int port){
+        address = address +":" +port;
+        Object[] items = parse_direction_msg(msg);
+        String entityName = (String) items[0];
+        int[] dir = (int[])items[1];
+
+        System.out.println("EntityName: " +entityName);
+        byte[] relayMsg = construct_direction_msg(entityName, dir);
+
+        for (String conn : connectionsAndChoice.keySet()) {
+            String[] IPAndPort = conn.split(":");
+            try {
+                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
+                serverSocket.send(new DatagramPacket(relayMsg, relayMsg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+                System.out.println("sent relay msg");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        gameManager.setOtherDir(entityName, dir);
+    }
     @Override
     public void kill() {
         this.serverSocket.close();

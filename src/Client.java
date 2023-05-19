@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Client extends Thread implements Connectable {
     private ManagerGame gameManager;
@@ -89,10 +90,28 @@ public class Client extends Thread implements Connectable {
                     ArrayList<String> choices = parse_multiple_entities_msg(receivedData);
                     gameLobby.onEntityList(choices);
                 }
-
                 case CONTINUE -> gameLobby.onContinue();
+
+                case SET_DIRECTION -> {
+                    Object[] items = parse_direction_msg(receivedData);
+                    String entityName = (String) items[0];
+                    int[] dir = (int[])items[1];
+                    gameManager.setOtherDir(entityName, dir);
+
+                }
             }
         }
 
+    }
+
+    public void sendUpdateDir(int[] dir, String entityName) {
+        byte[] msg = construct_direction_msg(entityName, dir);
+        System.out.println("need to send to server the new dir: " + Arrays.toString(msg));
+        try {
+            clientSocket.send(new DatagramPacket(msg, msg.length));
+            System.out.println("sent");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

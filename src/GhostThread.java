@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class GhostThread extends Thread implements Sleepable {
     private int controlledBy;
     private Ghost ghost;
@@ -21,7 +18,7 @@ public class GhostThread extends Thread implements Sleepable {
 
     }
 
-    public void run() {
+    public void selfLoop(){
         // chase pacman to get new x,y
         // if we collide than we keep the old x,y
         // when we get to an intersection we can choose a new x,y
@@ -45,5 +42,25 @@ public class GhostThread extends Thread implements Sleepable {
                 }
             }
         }
+    }
+
+    public void otherLoop(){
+        while (true){
+            sleep((int) (1000 / FPS * ghost.getOffset()));
+            if (gamePanel.getSuspend())
+                continue;
+
+            int[] ghostDir = ghost.getDir();
+            ghost.updateXInPanel(ghostDir[0]);
+            ghost.updateYInPanel(ghostDir[1]);
+        }
+    }
+
+    public void run() {
+        if (controlledBy == ManagerGame.AI)
+            selfLoop();
+
+        if (controlledBy == ManagerGame.REMOTE)
+            otherLoop();
     }
 }

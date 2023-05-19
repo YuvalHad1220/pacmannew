@@ -116,40 +116,38 @@ public class Entity {
         this.currDir = dir;
     }
 
-    public void setDirForCollision(int[] notAllowedToGoInDirection) {
+    public boolean setDirForCollision(int[] notAllowedToGoInDirection) {
         int[] dir;
         while (true){
             dir = directionQueue.poll();
             if (dir != null && !Arrays.equals(notAllowedToGoInDirection, dir)){
                 currDir = dir;
-                break;
+                return true;
             }
 
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                return false;
             }
+
         }
+
+
     }
 
-    public void pollDirForReversedMovement(){
+    public boolean pollDirForReversedMovement(){
         int[] dir = directionQueue.peek();
         if (dir != null && (dir[0] == -currDir[0] || dir[1] == -currDir[1])){
             directionQueue.remove();
-            currDir = dir;
-        }
-    }
-
-    public boolean setDirForIntersection(int[] notAllowedToGoInDirection) {
-        int[] dir;
-        dir = directionQueue.poll();
-        if (dir != null && !Arrays.equals(notAllowedToGoInDirection, dir)){
             currDir = dir;
             return true;
         }
         return false;
     }
+
+
     public boolean setDirForIntersection() {
         int[] dir;
         dir = directionQueue.poll();

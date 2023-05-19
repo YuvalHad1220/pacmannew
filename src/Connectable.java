@@ -46,13 +46,18 @@ public interface Connectable {
     }
 
     default byte[] construct_direction_msg(String chosenEntity, int[] dir){
-        String msg = Byte.toString(SET_DIRECTION) + stringChoiceToByte(chosenEntity) + dir[0] + dir[1];
-        return strToBytes(msg);
+        byte[] msg = new byte[4];
+
+        msg[0] = SET_DIRECTION;
+        msg[1] = stringChoiceToByte(chosenEntity);
+        msg[2] = (byte) dir[0];
+        msg[3] = (byte) dir[1];
+        return msg;
     }
 
     default Object[] parse_direction_msg(byte[] msg){
-        String chosenEntity = byteToStringChoice(msg[0]);
-        int[] dir = new int[]{msg[1], msg[2]};
+        String chosenEntity = byteToStringChoice(msg[1]);
+        int[] dir = new int[]{msg[2], msg[3]};
         return new Object[]{chosenEntity, dir};
     }
     default byte[] construct_select_multiple_entities_msg(ArrayList<String> chosen){

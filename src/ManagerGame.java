@@ -8,12 +8,12 @@ import java.util.List;
 
 public class ManagerGame {
 
-    public final int AI = 0;
-    public final static int SERVER = 0;
-    public final static int CLIENT = 0;
+    public final static int AI = 0;
+    public final static int REMOTE = 1;
+    public final static int LOCAL = 2;
 
     private Entity controlledEntity;
-    private Entity[] otherControlledEntities;
+    private Entity[] remoteControlledEntities;
     private Entity[] AIControlledEntities;
     private Pacman pacman;
     private Ghost[] ghosts;
@@ -22,6 +22,17 @@ public class ManagerGame {
 
     private Server server;
     private Client client;
+    public void updateDir(){
+        int[] dir = controlledEntity.getDir();
+
+        if (client != null)
+            client.sendUpdateDir(dir, getNameByEntity(controlledEntity));
+
+//        if (server != null)
+//            server.sendUpdateDir(dir);
+
+
+    }
 
     public static ManagerGame serverGame(int scale, Server serverConn, String selfChoice, ArrayList<String> allChoices){
         System.out.println("started multiplayer game as server");
@@ -43,8 +54,8 @@ public class ManagerGame {
          */
         ManagerGame gm = new ManagerGame(pacman, ghosts, map);
 
-        gm.controlledEntity = gm.determineControlledEntity(selfChoice);
-        gm.otherControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
+        gm.controlledEntity = gm.getEntityByName(selfChoice);
+        gm.remoteControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
         serverConn.setGameManager(gm);
         gm.setServer(serverConn);
 
@@ -58,7 +69,7 @@ public class ManagerGame {
             if (choice.equals(selfChoice))
                 continue;
 
-            choices[cntr] = determineControlledEntity(choice);
+            choices[cntr] = getEntityByName(choice);
             cntr++;
 
         }
@@ -66,8 +77,7 @@ public class ManagerGame {
         return choices;
     }
 
-    private Entity determineControlledEntity(String selfChoice) {
-        System.out.println(selfChoice);
+    private Entity getEntityByName(String selfChoice) {
         switch (selfChoice){
             case "Pacman" -> {
                 return pacman;
@@ -87,6 +97,22 @@ public class ManagerGame {
         }
         return null;
     }
+
+    private String getNameByEntity(Entity entity) {
+        if (pacman.equals(entity)) {
+            return "Pacman";
+        } else if (ghosts[0].equals(entity)) {
+            return "Blinky";
+        } else if (ghosts[1].equals(entity)) {
+            return "Clyde";
+        } else if (ghosts[2].equals(entity)) {
+            return "Inky";
+        } else if (ghosts[3].equals(entity)) {
+            return "Pinky";
+        }
+        return null;
+    }
+
 
     private void setServer(Server serverConn) {
         this.server = serverConn;
@@ -112,8 +138,8 @@ public class ManagerGame {
 
          */
         ManagerGame gm = new ManagerGame(pacman, ghosts, map);
-        gm.controlledEntity = gm.determineControlledEntity(selfChoice);
-        gm.otherControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
+        gm.controlledEntity = gm.getEntityByName(selfChoice);
+        gm.remoteControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
         gm.AIControlledEntities = gm.determineAI();
         clientConn.setGameManager(gm);
         gm.setClient(clientConn);
@@ -126,7 +152,7 @@ public class ManagerGame {
 
         for (Ghost g : ghosts) {
             boolean valid = true;
-            for (Entity entity : otherControlledEntities) {
+            for (Entity entity : remoteControlledEntities) {
                 if (entity == g) {
                     valid = false;
                     break;
@@ -142,27 +168,50 @@ public class ManagerGame {
     }
     public void startThreadsWhereNeeded(PanelGame gp) {
         System.out.println("Controlled Entity: " +this.controlledEntity);
-        System.out.println("Other Controlled Entities:" + Arrays.toString(this.otherControlledEntities));
+        System.out.println("Other Controlled Entities:" + Arrays.toString(this.remoteControlledEntities));
         System.out.println("AI Controlled Entities:" + Arrays.toString(this.AIControlledEntities));
 
 
-        if (pacman.equals(controlledEntity)) {
-            new PacmanThread(gp, pacman, CLIENT).start();
+        if (pacman == controlledEntity) {
+            new PacmanThread(gp, pacman, LOCAL).start();
         }
-        if (ghosts[0] == controlledEntity) {
-            new GhostThread(gp, ghosts[0], pacman, CLIENT).start();
+        else if (ghosts[0] == controlledEntity) {
+            new GhostThread(gp, ghosts[0], pacman, LOCAL).start();
 
         }
-        if (ghosts[1] == controlledEntity) {
-            new GhostThread(gp, ghosts[1], pacman, CLIENT).start();
+        else if (ghosts[1] == controlledEntity) {
+            new GhostThread(gp, ghosts[1], pacman, LOCAL).start();
 
         }
-        if (ghosts[2] == controlledEntity) {
-            new GhostThread(gp, ghosts[2], pacman, CLIENT).start();
+        else if (ghosts[2] == controlledEntity) {
+            new GhostThread(gp, ghosts[2], pacman, LOCAL).start();
 
         }
-        if (ghosts[3] == controlledEntity) {
-            new GhostThread(gp, ghosts[3], pacman, CLIENT).start();
+        else if (ghosts[3] == controlledEntity) {
+            new GhostThread(gp, ghosts[3], pacman, LOCAL).start();
+
+        }
+
+        for (Entity e : remoteControlledEntities){
+            if (pacman == e) {
+                new PacmanThread(gp, pacman, REMOTE).start();
+            }
+            else if (ghosts[0] == e) {
+                new GhostThread(gp, ghosts[0], pacman, REMOTE).start();
+
+            }
+            else if (ghosts[1] == e) {
+                new GhostThread(gp, ghosts[1], pacman, REMOTE).start();
+
+            }
+            else if (ghosts[2] == e) {
+                new GhostThread(gp, ghosts[2], pacman, REMOTE).start();
+
+            }
+            else if (ghosts[3] == e) {
+                new GhostThread(gp, ghosts[3], pacman, REMOTE).start();
+
+            }
 
         }
 
@@ -186,7 +235,7 @@ public class ManagerGame {
         ManagerGame gm =  new ManagerGame(pacman, ghosts, map);
         gm.controlledEntity = pacman;
         gm.AIControlledEntities = ghosts;
-        gm.otherControlledEntities = null;
+        gm.remoteControlledEntities = null;
         return gm;
 
     }
@@ -209,7 +258,7 @@ public class ManagerGame {
         ManagerGame gm =  new ManagerGame(pacman, ghosts, map);
         gm.controlledEntity = pacman;
         gm.AIControlledEntities = ghosts;
-        gm.otherControlledEntities = null;
+        gm.remoteControlledEntities = null;
 
         return gm;
 
@@ -218,7 +267,7 @@ public class ManagerGame {
     private ManagerGame(Pacman pacman, Ghost[] ghosts, Map map) {
         this.pacman = pacman;
         this.controlledEntity = null;
-        this.otherControlledEntities = null;
+        this.remoteControlledEntities = null;
         this.AIControlledEntities = null;
         this.ghosts = ghosts;
         this.map = map;
@@ -267,5 +316,11 @@ public class ManagerGame {
 
     public void addControlledEntityDir(int[] controlledEntityDir) {
         this.controlledEntity.addDir(controlledEntityDir);
+    }
+
+    public void setOtherDir(String entityName, int[] parsed_direction) {
+        Entity e = getEntityByName(entityName);
+        assert e != null;
+        e.setDir(parsed_direction);
     }
 }
