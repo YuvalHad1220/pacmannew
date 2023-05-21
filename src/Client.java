@@ -92,26 +92,44 @@ public class Client extends Thread implements Connectable {
                 }
                 case CONTINUE -> gameLobby.onContinue();
 
-                case SET_DIRECTION -> {
-                    Object[] items = parse_direction_msg(receivedData);
-                    String entityName = (String) items[0];
-                    int[] dir = (int[])items[1];
-                    gameManager.setOtherDir(entityName, dir);
-
+                case SET_LOCATION -> {
+                    System.out.println("SET LOCATION MSG");
+                    Object[] data = parse_location_msg(receivedData);
+                    String entityName = (String) data[0];
+                    int x = (int) data[1];
+                    int y = (int) data[2];
+                    gameManager.setLocation(entityName, x, y);
                 }
+
+//                case SET_DIRECTION -> {
+//                    Object[] items = parse_direction_msg(receivedData);
+//                    String entityName = (String) items[0];
+//                    int[] dir = (int[])items[1];
+//                    gameManager.setOtherDir(entityName, dir);
+
+//                }
             }
         }
 
     }
 
-    public void sendUpdateDir(int[] dir, String entityName) {
-        byte[] msg = construct_direction_msg(entityName, dir);
-        System.out.println("need to send to server the new dir: " + Arrays.toString(msg));
+//    public void sendUpdateDir(int[] dir, String entityName) {
+//        byte[] msg = construct_direction_msg(entityName, dir);
+//        System.out.println("need to send to server the new dir: " + Arrays.toString(msg));
+//        try {
+//            clientSocket.send(new DatagramPacket(msg, msg.length));
+//            System.out.println("sent");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    public void sendUpdateLocation(Entity e) {
+        byte[] msg = construct_location_msg(e);
         try {
             clientSocket.send(new DatagramPacket(msg, msg.length));
-            System.out.println("sent");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

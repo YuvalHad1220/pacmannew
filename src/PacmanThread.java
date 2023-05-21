@@ -72,8 +72,6 @@ public class PacmanThread extends Thread implements Sleepable{
                     }
                 }
             }
-            if (controlledBy == ManagerGame.LOCAL)
-                gamePanel.gameData.updateDir();
 
             if (map.eatPoint(pacman, gamePanel.gameData.getGhosts()))
                 gamePanel.updateScore();
@@ -112,6 +110,7 @@ public class PacmanThread extends Thread implements Sleepable{
                 }
             }
 
+            this.gamePanel.gameData.updateLocation(pacman);
         }
     }
 

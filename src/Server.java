@@ -15,13 +15,6 @@ public class Server extends Thread implements Connectable {
 
     HashMap<String, String> connectionsAndChoice = new HashMap<>();
 
-    public void setGame(ManagerGame gameManager) {
-
-    }
-
-    public void pingToAllConnections(byte[] msg) {
-
-    }
 
     public String getSelfIP() {
         return selfIP;
@@ -98,7 +91,6 @@ public class Server extends Thread implements Connectable {
             System.out.println(Arrays.toString(receivedData));
             switch (msg_id) {
                 case CONNECT -> {
-                    System.out.println("got connect");
                     if (!onConnect(packet.getAddress().getHostAddress(), packet.getPort()))
                         continue;
                     byte[] msg = construct_connect_msg();
@@ -115,36 +107,38 @@ public class Server extends Thread implements Connectable {
                     System.out.println("get select entities");
                     onSelectEntity(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
                 }
-                case SET_DIRECTION -> {
-                    onDir(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
+//                case SET_DIRECTION -> onDir(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
+
+                case SET_LOCATION -> {
+                    System.out.println("SET LOCATION MSG");
+                    onLocation(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
                 }
             }
         }
 
     }
 
-    public void onDir(byte[] msg, String address, int port){
-        address = address +":" +port;
-        Object[] items = parse_direction_msg(msg);
-        String entityName = (String) items[0];
-        int[] dir = (int[])items[1];
 
-        System.out.println("EntityName: " +entityName);
-        byte[] relayMsg = construct_direction_msg(entityName, dir);
-
-        for (String conn : connectionsAndChoice.keySet()) {
-            String[] IPAndPort = conn.split(":");
-            try {
-                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                serverSocket.send(new DatagramPacket(relayMsg, relayMsg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
-                System.out.println("sent relay msg");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        gameManager.setOtherDir(entityName, dir);
-    }
+//    public void onDir(byte[] msg, String address, int port){
+//        address = address +":" +port;
+//        Object[] items = parse_direction_msg(msg);
+//        String entityName = (String) items[0];
+//        int[] dir = (int[])items[1];
+//
+//        System.out.println("EntityName: " +entityName);
+//
+//        for (String conn : connectionsAndChoice.keySet()) {
+//            String[] IPAndPort = conn.split(":");
+//            try {
+//                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
+//                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        gameManager.setOtherDir(entityName, dir);
+//    }
     @Override
     public void kill() {
         this.serverSocket.close();
@@ -180,7 +174,38 @@ public class Server extends Thread implements Connectable {
                 e.printStackTrace();
             }
         }
+    }
 
+    public void sendUpdateLocation(Entity e) {
+        byte[] msg = construct_location_msg(e);
+        for (String conn : connectionsAndChoice.keySet()) {
+            String[] IPAndPort = conn.split(":");
+            try {
+                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
+                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    public void onLocation(byte[] msg, String address, int port){
+        Object[] values = parse_location_msg(msg);
+
+        String entityName = (String) values[0];
+        int x = (int) values[1];
+        int y = (int) values[2];
+
+        for (String conn : connectionsAndChoice.keySet()) {
+            String[] IPAndPort = conn.split(":");
+            try {
+                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
+                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        gameManager.setLocation(entityName, x, y);
     }
 
 

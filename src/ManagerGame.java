@@ -23,17 +23,17 @@ public class ManagerGame {
 
     private Server server;
     private Client client;
-    public void updateDir(){
-        int[] dir = controlledEntity.getDir();
-
-        if (client != null)
-            client.sendUpdateDir(dir, getNameByEntity(controlledEntity));
-
-//        if (server != null)
-//            server.sendUpdateDir(dir);
-
-
-    }
+//    public void updateDir(){
+//        int[] dir = controlledEntity.getDir();
+//
+//        if (client != null)
+//            client.sendUpdateDir(dir, getNameByEntity(controlledEntity));
+//
+////        if (server != null)
+////            server.sendUpdateDir(dir);
+//
+//
+//    }
 
     public static ManagerGame serverGame(int scale, Server serverConn, String selfChoice, ArrayList<String> allChoices, int FPS){
         System.out.println("started multiplayer game as server");
@@ -57,6 +57,7 @@ public class ManagerGame {
 
         gm.controlledEntity = gm.getEntityByName(selfChoice);
         gm.remoteControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
+        gm.AIControlledEntities = gm.determineAI();
         serverConn.setGameManager(gm);
         gm.setServer(serverConn);
 
@@ -205,32 +206,31 @@ public class ManagerGame {
 
                 }
                 else if (ghosts[1] == e) {
-                    releaseClyde();
+                    new Thread(this::releaseClyde).start();
                     new GhostThread(gp, ghosts[1], pacman, REMOTE).start();
 
                 }
                 else if (ghosts[2] == e) {
-                    releaseInky();
+                    new Thread(this::releaseInky).start();
                     new GhostThread(gp, ghosts[2], pacman, REMOTE).start();
 
                 }
                 else if (ghosts[3] == e) {
-                    releasePinky();
+                    new Thread(this::releasePinky).start();
                     new GhostThread(gp, ghosts[3], pacman, REMOTE).start();
                 }
             }
 
         if (AIControlledEntities != null)
             for (Entity e : AIControlledEntities){
-
                 if (e instanceof GhostClyde)
-                    releaseClyde();
+                    new Thread(this::releaseClyde).start();
 
                 if (e instanceof GhostPinky)
-                    releasePinky();
+                    new Thread(this::releasePinky).start();
 
                 if (e instanceof GhostInky)
-                    releaseInky();
+                    new Thread(this::releaseInky).start();
 
                 new GhostThread(gp, (Ghost) e, pacman, AI).start();
             }
@@ -251,6 +251,12 @@ public class ManagerGame {
 
     public void releasePinky(){
         // it just moves straight up and then thats it
+        try {
+            Thread.sleep(3400);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         ghostOutOfCage(ghosts[3]);
 
     }
@@ -258,8 +264,13 @@ public class ManagerGame {
     public void releaseClyde(){
         // need to move it 2 blocks to the left and then up
 
-        int ghostoriginalX = ghosts[1].getX();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        int ghostoriginalX = ghosts[1].getX();
         while (ghosts[1].getX() > ghostoriginalX - 3){
             ghosts[1].updateXInPanel(-1);
             try {
@@ -274,6 +285,12 @@ public class ManagerGame {
 
     public void releaseInky(){
         // need to move it 3 block to right and then up
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         int originalX = ghosts[2].getX();
         while (ghosts[2].getX() < originalX + 2){
             ghosts[2].updateXInPanel(1);
@@ -388,10 +405,31 @@ public class ManagerGame {
     public void addControlledEntityDir(int[] controlledEntityDir) {
         this.controlledEntity.addDir(controlledEntityDir);
     }
+//
+//    public void setOtherDir(String entityName, int[] parsed_direction) {
+//        Entity e = getEntityByName(entityName);
+//        assert e != null;
+//        e.setDir(parsed_direction);
+//    }
 
-    public void setOtherDir(String entityName, int[] parsed_direction) {
+    public void updateLocation(Entity e) {
+        // that means that user sent us its new location, so we must update it and relay the data
+        if (client != null)
+            client.sendUpdateLocation(e);
+
+        if (server != null)
+            server.sendUpdateLocation(e);
+    }
+
+    public void setLocation(String entityName, int x, int y) {
         Entity e = getEntityByName(entityName);
+        if (e == controlledEntity)
+            return;
+
+
         assert e != null;
-        e.setDir(parsed_direction);
+        e.setXinPanel(x * e.scale);
+        e.setYinPanel(y * e.scale);
+        System.out.println("entity: " +entityName +" x in map: " + x * e.scale +" y in map: " +y * e.scale);
     }
 }

@@ -18,11 +18,12 @@ public interface Connectable {
     byte SELECTENTITIES = 8;
 //  public static final byte DESELECTENTITY = 9;
 
-    byte SET_DIRECTION = 13;
+    byte SET_LOCATION = 12;
+//    byte SET_DIRECTION = 13;
     byte SEED = 14;
     byte CONTINUE = 15;
 
-    int LONGEST_MSG_LENGTH = 16;
+    int LONGEST_MSG_LENGTH = 8;
 
     default byte[] strToBytes(String msg){
         byte[] arrMsg = new byte[msg.length()];
@@ -41,25 +42,53 @@ public interface Connectable {
         return Long.parseLong(seedStr);
     }
 
+    default byte[] construct_location_msg(Entity e){
+        int x = e.getX();
+        int y = e.getY();
+        byte entityByte = NONE;
+
+        if (e instanceof Pacman)
+            entityByte = stringChoiceToByte("Pacman");
+        if (e instanceof GhostInky)
+            entityByte = stringChoiceToByte("Inky");
+        if (e instanceof GhostPinky)
+            entityByte = stringChoiceToByte("Pinky");
+        if (e instanceof GhostClyde)
+            entityByte = stringChoiceToByte("Clyde");
+
+
+        return new byte[]{SET_LOCATION, entityByte, (byte) x, (byte) y};
+
+    }
+
+    default Object[] parse_location_msg(byte[] msg){
+        String entity = byteToStringChoice(msg[1]);
+        int x = msg[2];
+        int y = msg[3];
+
+        return new Object[]{entity, x ,y};
+
+    }
+
     default byte[] construct_connect_msg() {
         return new byte[]{CONNECT};
     }
 
-    default byte[] construct_direction_msg(String chosenEntity, int[] dir){
-        byte[] msg = new byte[4];
-
-        msg[0] = SET_DIRECTION;
-        msg[1] = stringChoiceToByte(chosenEntity);
-        msg[2] = (byte) dir[0];
-        msg[3] = (byte) dir[1];
-        return msg;
-    }
-
-    default Object[] parse_direction_msg(byte[] msg){
-        String chosenEntity = byteToStringChoice(msg[1]);
-        int[] dir = new int[]{msg[2], msg[3]};
-        return new Object[]{chosenEntity, dir};
-    }
+//    default byte[] construct_direction_msg(String chosenEntity, int[] dir){
+//        byte[] msg = new byte[4];
+//
+//        msg[0] = SET_LOCATION;
+//        msg[1] = stringChoiceToByte(chosenEntity);
+//        msg[2] = (byte) dir[0];
+//        msg[3] = (byte) dir[1];
+//        return msg;
+//    }
+//
+//    default Object[] parse_direction_msg(byte[] msg){
+//        String chosenEntity = byteToStringChoice(msg[1]);
+//        int[] dir = new int[]{msg[2], msg[3]};
+//        return new Object[]{chosenEntity, dir};
+//    }
     default byte[] construct_select_multiple_entities_msg(ArrayList<String> chosen){
         String msg = Byte.toString(SELECTENTITIES);
         for (String choice : chosen)
