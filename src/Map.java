@@ -194,11 +194,11 @@ class Map {
 
     public int[] isAtPath(Entity entity){
         if (entity.getX() + 2 == map[0].length && entity.getY() == 15){
-            return new int[]{0, 15};
+            return new int[]{1, 15};
         }
 
         if (entity.getXInPanel() == 0 && entity.getY() == 15){
-            return new int[]{26,15};
+            return new int[]{25,15};
         }
         return null;
     }

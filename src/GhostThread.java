@@ -45,6 +45,9 @@ public class GhostThread extends Thread implements Sleepable {
     }
 
     public void otherLoop(){
+        // first we need to release ghost from cage
+
+
         while (true){
             sleep((int) (1000 / FPS * ghost.getOffset()));
             if (gamePanel.getSuspend())

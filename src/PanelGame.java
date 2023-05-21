@@ -29,7 +29,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        this.gameData = ManagerGame.singlePlayerGameFromSave(savedRecord, scale);
+        this.gameData = ManagerGame.singlePlayerGameFromSave(savedRecord, scale, FPS);
         init();
     }
     public PanelGame(int scale, ScreenMain mainFrame, int FPS){
@@ -37,7 +37,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        this.gameData = ManagerGame.singlePlayerGameDefault(scale);
+        this.gameData = ManagerGame.singlePlayerGameDefault(scale, FPS);
         init();
     }
 
@@ -46,7 +46,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        this.gameData = ManagerGame.clientGame(scale, client, selfChoice, allChoices);
+        this.gameData = ManagerGame.clientGame(scale, client, selfChoice, allChoices, FPS);
         init();
     }
     public PanelGame(int scale, ScreenMain mainFrame, int FPS, Server server, String selfChoice, ArrayList<String> allChoices){
@@ -54,7 +54,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
-        this.gameData = ManagerGame.serverGame(scale, server, selfChoice, allChoices);
+        this.gameData = ManagerGame.serverGame(scale, server, selfChoice, allChoices, FPS);
         init();
     }
 
@@ -66,7 +66,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         mapPanel = new PanelMap(this);
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));
-        livesLabel = new PacmanJLabel("Lives: " + gameData.getPacman().getLives(), pacmanFont.deriveFont(14f));
+        livesLabel = new PacmanJLabel("Lives Left: " + gameData.getPacman().getLives(), pacmanFont.deriveFont(14f));
         scoreLabel = new PacmanJLabel("Score: " + gameData.getPacman().getScore(), pacmanFont.deriveFont(14f));
 
         dataPanel.add(livesLabel);
@@ -172,4 +172,9 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     public boolean isInGame() {
         return isInGame;
     }
+
+    public void updateLive(){
+        livesLabel.setText("Lives Left: " + gameData.getPacman().getLives());
+    }
+
 }

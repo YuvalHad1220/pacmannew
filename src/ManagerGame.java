@@ -19,6 +19,7 @@ public class ManagerGame {
     private Ghost[] ghosts;
     private Map map;
     private double ghostSpeedMultiplier;
+    private int FPS;
 
     private Server server;
     private Client client;
@@ -34,7 +35,7 @@ public class ManagerGame {
 
     }
 
-    public static ManagerGame serverGame(int scale, Server serverConn, String selfChoice, ArrayList<String> allChoices){
+    public static ManagerGame serverGame(int scale, Server serverConn, String selfChoice, ArrayList<String> allChoices, int FPS){
         System.out.println("started multiplayer game as server");
         Map map = new Map();
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
@@ -52,7 +53,7 @@ public class ManagerGame {
         Obviously, the clientSocket will update the entites where necessary.
 
          */
-        ManagerGame gm = new ManagerGame(pacman, ghosts, map);
+        ManagerGame gm = new ManagerGame(pacman, ghosts, map, FPS);
 
         gm.controlledEntity = gm.getEntityByName(selfChoice);
         gm.remoteControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
@@ -118,7 +119,7 @@ public class ManagerGame {
         this.server = serverConn;
     }
 
-    public static ManagerGame clientGame(int scale, Client clientConn, String selfChoice, ArrayList<String> allChoices){
+    public static ManagerGame clientGame(int scale, Client clientConn, String selfChoice, ArrayList<String> allChoices, int FPS){
         System.out.println("started multiplayer game as client");
         Map map = new Map();
         Pacman pacman = new Pacman(map.asIntArray().length / 2 - 3, 25, scale);
@@ -137,7 +138,7 @@ public class ManagerGame {
         Obviously, the clientSocket will update the entites where necessary.
 
          */
-        ManagerGame gm = new ManagerGame(pacman, ghosts, map);
+        ManagerGame gm = new ManagerGame(pacman, ghosts, map, FPS);
         gm.controlledEntity = gm.getEntityByName(selfChoice);
         gm.remoteControlledEntities = gm.determineOtherControlledEntities(allChoices, selfChoice);
         gm.AIControlledEntities = gm.determineAI();
@@ -180,45 +181,114 @@ public class ManagerGame {
 
         }
         else if (ghosts[1] == controlledEntity) {
+            releaseClyde();
             new GhostThread(gp, ghosts[1], pacman, LOCAL).start();
 
         }
         else if (ghosts[2] == controlledEntity) {
+            releaseInky();
             new GhostThread(gp, ghosts[2], pacman, LOCAL).start();
 
         }
         else if (ghosts[3] == controlledEntity) {
+            releasePinky();
             new GhostThread(gp, ghosts[3], pacman, LOCAL).start();
 
         }
+        if (remoteControlledEntities != null)
+            for (Entity e : remoteControlledEntities){
+                if (pacman == e) {
+                    new PacmanThread(gp, pacman, REMOTE).start();
+                }
+                else if (ghosts[0] == e) {
+                    new GhostThread(gp, ghosts[0], pacman, REMOTE).start();
 
-        for (Entity e : remoteControlledEntities){
-            if (pacman == e) {
-                new PacmanThread(gp, pacman, REMOTE).start();
+                }
+                else if (ghosts[1] == e) {
+                    releaseClyde();
+                    new GhostThread(gp, ghosts[1], pacman, REMOTE).start();
+
+                }
+                else if (ghosts[2] == e) {
+                    releaseInky();
+                    new GhostThread(gp, ghosts[2], pacman, REMOTE).start();
+
+                }
+                else if (ghosts[3] == e) {
+                    releasePinky();
+                    new GhostThread(gp, ghosts[3], pacman, REMOTE).start();
+                }
             }
-            else if (ghosts[0] == e) {
-                new GhostThread(gp, ghosts[0], pacman, REMOTE).start();
 
+        if (AIControlledEntities != null)
+            for (Entity e : AIControlledEntities){
+
+                if (e instanceof GhostClyde)
+                    releaseClyde();
+
+                if (e instanceof GhostPinky)
+                    releasePinky();
+
+                if (e instanceof GhostInky)
+                    releaseInky();
+
+                new GhostThread(gp, (Ghost) e, pacman, AI).start();
             }
-            else if (ghosts[1] == e) {
-                new GhostThread(gp, ghosts[1], pacman, REMOTE).start();
-
-            }
-            else if (ghosts[2] == e) {
-                new GhostThread(gp, ghosts[2], pacman, REMOTE).start();
-
-            }
-            else if (ghosts[3] == e) {
-                new GhostThread(gp, ghosts[3], pacman, REMOTE).start();
-
-            }
-
-        }
 
     }
 
+    public void ghostOutOfCage(Ghost g){
+        int originalY = g.getY(); // lets say its 5. we need to run the for loop until it turns 4
+        while (g.getY() > originalY - 5){ // 5 blocks in total
+            g.updateYInPanel(-1);
+            try {
+                Thread.sleep(1000/FPS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-    public static ManagerGame singlePlayerGameDefault(int scale){
+    public void releasePinky(){
+        // it just moves straight up and then thats it
+        ghostOutOfCage(ghosts[3]);
+
+    }
+
+    public void releaseClyde(){
+        // need to move it 2 blocks to the left and then up
+
+        int ghostoriginalX = ghosts[1].getX();
+
+        while (ghosts[1].getX() > ghostoriginalX - 3){
+            ghosts[1].updateXInPanel(-1);
+            try {
+                Thread.sleep(1000/FPS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ghostOutOfCage(ghosts[1]);
+    }
+
+    public void releaseInky(){
+        // need to move it 3 block to right and then up
+        int originalX = ghosts[2].getX();
+        while (ghosts[2].getX() < originalX + 2){
+            ghosts[2].updateXInPanel(1);
+            try {
+                Thread.sleep(1000/FPS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ghostOutOfCage(ghosts[2]);
+    }
+
+
+    public static ManagerGame singlePlayerGameDefault(int scale, int FPS){
         System.out.println("started single player game from default");
         Map map = new Map();
 
@@ -232,7 +302,7 @@ public class ManagerGame {
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
 
-        ManagerGame gm =  new ManagerGame(pacman, ghosts, map);
+        ManagerGame gm =  new ManagerGame(pacman, ghosts, map, FPS);
         gm.controlledEntity = pacman;
         gm.AIControlledEntities = ghosts;
         gm.remoteControlledEntities = null;
@@ -242,7 +312,7 @@ public class ManagerGame {
 
 
 
-    public static ManagerGame singlePlayerGameFromSave(Database savedRecord, int scale){
+    public static ManagerGame singlePlayerGameFromSave(Database savedRecord, int scale, int FPS){
         System.out.println("started singleplayer game from save");
         Map map = new Map();
         map.setMap(savedRecord.bm);
@@ -255,7 +325,7 @@ public class ManagerGame {
         };
         ((GhostInky)ghosts[2]).setBlinky(ghosts[0]);
 
-        ManagerGame gm =  new ManagerGame(pacman, ghosts, map);
+        ManagerGame gm =  new ManagerGame(pacman, ghosts, map, FPS);
         gm.controlledEntity = pacman;
         gm.AIControlledEntities = ghosts;
         gm.remoteControlledEntities = null;
@@ -264,13 +334,14 @@ public class ManagerGame {
 
     }
 
-    private ManagerGame(Pacman pacman, Ghost[] ghosts, Map map) {
+    private ManagerGame(Pacman pacman, Ghost[] ghosts, Map map, int FPS) {
         this.pacman = pacman;
         this.controlledEntity = null;
         this.remoteControlledEntities = null;
         this.AIControlledEntities = null;
         this.ghosts = ghosts;
         this.map = map;
+        this.FPS = FPS;
         this.ghostSpeedMultiplier = 1;
         this.client = null;
         this.server = null;
