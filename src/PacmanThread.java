@@ -73,7 +73,7 @@ public class PacmanThread extends Thread implements Sleepable{
                 }
             }
 
-            if (map.eatPoint(pacman, gamePanel.gameData.getGhosts()))
+            if (map.eatPoint(pacman, ghosts))
                 gamePanel.updateScore();
 
             int[] newLocation = map.isAtPath(pacman);
@@ -105,12 +105,14 @@ public class PacmanThread extends Thread implements Sleepable{
 
                     this.pacman.setLives(this.pacman.getLives() - 1);
                     gamePanel.updateLive();
-
+                    this.gamePanel.gameData.sendPacmanDeath();
 
                 }
             }
 
+
             this.gamePanel.gameData.updateLocation(pacman);
+
         }
     }
 
@@ -122,6 +124,26 @@ public class PacmanThread extends Thread implements Sleepable{
             int[] pacmanDir = pacman.getDir();
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);
+
+            if (map.eatPoint(pacman, ghosts))
+                gamePanel.updateScore();
+
+
+            gamePanel.updateLive();
+            if (this.pacman.getLives() == 0) {
+                System.out.println("END OF GAME");
+                PacmanJPanel gameOver = new PacmanJPanel();
+                gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+                PacmanJLabel gameOverLabel = new PacmanJLabel("Game Over", gameOver.pacmanFont.deriveFont(34f));
+                gameOver.add(gameOverLabel);
+
+                this.gamePanel.mainFrame.addPanel(gameOver, "gameOver");
+                this.gamePanel.mainFrame.showPanel("gameOver");
+                sleep(5 * 1000);
+                System.exit(1);
+            }
+
         }
     }
 

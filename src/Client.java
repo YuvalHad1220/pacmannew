@@ -101,6 +101,8 @@ public class Client extends Thread implements Connectable {
                     gameManager.setLocation(entityName, x, y);
                 }
 
+                case PACMAN_DEATH -> gameManager.onDeath();
+
 //                case SET_DIRECTION -> {
 //                    Object[] items = parse_direction_msg(receivedData);
 //                    String entityName = (String) items[0];
@@ -126,6 +128,15 @@ public class Client extends Thread implements Connectable {
 
     public void sendUpdateLocation(Entity e) {
         byte[] msg = construct_location_msg(e);
+        try {
+            clientSocket.send(new DatagramPacket(msg, msg.length));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void sendDeath() {
+        byte[] msg = construct_pacman_death();
         try {
             clientSocket.send(new DatagramPacket(msg, msg.length));
         } catch (IOException ex) {

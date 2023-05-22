@@ -359,7 +359,7 @@ public class ManagerGame {
         this.ghosts = ghosts;
         this.map = map;
         this.FPS = FPS;
-        this.ghostSpeedMultiplier = 1;
+        this.ghostSpeedMultiplier = 0.5;
         this.client = null;
         this.server = null;
     }
@@ -431,5 +431,21 @@ public class ManagerGame {
         e.setXinPanel(x * e.scale);
         e.setYinPanel(y * e.scale);
         System.out.println("entity: " +entityName +" x in map: " + x * e.scale +" y in map: " +y * e.scale);
+    }
+
+    public void sendPacmanDeath() {
+        if (client != null)
+            client.sendDeath();
+
+        if (server != null)
+            server.sendDeath();
+    }
+
+    public void onDeath(){
+        if (pacman == controlledEntity)
+            return;
+
+        pacman.setLives(pacman.getLives() - 1);
+
     }
 }

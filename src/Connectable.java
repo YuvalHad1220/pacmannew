@@ -22,8 +22,13 @@ public interface Connectable {
 //    byte SET_DIRECTION = 13;
     byte SEED = 14;
     byte CONTINUE = 15;
+    byte PACMAN_DEATH = 16;
 
     int LONGEST_MSG_LENGTH = 8;
+
+    default byte[] construct_pacman_death(){
+        return new byte[]{PACMAN_DEATH};
+    }
 
     default byte[] strToBytes(String msg){
         byte[] arrMsg = new byte[msg.length()];

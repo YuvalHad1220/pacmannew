@@ -37,6 +37,19 @@ public class GhostThread extends Thread implements Sleepable {
                     ghost.updateXInPanel(ghostDir[0]);
                     ghost.updateYInPanel(ghostDir[1]);
 
+                    if (ghostDir[1] == 1){
+                        ghost.updateYInPanel(1);
+                    }
+//                    if (ghostDir[1] == -1){
+//                        ghost.updateYInPanel(-1);
+//                    }
+
+                    if (ghostDir[0] == 1)
+                        ghost.updateXInPanel(1);
+                    if (ghostDir[0] == -1)
+                        ghost.updateXInPanel(-1);
+
+
                 }
             } else {
                 if (map.toCageDir(ghost)) {

@@ -113,6 +113,8 @@ public class Server extends Thread implements Connectable {
                     System.out.println("SET LOCATION MSG");
                     onLocation(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
                 }
+
+                case PACMAN_DEATH -> gameManager.onDeath();
             }
         }
 
@@ -209,4 +211,16 @@ public class Server extends Thread implements Connectable {
     }
 
 
+    public void sendDeath() {
+        byte[] msg = construct_pacman_death();
+        for (String conn : connectionsAndChoice.keySet()) {
+            String[] IPAndPort = conn.split(":");
+            try {
+                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
+                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }
