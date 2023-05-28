@@ -5,6 +5,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PanelGame extends PacmanJPanel implements KeyListener{
     ScreenMain mainFrame;
@@ -18,11 +19,13 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     final ManagerGame gameData;
     public PowerUpManager pwm;
 
-    private boolean isSuspend;
     private int scale;
     private int FPS;
 
     private boolean isInGame;
+
+    private ArrayList<Thread> gameThreads;
+    private AtomicBoolean isSuspended;
 
     public PanelGame(int scale, ScreenMain mainFrame, int FPS, Database savedRecord){
         super();
@@ -30,6 +33,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.singlePlayerGameFromSave(savedRecord, scale, FPS);
+        this.gameThreads = null;
+         isSuspended = new AtomicBoolean(false);
         init();
     }
     public PanelGame(int scale, ScreenMain mainFrame, int FPS){
@@ -38,6 +43,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.singlePlayerGameDefault(scale, FPS);
+        this.gameThreads = null;
+        isSuspended = new AtomicBoolean(false);
         init();
     }
 
@@ -47,6 +54,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.clientGame(scale, client, selfChoice, allChoices, FPS);
+        this.gameThreads = null;
+        isSuspended = new AtomicBoolean(false);
         init();
     }
     public PanelGame(int scale, ScreenMain mainFrame, int FPS, Server server, String selfChoice, ArrayList<String> allChoices){
@@ -55,12 +64,13 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.scale = scale;
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.serverGame(scale, server, selfChoice, allChoices, FPS);
+        this.gameThreads = null;
+        isSuspended = new AtomicBoolean(false);
         init();
     }
 
 
     private void init(){
-        this.isSuspend = false;
         this.isInGame = true;
         pwm = new PowerUpManager(this);
         mapPanel = new PanelMap(this);
@@ -92,7 +102,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         // starting threads and such
         mapPanel.startGame();
         pwm.start();
-        gameData.startThreadsWhereNeeded(this);
+        gameThreads = gameData.startThreadsWhereNeeded(this);
 
 
     }
@@ -146,8 +156,19 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
     }
 
-    public void setSuspend(boolean flag){
-        isSuspend = flag;
+    public void setSuspend(boolean flag) {
+        isSuspended.set(flag);
+        if (!flag) {
+            for (Thread gameThread : gameThreads) {
+                resumeThread(gameThread);
+            }
+        }
+    }
+
+    private void resumeThread(Thread thread) {
+        synchronized (thread) {
+            thread.notify();
+        }
     }
 
     public void updateScore(){
@@ -161,7 +182,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     }
 
     public boolean getSuspend() {
-        return isSuspend;
+        return isSuspended.get();
     }
 
     @Override

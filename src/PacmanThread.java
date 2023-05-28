@@ -118,9 +118,19 @@ public class PacmanThread extends Thread implements Sleepable{
 
     public void remoteLoop() {
         while (true) {
+            if (gamePanel.getSuspend()) {
+                // Suspend the thread until it is resumed
+                synchronized (Thread.currentThread()) {
+                    try {
+                        Thread.currentThread().wait();
+                    } catch (InterruptedException e) {
+                        // Handle interruption if needed
+                    }
+                }
+            }
+
             sleep(1000 / FPS);
-            if (gamePanel.getSuspend())
-                continue;
+
             int[] pacmanDir = pacman.getDir();
             pacman.updateXInPanel(pacmanDir[0]);
             pacman.updateYInPanel(pacmanDir[1]);

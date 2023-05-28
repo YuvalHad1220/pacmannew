@@ -168,61 +168,74 @@ public class ManagerGame {
 
         return validEntities.toArray(new Entity[0]);
     }
-    public void startThreadsWhereNeeded(PanelGame gp) {
-        System.out.println("Controlled Entity: " +this.controlledEntity);
+    public ArrayList<Thread> startThreadsWhereNeeded(PanelGame gp) {
+        System.out.println("Controlled Entity: " + this.controlledEntity);
         System.out.println("Other Controlled Entities:" + Arrays.toString(this.remoteControlledEntities));
         System.out.println("AI Controlled Entities:" + Arrays.toString(this.AIControlledEntities));
 
+        ArrayList<Thread> threads = new ArrayList<>();
+        Thread t;
 
         if (pacman == controlledEntity) {
-            new PacmanThread(gp, pacman, LOCAL).start();
-        }
-        else if (ghosts[0] == controlledEntity) {
-            new GhostThread(gp, ghosts[0], pacman, LOCAL).start();
+            t = new PacmanThread(gp, pacman, LOCAL);
+            threads.add(t);
+            t.start();
+        } else if (ghosts[0] == controlledEntity) {
+            t = new GhostThread(gp, ghosts[0], pacman, LOCAL);
+            threads.add(t);
+            t.start();
+        } else if (ghosts[1] == controlledEntity) {
+            new Thread(this::releaseClyde).start();
+            t = new GhostThread(gp, ghosts[1], pacman, LOCAL);
+            threads.add(t);
+            t.start();
 
-        }
-        else if (ghosts[1] == controlledEntity) {
-            releaseClyde();
-            new GhostThread(gp, ghosts[1], pacman, LOCAL).start();
+        } else if (ghosts[2] == controlledEntity) {
+            new Thread(this::releaseInky).start();
+            t = new GhostThread(gp, ghosts[2], pacman, LOCAL);
+            threads.add(t);
+            t.start();
 
-        }
-        else if (ghosts[2] == controlledEntity) {
-            releaseInky();
-            new GhostThread(gp, ghosts[2], pacman, LOCAL).start();
-
-        }
-        else if (ghosts[3] == controlledEntity) {
-            releasePinky();
-            new GhostThread(gp, ghosts[3], pacman, LOCAL).start();
+        } else if (ghosts[3] == controlledEntity) {
+            new Thread(this::releasePinky).start();
+            t = new GhostThread(gp, ghosts[3], pacman, LOCAL);
+            threads.add(t);
+            t.start();
 
         }
         if (remoteControlledEntities != null)
-            for (Entity e : remoteControlledEntities){
+            for (Entity e : remoteControlledEntities) {
                 if (pacman == e) {
-                    new PacmanThread(gp, pacman, REMOTE).start();
-                }
-                else if (ghosts[0] == e) {
-                    new GhostThread(gp, ghosts[0], pacman, REMOTE).start();
+                    t = new PacmanThread(gp, pacman, REMOTE);
+                    threads.add(t);
+                    t.start();
+                } else if (ghosts[0] == e) {
+                    t = new GhostThread(gp, ghosts[0], pacman, REMOTE);
+                    threads.add(t);
+                    t.start();
 
-                }
-                else if (ghosts[1] == e) {
+                } else if (ghosts[1] == e) {
                     new Thread(this::releaseClyde).start();
-                    new GhostThread(gp, ghosts[1], pacman, REMOTE).start();
+                    t = new GhostThread(gp, ghosts[1], pacman, REMOTE);
+                    threads.add(t);
+                    t.start();
 
-                }
-                else if (ghosts[2] == e) {
+                } else if (ghosts[2] == e) {
                     new Thread(this::releaseInky).start();
-                    new GhostThread(gp, ghosts[2], pacman, REMOTE).start();
+                    t = new GhostThread(gp, ghosts[2], pacman, REMOTE);
+                    threads.add(t);
+                    t.start();
 
-                }
-                else if (ghosts[3] == e) {
+                } else if (ghosts[3] == e) {
                     new Thread(this::releasePinky).start();
-                    new GhostThread(gp, ghosts[3], pacman, REMOTE).start();
+                    t = new GhostThread(gp, ghosts[3], pacman, REMOTE);
+                    threads.add(t);
+                    t.start();
                 }
             }
 
         if (AIControlledEntities != null)
-            for (Entity e : AIControlledEntities){
+            for (Entity e : AIControlledEntities) {
                 if (e instanceof GhostClyde)
                     new Thread(this::releaseClyde).start();
 
@@ -232,8 +245,12 @@ public class ManagerGame {
                 if (e instanceof GhostInky)
                     new Thread(this::releaseInky).start();
 
-                new GhostThread(gp, (Ghost) e, pacman, AI).start();
+                t = new GhostThread(gp, (Ghost) e, pacman, AI);
+                threads.add(t);
+                t.start();
             }
+
+        return threads;
 
     }
 

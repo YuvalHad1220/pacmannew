@@ -27,9 +27,18 @@ public class GhostThread extends Thread implements Sleepable {
         // if we collide than we keep the old x,y
         // when we get to an intersection we can choose a new x,y
         while (true) {
+            if (gamePanel.getSuspend()) {
+                // Suspend the thread until it is resumed
+                synchronized (Thread.currentThread()) {
+                    try {
+                        Thread.currentThread().wait();
+                    } catch (InterruptedException e) {
+                        // Handle interruption if needed
+                    }
+                }
+            }
+
             sleep((int) (1000 / FPS * ghost.getOffset()));
-            if (gamePanel.getSuspend())
-                continue;
 
             if (ghost.getGhostMode() == Ghost.CHASE) {
                 if (map.getOptimalDir(ghost, p)) {
