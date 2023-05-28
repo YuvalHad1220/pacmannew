@@ -9,10 +9,11 @@ public class PowerUpManager extends Thread implements Sleepable{
     private Class<?>[] powerUpTypes;
     private Random random;
 
-    public PowerUpManager(PanelGame gamePanel){
+    public PowerUpManager(PanelGame gamePanel, long randNum){
         this.gamePanel = gamePanel;
-        this.random = new Random();
+        this.random = new Random(randNum);
         init();
+
     }
     private ArrayList<int[]> getAvailableTiles(){
         int[][] map = gamePanel.gameData.getMap().asIntArray();

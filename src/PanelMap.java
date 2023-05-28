@@ -22,93 +22,11 @@ public class PanelMap extends JPanel implements Sleepable{
 
     public void startGame(){
         startRepaintingThread();
-
-        // by using the adapterGame we will know which threads to start; anyways, we will start all the timers to release the ghosts from cage
-
         Map map = gamePanel.gameData.getMap();
-
-        // first we will remove cage doors
         map.removeCageDoors();
 
-        /*
-        red & pacman start immediately
-        pinky after 7 seconds (need to release)
-        inky after 17 seconds (need to release)
-        clyde after 32 seconds (need to release)
-         */
-//
-//        new Thread(() -> {
-//            gamePanel.gameData.startBlinky(gamePanel);
-//            gamePanel.gameData.startPacman(gamePanel);
-//
-//            sleep(7000);
-//            releasePinky();
-//            gamePanel.gameData.startPinky(gamePanel);
-//
-//            sleep(17000 - 7000);
-//            releaseInky();
-//            gamePanel.gameData.startInky(gamePanel);
-//
-//            sleep(32000 - 17000 - 7000);
-//            releaseClyde();
-//            gamePanel.gameData.startClyde(gamePanel);
-//        }).start();
-
     }
 
-
-
-    public void ghostOutOfCage(Ghost g){
-        int originalY = g.getY(); // lets say its 5. we need to run the for loop until it turns 4
-        while (g.getY() > originalY - 5){ // 5 blocks in total
-            g.updateYInPanel(-1);
-            try {
-                Thread.sleep(1000/gamePanel.getFPS());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void releasePinky(){
-        Ghost pinky = gamePanel.gameData.getGhosts()[3];
-
-        // it just moves straight up and then thats it
-        ghostOutOfCage(pinky);
-
-    }
-
-    public void releaseClyde(){
-        // need to move it 2 blocks to the left and then up
-        Ghost orangeGhost = gamePanel.gameData.getGhosts()[1];
-        int originalX = orangeGhost.getX();
-        while (orangeGhost.getX() > originalX - 3){
-            orangeGhost.updateXInPanel(-1);
-            try {
-                Thread.sleep(1000/gamePanel.getFPS());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        ghostOutOfCage(orangeGhost);
-    }
-
-    public void releaseInky(){
-        // need to move it 3 block to right and then up
-        Ghost blueGhost = gamePanel.gameData.getGhosts()[2];
-        int originalX = blueGhost.getX();
-        while (blueGhost.getX() < originalX + 2){
-            blueGhost.updateXInPanel(1);
-            try {
-                Thread.sleep(1000/gamePanel.getFPS());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        ghostOutOfCage(blueGhost);
-    }
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -170,12 +88,6 @@ public class PanelMap extends JPanel implements Sleepable{
     }
 
     protected void drawPowerUps(Graphics g){
-//        int scale = gamePanel.getScale();
-//        int powerUpSize = (int) (scale * 1.2);
-//        for (PowerUp pw : gamePanel.pwm.getEnabledPowerUps()){
-//            g.drawImage(pw.powerUpImage, (pw.getXInPanel() + 1) * scale, (pw.getYInPanel() + 1) * scale, powerUpSize, powerUpSize, this);
-
-
         int powerUpSize = (int) (gamePanel.getScale() * 1.5);
         for (PowerUp pw : gamePanel.pwm.getEnabledPowerUps()){
             g.drawImage(pw.powerUpImage, pw.getXInPanel(), pw.getYInPanel(), powerUpSize, powerUpSize, this);

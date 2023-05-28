@@ -2,9 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PacmanThread extends Thread implements Sleepable{
-    private Pacman pacman;
+    private final Pacman pacman;
     private PanelGame gamePanel;
-    Ghost[] ghosts;
+    final Ghost[] ghosts;
     private int FPS;
     private int controlledBy;
     private int scale;
@@ -82,33 +82,39 @@ public class PacmanThread extends Thread implements Sleepable{
                 pacman.setYinPanel(newLocation[1] * scale);
             }
 
-            for (Ghost g : this.ghosts){
-                if (g.getX() == pacman.getX() && pacman.getY() == g.getY()){
-                    System.out.println("collision");
-                    this.pacman.setXinPanel(this.pacmanStartX);
-                    this.pacman.setYinPanel(this.pacmanStartY);
+            synchronized (ghosts){
+                for (Ghost g : this.ghosts){
+                    if (g.getX() == pacman.getX() && pacman.getY() == g.getY()){
+                        System.out.println("collision");
+                        synchronized (pacman){
+                            this.pacman.setXinPanel(this.pacmanStartX);
+                            this.pacman.setYinPanel(this.pacmanStartY);
 
-                    if (this.pacman.getLives() == 0){
-                        System.out.println("END OF GAME");
-                        PacmanJPanel gameOver = new PacmanJPanel();
-                        gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+                        }
 
-                        PacmanJLabel gameOverLabel = new PacmanJLabel("Game Over", gameOver.pacmanFont.deriveFont(34f));
-                        gameOver.add(gameOverLabel);
+                        if (this.pacman.getLives() == 0){
+                            System.out.println("END OF GAME");
+                            PacmanJPanel gameOver = new PacmanJPanel();
+                            gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
-                        this.gamePanel.mainFrame.addPanel(gameOver, "gameOver");
-                        this.gamePanel.mainFrame.showPanel("gameOver");
-                        sleep(5 * 1000);
-                        System.exit(1);
+                            PacmanJLabel gameOverLabel = new PacmanJLabel("Game Over", gameOver.pacmanFont.deriveFont(34f));
+                            gameOver.add(gameOverLabel);
+
+                            this.gamePanel.mainFrame.addPanel(gameOver, "gameOver");
+                            this.gamePanel.mainFrame.showPanel("gameOver");
+                            sleep(5 * 1000);
+                            System.exit(1);
+
+                        }
+
+                        this.pacman.setLives(this.pacman.getLives() - 1);
+                        gamePanel.updateLive();
+                        this.gamePanel.gameData.sendPacmanDeath();
 
                     }
-
-                    this.pacman.setLives(this.pacman.getLives() - 1);
-                    gamePanel.updateLive();
-                    this.gamePanel.gameData.sendPacmanDeath();
-
                 }
             }
+
 
 
             this.gamePanel.gameData.updateLocation(pacman);

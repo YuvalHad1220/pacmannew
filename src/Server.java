@@ -104,13 +104,11 @@ public class Server extends Thread implements Connectable {
 
                 }
                 case SELECTENTITIES -> {
-                    System.out.println("get select entities");
                     onSelectEntity(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
                 }
 //                case SET_DIRECTION -> onDir(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
 
                 case SET_LOCATION -> {
-                    System.out.println("SET LOCATION MSG");
                     onLocation(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
                 }
 
@@ -164,12 +162,12 @@ public class Server extends Thread implements Connectable {
         this.gameManager = gm;
     }
 
-    public void sendContinueMessage() {
+    public void sendContinueMessage(long seed) {
         System.out.println("sending startgame message!!");
         for (String conn : connectionsAndChoice.keySet()) {
             String[] ipandport = conn.split(":");
             try {
-                byte[] msg = construct_start_game_msg();
+                byte[] msg = construct_start_game_msg(seed);
                 InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
                 serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(ipandport[1])));
             } catch (IOException e) {

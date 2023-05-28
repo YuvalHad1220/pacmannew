@@ -90,10 +90,9 @@ public class Client extends Thread implements Connectable {
                     ArrayList<String> choices = parse_multiple_entities_msg(receivedData);
                     gameLobby.onEntityList(choices);
                 }
-                case CONTINUE -> gameLobby.onContinue();
+                case CONTINUE -> onContinue(receivedData);
 
                 case SET_LOCATION -> {
-                    System.out.println("SET LOCATION MSG");
                     Object[] data = parse_location_msg(receivedData);
                     String entityName = (String) data[0];
                     int x = (int) data[1];
@@ -110,6 +109,8 @@ public class Client extends Thread implements Connectable {
 //                    gameManager.setOtherDir(entityName, dir);
 
 //                }
+
+
             }
         }
 
@@ -126,6 +127,10 @@ public class Client extends Thread implements Connectable {
 //        }
 //    }
 
+    public void onContinue(byte[] msg){
+        long seed = parse_start_game_msg(msg);
+        gameLobby.onContinue(seed);
+    }
     public void sendUpdateLocation(Entity e) {
         byte[] msg = construct_location_msg(e);
         try {

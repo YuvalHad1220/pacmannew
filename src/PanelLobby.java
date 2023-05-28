@@ -220,7 +220,7 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
         else if (clicked == continueButton){
             if (server != null)
-                onContinue();
+                onContinue(System.currentTimeMillis());
 
         }
         else {
@@ -230,21 +230,22 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
 
     }
 
-    public void onContinue() {
+    public void onContinue(long seed) {
+        System.out.println("seed is: " +seed);
         if (client != null) {
             PanelGame game;
-            game = new PanelGame(scale, mainFrame, FPS, client, ourChoice, selectedEntities);
+            game = new PanelGame(seed, scale, mainFrame, FPS, client, ourChoice, selectedEntities);
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.showPanel("gamePanel");
         }
 
         if (server != null) {
             PanelGame game;
-            game = new PanelGame(scale, mainFrame, FPS, server, ourChoice, selectedEntities);
+            game = new PanelGame(seed,scale, mainFrame, FPS, server, ourChoice, selectedEntities);
             mainFrame.addPanel(game, "gamePanel");
             mainFrame.showPanel("gamePanel");
 
-            server.sendContinueMessage();
+            server.sendContinueMessage(seed);
         }
     }
 

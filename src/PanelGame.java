@@ -34,8 +34,8 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.singlePlayerGameFromSave(savedRecord, scale, FPS);
         this.gameThreads = null;
-         isSuspended = new AtomicBoolean(false);
-        init();
+        this.isSuspended = new AtomicBoolean(false);
+        init(System.currentTimeMillis());
     }
     public PanelGame(int scale, ScreenMain mainFrame, int FPS){
         super();
@@ -44,35 +44,35 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.singlePlayerGameDefault(scale, FPS);
         this.gameThreads = null;
-        isSuspended = new AtomicBoolean(false);
-        init();
+        this.isSuspended = new AtomicBoolean(false);
+        init(System.currentTimeMillis());
     }
 
-    public PanelGame(int scale, ScreenMain mainFrame, int FPS, Client client, String selfChoice, ArrayList<String> allChoices){
+    public PanelGame(long seed, int scale, ScreenMain mainFrame, int FPS, Client client, String selfChoice, ArrayList<String> allChoices){
         super();
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.clientGame(scale, client, selfChoice, allChoices, FPS);
         this.gameThreads = null;
-        isSuspended = new AtomicBoolean(false);
-        init();
+        this.isSuspended = new AtomicBoolean(false);
+        init(seed);
     }
-    public PanelGame(int scale, ScreenMain mainFrame, int FPS, Server server, String selfChoice, ArrayList<String> allChoices){
+    public PanelGame(long seed, int scale, ScreenMain mainFrame, int FPS, Server server, String selfChoice, ArrayList<String> allChoices){
         super();
         this.FPS = FPS;
         this.scale = scale;
         this.mainFrame = mainFrame;
         this.gameData = ManagerGame.serverGame(scale, server, selfChoice, allChoices, FPS);
         this.gameThreads = null;
-        isSuspended = new AtomicBoolean(false);
-        init();
+        this.isSuspended = new AtomicBoolean(false);
+        init(seed);
     }
 
 
-    private void init(){
+    private void init(long seed){
         this.isInGame = true;
-        pwm = new PowerUpManager(this);
+        pwm = new PowerUpManager(this, seed);
         mapPanel = new PanelMap(this);
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayout(1,0));

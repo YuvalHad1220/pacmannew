@@ -1,4 +1,6 @@
 import java.lang.reflect.Array;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,7 +26,7 @@ public interface Connectable {
     byte CONTINUE = 15;
     byte PACMAN_DEATH = 16;
 
-    int LONGEST_MSG_LENGTH = 8;
+    int LONGEST_MSG_LENGTH = 12;
 
     default byte[] construct_pacman_death(){
         return new byte[]{PACMAN_DEATH};
@@ -38,14 +40,14 @@ public interface Connectable {
         return arrMsg;
     }
 
-    default byte[] construct_seed_msg(long seed) {
-        return strToBytes((Byte.toString(SEED) + seed));
-    }
-
-    default long get_seed_from_msg(byte[] msg) {
-        String seedStr = new String(msg, 1, msg.length - 1);
-        return Long.parseLong(seedStr);
-    }
+//    default byte[] construct_seed_msg(long seed) {
+//        return strToBytes((Byte.toString(SEED) + seed));
+//    }
+//
+//    default long get_seed_from_msg(byte[] msg) {
+//        String seedStr = new String(msg, 1, msg.length - 1);
+//        return Long.parseLong(seedStr);
+//    }
 
     default byte[] construct_location_msg(Entity e){
         int x = e.getX();
@@ -111,8 +113,23 @@ public interface Connectable {
         }
         return choices;
     }
-    default byte[] construct_start_game_msg() {
-        return new byte[]{CONTINUE};
+    default byte[] construct_start_game_msg(long seed) {
+        byte[] byteArray = ByteBuffer.allocate(Long.BYTES).putLong(seed).array();
+        byte[] toRet = new byte[byteArray.length + 1];
+        toRet[0] = CONTINUE;
+
+        for (int i = 0; i<byteArray.length; i++)
+            toRet[i+1] = byteArray[i];
+
+        return toRet;
+    }
+
+    default long parse_start_game_msg(byte[] msg){
+        byte[] longArr = Arrays.copyOfRange(msg, 1, msg.length);
+
+        long parsedValue = ByteBuffer.wrap(longArr).getLong();
+        return parsedValue;
+
     }
 
     default byte stringChoiceToByte(String choice) {
