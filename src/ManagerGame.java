@@ -7,7 +7,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
 
 public class ManagerGame {
 
@@ -528,12 +527,14 @@ public class ManagerGame {
         }
     }
 
-    public void onPause() {
-        gamePanel.setSuspend(true);
+    public void onSuspend() {
+        if (!gamePanel.getSuspend())
+            gamePanel.setSuspend(true);
     }
 
     public void onResume(){
-        gamePanel.setSuspend(false);
+        if (gamePanel.getSuspend())
+            gamePanel.setSuspend(false);
     }
 
     public void sendResume() {

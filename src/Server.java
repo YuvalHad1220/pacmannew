@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Server extends Thread implements Connectable {
@@ -133,7 +132,7 @@ TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
 
                 case PACMAN_DEATH -> gameManager.onDeath();
 
-                case PAUSE_GAME -> gameManager.onPause();
+                case PAUSE_GAME -> gameManager.onSuspend();
 
                 case RESUME_GAME -> gameManager.onResume();
             }

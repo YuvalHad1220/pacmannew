@@ -56,9 +56,12 @@ public class PanelLobby extends PacmanJPanel implements ActionListener {
         if (this.instanceType.equals("server")){
             connectButton.setEnabled(false);
             IPtextField.setText(server.getSelfIP());
-            portTextField.setText(Integer.toString(server.getSelfPort()));
-            portTextField.setEnabled(false);
-            IPtextField.setEnabled(false);
+            portTextField.setText(String.valueOf(server.getSelfPort()));
+//            portTextField.setEnabled(false);
+//            IPtextField.setEnabled(false);
+            IPtextField.setForeground(Color.ORANGE);
+            portTextField.setForeground(Color.ORANGE);
+
         }
     }
 

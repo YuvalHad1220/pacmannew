@@ -2,9 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Client extends Thread implements Connectable {
     private ManagerGame gameManager;
@@ -114,7 +112,7 @@ public class Client extends Thread implements Connectable {
 //                }
 
 
-                case PAUSE_GAME -> gameManager.onPause();
+                case PAUSE_GAME -> gameManager.onSuspend();
 
                 case RESUME_GAME -> gameManager.onResume();
 
