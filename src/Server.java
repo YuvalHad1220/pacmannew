@@ -78,35 +78,11 @@ public class Server extends Thread implements Connectable {
         byte[] buffer = new byte[LONGEST_MSG_LENGTH]; // Buffer to store received data
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         while (true) {
-
-            if (gameManager != null && !gameManager.getGamePanel().getSuspend()){
-                // then we are at a game and not paused and expect to get a message every few millisecond. if we dont get a msg then the peer is disconnected
-                try {
-                    serverSocket.setSoTimeout(500); // Set the timeout duration half a second
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            else {
-                // then we are either at a lobby or at suspend so no need to change timeout
-                try {
-                    serverSocket.setSoTimeout(0);
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
             try {
                 serverSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
-                System.out.println("CLIENT CLOSED! DEFAULTING HIM TO AI");
-                gameManager.AIFallback();
-/*
-TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
- */
-                return;
+                System.out.println(e.getMessage());
+                System.exit(1);
             }
 
             // Extract received message and process it
