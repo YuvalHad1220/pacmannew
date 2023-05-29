@@ -65,7 +65,7 @@ public class Server extends Thread implements Connectable {
             String[] ipandport = conn.split(":");
             try {
                 InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
-                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(ipandport[1])));
+                sendMsg(msg, inetAddress, Integer.parseInt(ipandport[1]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -79,27 +79,46 @@ public class Server extends Thread implements Connectable {
         byte[] buffer = new byte[LONGEST_MSG_LENGTH]; // Buffer to store received data
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         while (true) {
+
+            if (gameManager != null && !gameManager.getGamePanel().getSuspend()){
+                // then we are at a game and not paused and expect to get a message every few millisecond. if we dont get a msg then the peer is disconnected
+                try {
+                    serverSocket.setSoTimeout(500); // Set the timeout duration half a second
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            else {
+                // then we are either at a lobby or at suspend so no need to change timeout
+                try {
+                    serverSocket.setSoTimeout(0);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
             try {
                 serverSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("CLIENT CLOSED! DEFAULTING HIM TO AI");
+                gameManager.AIFallback();
+/*
+TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
+ */
+                return;
             }
 
             // Extract received message and process it
             byte[] receivedData = packet.getData();
             byte msg_id = receivedData[0];
-            System.out.println(Arrays.toString(receivedData));
             switch (msg_id) {
                 case CONNECT -> {
                     if (!onConnect(packet.getAddress().getHostAddress(), packet.getPort()))
                         continue;
                     byte[] msg = construct_connect_msg();
-                    try {
-                        serverSocket.send(new DatagramPacket(msg, msg.length, packet.getAddress(), packet.getPort()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                    sendMsg(msg, packet.getAddress(), packet.getPort());
                     gameLobby.enableButtons();
 
                 }
@@ -151,7 +170,7 @@ public class Server extends Thread implements Connectable {
             try {
                 byte[] msg = construct_select_multiple_entities_msg(selectedEntities);
                 InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
-                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(ipandport[1])));
+               sendMsg(msg, inetAddress, Integer.parseInt(ipandport[1]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -169,11 +188,21 @@ public class Server extends Thread implements Connectable {
             try {
                 byte[] msg = construct_start_game_msg(seed);
                 InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
-                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(ipandport[1])));
+                sendMsg(msg,inetAddress, Integer.parseInt(ipandport[1]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void sendMsg(byte[] msg, InetAddress addr, int port){
+        try {
+            serverSocket.send(new DatagramPacket(msg, msg.length, addr, port));
+        } catch (IOException e) {
+            System.out.println("client closed connection " + addr);
+            System.exit(1);
+        }
+
     }
 
     public void sendUpdateLocation(Entity e) {
@@ -182,11 +211,12 @@ public class Server extends Thread implements Connectable {
             String[] IPAndPort = conn.split(":");
             try {
                 InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+                sendMsg(msg, inetAddress, Integer.parseInt(IPAndPort[1]));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
+
     }
     public void onLocation(byte[] msg, String address, int port){
         Object[] values = parse_location_msg(msg);
@@ -199,7 +229,7 @@ public class Server extends Thread implements Connectable {
             String[] IPAndPort = conn.split(":");
             try {
                 InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+                sendMsg(msg, inetAddress, Integer.parseInt(IPAndPort[1]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -215,7 +245,7 @@ public class Server extends Thread implements Connectable {
             String[] IPAndPort = conn.split(":");
             try {
                 InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
+                sendMsg(msg, inetAddress, Integer.parseInt(IPAndPort[1]));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

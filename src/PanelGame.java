@@ -102,7 +102,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         // starting threads and such
         mapPanel.startGame();
         pwm.start();
-        gameThreads = gameData.startThreadsWhereNeeded(this);
+        gameData.startThreadsWhereNeeded(this);
 
 
     }
@@ -159,7 +159,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     public void setSuspend(boolean flag) {
         isSuspended.set(flag);
         if (!flag) {
-            for (Thread gameThread : gameThreads) {
+            for (Thread gameThread : gameData.getGameThreads()) {
                 resumeThread(gameThread);
             }
         }
@@ -198,4 +198,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         livesLabel.setText("Lives Left: " + gameData.getPacman().getLives());
     }
 
+    public ArrayList<Thread> getGameThreads() {
+        return gameThreads;
+    }
 }

@@ -2,9 +2,12 @@
 by using this class we would update the main entity and start threads where needed
  */
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 
 public class ManagerGame {
 
@@ -23,6 +26,11 @@ public class ManagerGame {
 
     private Server server;
     private Client client;
+
+    private PanelGame gamePanel;
+
+    private ArrayList<Thread> gameThreads;
+
 //    public void updateDir(){
 //        int[] dir = controlledEntity.getDir();
 //
@@ -168,7 +176,7 @@ public class ManagerGame {
 
         return validEntities.toArray(new Entity[0]);
     }
-    public ArrayList<Thread> startThreadsWhereNeeded(PanelGame gp) {
+    public void startThreadsWhereNeeded(PanelGame gp) {
         System.out.println("Controlled Entity: " + this.controlledEntity);
         System.out.println("Other Controlled Entities:" + Arrays.toString(this.remoteControlledEntities));
         System.out.println("AI Controlled Entities:" + Arrays.toString(this.AIControlledEntities));
@@ -250,7 +258,8 @@ public class ManagerGame {
                 t.start();
             }
 
-        return threads;
+        this.gameThreads = threads;
+        this.gamePanel = gp;
 
     }
 
@@ -379,6 +388,7 @@ public class ManagerGame {
         this.ghostSpeedMultiplier = 0.5;
         this.client = null;
         this.server = null;
+        this.gameThreads = null;
     }
 
     public Pacman getPacman() {
@@ -445,9 +455,9 @@ public class ManagerGame {
 
 
         assert e != null;
+
         e.setXinPanel(x * e.scale);
         e.setYinPanel(y * e.scale);
-        System.out.println("entity: " +entityName +" x in map: " + x * e.scale +" y in map: " +y * e.scale);
     }
 
     public void sendPacmanDeath() {
@@ -465,4 +475,47 @@ public class ManagerGame {
         pacman.setLives(pacman.getLives() - 1);
 
     }
+
+    public void AIFallback() {
+        for (Entity e : remoteControlledEntities){
+            if (e instanceof Pacman){
+                PacmanJPanel gameOver = new PacmanJPanel();
+                gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+                String labelText = "<html><span style='font-family: " + gameOver.pacmanFont.getFontName() + "; font-size: 28px;'>Game Over<br>Pacman left the game</span></html>";
+                JLabel gameOverLabel = new JLabel(labelText);
+                gameOver.add(gameOverLabel);
+
+                gamePanel.mainFrame.addPanel(gameOver, "gameOver");
+                this.gamePanel.mainFrame.showPanel("gameOver");
+                try {
+                    Thread.sleep(5 * 1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                System.exit(1);
+            }
+
+            for (Thread t : gameThreads){
+                if (t instanceof GhostThread){
+                    if (((GhostThread) t).getGhost() == e){
+                        ((GhostThread) t).stopThread();
+                        gameThreads.remove(t);
+                        GhostThread newThread = new GhostThread(gamePanel, (Ghost) e, pacman, AI);
+                        newThread.start();
+                        gameThreads.add(t);
+                    }
+                }
+            }
+        }
+    }
+
+    public PanelGame getGamePanel() {
+        return gamePanel;
+    }
+
+    public ArrayList<Thread> getGameThreads() {
+        return gameThreads;
+    }
+
 }

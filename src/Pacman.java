@@ -23,8 +23,8 @@ public class Pacman extends Entity{
     }
     public int getScore() { return score;}
     public void setScore(int newScore){score = newScore;}
-    public void setLives(int newLives){lives = newLives;}
-    public int getLives(){return lives;}
+    synchronized public void setLives(int newLives){lives = newLives;}
+    synchronized public int getLives(){return lives;}
 
     public BufferedImage getPacmanImage(){
         return image;

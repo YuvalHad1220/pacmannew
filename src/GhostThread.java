@@ -6,6 +6,7 @@ public class GhostThread extends Thread implements Sleepable {
     private int FPS;
     private Map map;
     private int scale;
+    private boolean running;
     private int ghostStartX;
     private int ghostStartY;
 
@@ -19,6 +20,7 @@ public class GhostThread extends Thread implements Sleepable {
         this.scale = gamePanel.getScale();
         this.ghostStartX = this.ghost.getXInPanel();
         this.ghostStartY = this.ghost.getXInPanel();
+        this.running = true;
 
     }
 
@@ -26,7 +28,7 @@ public class GhostThread extends Thread implements Sleepable {
         // chase pacman to get new x,y
         // if we collide than we keep the old x,y
         // when we get to an intersection we can choose a new x,y
-        while (true) {
+        while (running) {
             if (gamePanel.getSuspend()) {
                 // Suspend the thread until it is resumed
                 synchronized (Thread.currentThread()) {
@@ -62,7 +64,6 @@ public class GhostThread extends Thread implements Sleepable {
                 }
             } else {
                 if (map.toCageDir(ghost)) {
-                    System.out.println("need to get back to cage");
                     int[] ghostDir = ghost.getDir();
                     ghost.updateXInPanel(ghostDir[0]);
                     ghost.updateYInPanel(ghostDir[1]);
@@ -74,7 +75,7 @@ public class GhostThread extends Thread implements Sleepable {
 
     public void remoteLoop(){
         // first we need to release ghost from cage
-        while (true){
+        while (running){
             sleep((int) (1000 / FPS * ghost.getOffset()));
             if (gamePanel.getSuspend())
                 continue;
@@ -87,7 +88,7 @@ public class GhostThread extends Thread implements Sleepable {
 
     public void selfLoop(){
         ghost.pollDirForReversedMovement();
-        while (true) {
+        while (running) {
             sleep(1000 / FPS);
 
             if (gamePanel.getSuspend())
@@ -142,5 +143,13 @@ public class GhostThread extends Thread implements Sleepable {
 
         if (controlledBy == ManagerGame.LOCAL)
             selfLoop();
+    }
+
+    public Entity getGhost(){
+        return this.ghost;
+    }
+
+    synchronized public void stopThread(){
+        running = false;
     }
 }

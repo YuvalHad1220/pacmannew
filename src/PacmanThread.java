@@ -93,7 +93,6 @@ public class PacmanThread extends Thread implements Sleepable{
                         }
 
                         if (this.pacman.getLives() == 0){
-                            System.out.println("END OF GAME");
                             PacmanJPanel gameOver = new PacmanJPanel();
                             gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
@@ -173,5 +172,10 @@ public class PacmanThread extends Thread implements Sleepable{
             System.out.println("started pacman as remote");
             remoteLoop();
         }
+    }
+
+
+    public void setGamePanel(PanelGame gamePanel) {
+        this.gamePanel = gamePanel;
     }
 }
