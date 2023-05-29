@@ -162,7 +162,12 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
             for (Thread gameThread : gameData.getGameThreads()) {
                 resumeThread(gameThread);
             }
+            gameData.sendResume();
         }
+
+        else
+            gameData.sendSuspend();
+
     }
 
     private void resumeThread(Thread thread) {

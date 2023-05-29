@@ -518,4 +518,29 @@ public class ManagerGame {
         return gameThreads;
     }
 
+    public void sendSuspend() {
+        if (client != null){
+            client.sendPause();
+        }
+
+        if (server != null){
+            server.sendPause();
+        }
+    }
+
+    public void onPause() {
+        gamePanel.setSuspend(true);
+    }
+
+    public void onResume(){
+        gamePanel.setSuspend(false);
+    }
+
+    public void sendResume() {
+        if (client != null)
+            client.sendResume();
+
+        if (server != null)
+            server.sendResume();
+    }
 }

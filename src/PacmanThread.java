@@ -30,10 +30,18 @@ public class PacmanThread extends Thread implements Sleepable{
     public void selfLoop() {
         pacman.pollForFirstMovement();
         while (true) {
-            sleep(1000 / FPS);
-
-            if (gamePanel.getSuspend())
+            if (gamePanel.getSuspend()) {
+                // Suspend the thread until it is resumed
+                synchronized (Thread.currentThread()) {
+                    try {
+                        Thread.currentThread().wait();
+                    } catch (InterruptedException e) {
+                        // Handle interruption if needed
+                    }
+                }
                 continue;
+            }
+            sleep(1000 / FPS);
 
 
             pacman.pollDirForReversedMovement();

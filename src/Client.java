@@ -114,6 +114,11 @@ public class Client extends Thread implements Connectable {
 //                }
 
 
+                case PAUSE_GAME -> gameManager.onPause();
+
+                case RESUME_GAME -> gameManager.onResume();
+
+
             }
         }
 
@@ -145,6 +150,24 @@ public class Client extends Thread implements Connectable {
 
     public void sendDeath() {
         byte[] msg = construct_pacman_death();
+        try {
+            clientSocket.send(new DatagramPacket(msg, msg.length));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void sendPause() {
+        byte[] msg = construct_pause_msg();
+        try {
+            clientSocket.send(new DatagramPacket(msg, msg.length));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void sendResume() {
+        byte[] msg = construct_resume_msg();
         try {
             clientSocket.send(new DatagramPacket(msg, msg.length));
         } catch (IOException ex) {

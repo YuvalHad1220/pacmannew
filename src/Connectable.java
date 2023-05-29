@@ -22,11 +22,23 @@ public interface Connectable {
 
     byte SET_LOCATION = 12;
 //    byte SET_DIRECTION = 13;
-    byte SEED = 14;
+//    byte SEED = 14;
     byte CONTINUE = 15;
     byte PACMAN_DEATH = 16;
+    byte PAUSE_GAME = 17;
+    byte RESUME_GAME = 18;
 
     int LONGEST_MSG_LENGTH = 12;
+
+
+
+    default byte[] construct_pause_msg(){
+        return new byte[]{PAUSE_GAME};
+    }
+
+    default byte[] construct_resume_msg(){
+        return new byte[]{RESUME_GAME};
+    }
 
     default byte[] construct_pacman_death(){
         return new byte[]{PACMAN_DEATH};

@@ -38,6 +38,7 @@ public class GhostThread extends Thread implements Sleepable {
                         // Handle interruption if needed
                     }
                 }
+                continue;
             }
 
             sleep((int) (1000 / FPS * ghost.getOffset()));
@@ -47,20 +48,17 @@ public class GhostThread extends Thread implements Sleepable {
                     int[] ghostDir = ghost.getDir();
                     ghost.updateXInPanel(ghostDir[0]);
                     ghost.updateYInPanel(ghostDir[1]);
-
-                    if (ghostDir[1] == 1){
-                        ghost.updateYInPanel(1);
-                    }
-//                    if (ghostDir[1] == -1){
-//                        ghost.updateYInPanel(-1);
+//                    if (ghostDir[1] == 1){
+//                        ghost.updateYInPanel(1);
 //                    }
-
-                    if (ghostDir[0] == 1)
-                        ghost.updateXInPanel(1);
-                    if (ghostDir[0] == -1)
-                        ghost.updateXInPanel(-1);
-
-
+////                    if (ghostDir[1] == -1){
+////                        ghost.updateYInPanel(-1);
+////                    }
+//
+//                    if (ghostDir[0] == 1)
+//                        ghost.updateXInPanel(1);
+//                    if (ghostDir[0] == -1)
+//                        ghost.updateXInPanel(-1);
                 }
             } else {
                 if (map.toCageDir(ghost)) {
@@ -88,12 +86,23 @@ public class GhostThread extends Thread implements Sleepable {
 
     public void selfLoop(){
         ghost.pollDirForReversedMovement();
-        while (running) {
-            sleep(1000 / FPS);
 
-            if (gamePanel.getSuspend())
+        while (running) {
+            if (gamePanel.getSuspend()) {
+                // Suspend the thread until it is resumed
+                synchronized (Thread.currentThread()) {
+                    try {
+                        Thread.currentThread().wait();
+                    } catch (InterruptedException e) {
+                        // Handle interruption if needed
+                    }
+                }
                 continue;
+            }
+
+            sleep((int) (1000 / FPS * ghost.getOffset()));
             ghost.pollDirForReversedMovement();
+
             int[] ghostDir = ghost.getDir();
             ghost.updateXInPanel(ghostDir[0]);
             ghost.updateYInPanel(ghostDir[1]);

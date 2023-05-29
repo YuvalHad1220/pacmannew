@@ -132,9 +132,25 @@ TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
                 }
 
                 case PACMAN_DEATH -> gameManager.onDeath();
+
+                case PAUSE_GAME -> gameManager.onPause();
+
+                case RESUME_GAME -> gameManager.onResume();
             }
         }
 
+    }
+
+    public void sendToAll(byte[] msg){
+        for (String conn : connectionsAndChoice.keySet()) {
+            String[] ipandport = conn.split(":");
+            try {
+                InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
+                sendMsg(msg, inetAddress, Integer.parseInt(ipandport[1]));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -164,37 +180,10 @@ TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
     }
 
     public void sendUpdateChoiceMessage(ArrayList<String> selectedEntities) {
-        System.out.println("need to send to clients the current list: " + selectedEntities);
-        for (String conn : connectionsAndChoice.keySet()) {
-            String[] ipandport = conn.split(":");
-            try {
-                byte[] msg = construct_select_multiple_entities_msg(selectedEntities);
-                InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
-               sendMsg(msg, inetAddress, Integer.parseInt(ipandport[1]));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        System.out.println("need to send to clients the current list: " + selectedEntities);
+        byte[] msg = construct_select_multiple_entities_msg(selectedEntities);
+        sendToAll(msg);
     }
-
-    public void setGameManager(ManagerGame gm) {
-        this.gameManager = gm;
-    }
-
-    public void sendContinueMessage(long seed) {
-        System.out.println("sending startgame message!!");
-        for (String conn : connectionsAndChoice.keySet()) {
-            String[] ipandport = conn.split(":");
-            try {
-                byte[] msg = construct_start_game_msg(seed);
-                InetAddress inetAddress = InetAddress.getByName(ipandport[0]);
-                sendMsg(msg,inetAddress, Integer.parseInt(ipandport[1]));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void sendMsg(byte[] msg, InetAddress addr, int port){
         try {
             serverSocket.send(new DatagramPacket(msg, msg.length, addr, port));
@@ -205,17 +194,19 @@ TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
 
     }
 
+    public void setGameManager(ManagerGame gm) {
+        this.gameManager = gm;
+    }
+
+    public void sendContinueMessage(long seed) {
+//        System.out.println("sending startgame message!!");
+        byte[] msg = construct_start_game_msg(seed);
+        sendToAll(msg);
+    }
+
     public void sendUpdateLocation(Entity e) {
         byte[] msg = construct_location_msg(e);
-        for (String conn : connectionsAndChoice.keySet()) {
-            String[] IPAndPort = conn.split(":");
-            try {
-                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                sendMsg(msg, inetAddress, Integer.parseInt(IPAndPort[1]));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+        sendToAll(msg);
 
     }
     public void onLocation(byte[] msg, String address, int port){
@@ -224,31 +215,23 @@ TODO: ADD WHAT TO DO WHEN CLIENT CLOSES TO SERVER.
         String entityName = (String) values[0];
         int x = (int) values[1];
         int y = (int) values[2];
-
-        for (String conn : connectionsAndChoice.keySet()) {
-            String[] IPAndPort = conn.split(":");
-            try {
-                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                sendMsg(msg, inetAddress, Integer.parseInt(IPAndPort[1]));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+        sendToAll(msg);
         gameManager.setLocation(entityName, x, y);
     }
 
 
     public void sendDeath() {
         byte[] msg = construct_pacman_death();
-        for (String conn : connectionsAndChoice.keySet()) {
-            String[] IPAndPort = conn.split(":");
-            try {
-                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-                sendMsg(msg, inetAddress, Integer.parseInt(IPAndPort[1]));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+        sendToAll(msg);
+    }
+
+    public void sendPause() {
+        byte[] msg = construct_pause_msg();
+        sendToAll(msg);
+    }
+
+    public void sendResume() {
+        byte[] msg = construct_resume_msg();
+        sendToAll(msg);
     }
 }
