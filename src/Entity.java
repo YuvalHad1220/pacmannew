@@ -56,11 +56,11 @@ public class Entity {
         return height;
     }
 
-    public int getXInPanel() {
+    synchronized public int getXInPanel() {
         return xInMap;
     }
 
-    public int getYinPanel() {
+    synchronized public int getYinPanel() {
         return yInMap;
     }
 
@@ -83,11 +83,11 @@ public class Entity {
     public int[] getDir(){
         return currDir;
     }
-    public int getX() {
+    synchronized public int getX() {
         return xInMap / scale;
     }
 
-    public int getY() {
+    synchronized public int getY() {
         return yInMap / scale;
     }
 

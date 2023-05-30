@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Server extends Thread implements Connectable {
 
@@ -11,8 +12,16 @@ public class Server extends Thread implements Connectable {
     private String selfIP;
     private int selfPort;
     private String selfChoice;
+    private int serverLoops;
 
-    HashMap<String, String> connectionsAndChoice = new HashMap<>();
+    /*
+    once we will recieve a response, we will put {address:response_times}.
+    we will see whats the avarage of responses if the avarage is 20.
+    If the diff between the minimum and the avarage is more than 10, then it means that we stopped getting responses and thus remove the peer.
+     */
+    HashMap<String, Integer> connectionsResponses;
+
+    HashMap<String, String> connectionsAndChoice;
 
 
     public String getSelfIP() {
@@ -36,14 +45,39 @@ public class Server extends Thread implements Connectable {
             e.printStackTrace();
         }
 
+        this.serverLoops = 0;
+        this.connectionsResponses = new HashMap<>();
+        this.connectionsAndChoice = new HashMap<>();
     }
 
     private boolean onConnect(String address, int port) {
         if (connectionsAndChoice.size() > 4)
             return false;
-        System.out.println("added " + address + ":" + port);
-        connectionsAndChoice.put(address + ":" + port, null);
+        String addr = address + ":" + port;
+        System.out.println("added " + addr);
+        connectionsAndChoice.put(addr, null);
+        connectionsResponses.put(addr, 0);
         return true;
+
+    }
+
+    private void onMsg(String address){
+        Integer current_responses = connectionsResponses.get(address);
+        if (current_responses == null)
+            return;
+
+        connectionsResponses.put(address, current_responses + 1);
+    }
+
+    private void checkResponses(){
+
+        for (Map.Entry<String, Integer> item : connectionsResponses.entrySet()){
+            System.out.println(item.getKey() +": " +item.getValue());
+            if (serverLoops - item.getValue() > 5){
+                // then we didnt get a response for a huge time
+                gameManager.AIFallback(connectionsAndChoice.get(item.getKey()));
+            }
+        }
 
     }
 
@@ -77,33 +111,46 @@ public class Server extends Thread implements Connectable {
         System.out.println("started server");
         byte[] buffer = new byte[LONGEST_MSG_LENGTH]; // Buffer to store received data
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+        try {
+            serverSocket.setSoTimeout(5 * 1000);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+
         while (true) {
+            serverLoops++;
             try {
                 serverSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
-                System.out.println(e.getMessage());
-                System.exit(1);
+                checkResponses();
+                continue;
             }
 
             // Extract received message and process it
             byte[] receivedData = packet.getData();
             byte msg_id = receivedData[0];
+            String address = packet.getAddress().getHostAddress();
+            int port = packet.getPort();
+            onMsg(address);
+
             switch (msg_id) {
                 case CONNECT -> {
-                    if (!onConnect(packet.getAddress().getHostAddress(), packet.getPort()))
+                    if (!onConnect(address, port))
                         continue;
                     byte[] msg = construct_connect_msg();
-                    sendMsg(msg, packet.getAddress(), packet.getPort());
+                    sendMsg(msg, packet.getAddress(), port);
                     gameLobby.enableButtons();
 
                 }
                 case SELECTENTITIES -> {
-                    onSelectEntity(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
+                    onSelectEntity(receivedData, address, port);
                 }
-//                case SET_DIRECTION -> onDir(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
+//                case SET_DIRECTION -> onDir(receivedData, address, port);
 
                 case SET_LOCATION -> {
-                    onLocation(receivedData, packet.getAddress().getHostAddress(), packet.getPort());
+                    onLocation(receivedData, address, port);
                 }
 
                 case PACMAN_DEATH -> gameManager.onDeath();
@@ -112,6 +159,7 @@ public class Server extends Thread implements Connectable {
 
                 case RESUME_GAME -> gameManager.onResume();
             }
+
         }
 
     }
@@ -124,6 +172,9 @@ public class Server extends Thread implements Connectable {
                 sendMsg(msg, inetAddress, Integer.parseInt(ipandport[1]));
             } catch (IOException e) {
                 e.printStackTrace();
+
+                System.out.println("error sending data to client, probably logged out");
+
             }
         }
     }
@@ -163,8 +214,7 @@ public class Server extends Thread implements Connectable {
         try {
             serverSocket.send(new DatagramPacket(msg, msg.length, addr, port));
         } catch (IOException e) {
-            System.out.println("client closed connection " + addr);
-            System.exit(1);
+            System.out.println(e.getMessage());
         }
 
     }

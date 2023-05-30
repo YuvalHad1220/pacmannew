@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ManagerGame {
@@ -103,8 +104,11 @@ public class ManagerGame {
             case "Pinky" -> {
                 return ghosts[3];
             }
+
+            default -> {
+                return null;
+            }
         }
-        return null;
     }
 
     private String getNameByEntity(Entity entity) {
@@ -475,38 +479,54 @@ public class ManagerGame {
 
     }
 
-    public void AIFallback() {
-        for (Entity e : remoteControlledEntities){
-            if (e instanceof Pacman){
-                PacmanJPanel gameOver = new PacmanJPanel();
-                gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    public void AIFallback(String fallenEntityName) {
+        Entity fallenEntity = getEntityByName(fallenEntityName);
 
-                String labelText = "<html><span style='font-family: " + gameOver.pacmanFont.getFontName() + "; font-size: 28px;'>Game Over<br>Pacman left the game</span></html>";
-                JLabel gameOverLabel = new JLabel(labelText);
-                gameOver.add(gameOverLabel);
+        // if null then we need to iterate over all because the server has fallen
+        if (fallenEntity == null)
+            for (Entity e : remoteControlledEntities)
+                removeThread(e);
 
-                gamePanel.mainFrame.addPanel(gameOver, "gameOver");
-                this.gamePanel.mainFrame.showPanel("gameOver");
-                try {
-                    Thread.sleep(5 * 1000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-                System.exit(1);
+        else
+            removeThread(fallenEntity);
+    }
+
+
+    public void removeThread(Entity e){
+        System.out.println("NEED TO REMOVE: " +e);
+        if (e instanceof Pacman){
+            PacmanJPanel gameOver = new PacmanJPanel();
+            gameOver.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+            String labelText = "<html><span style='font-family: \"" + gameOver.pacmanFont.getFontName() + "\"; font-size: 28px;'>Game Over<br>Pacman left the game</span></html>";
+            JLabel gameOverLabel = new JLabel(labelText);
+            gameOver.add(gameOverLabel);
+
+            gamePanel.mainFrame.addPanel(gameOver, "gameOver");
+            this.gamePanel.mainFrame.showPanel("gameOver");
+            try {
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
+            System.exit(1);
+        }
 
-            for (Thread t : gameThreads){
-                if (t instanceof GhostThread){
-                    if (((GhostThread) t).getGhost() == e){
-                        ((GhostThread) t).stopThread();
-                        gameThreads.remove(t);
-                        GhostThread newThread = new GhostThread(gamePanel, (Ghost) e, pacman, AI);
-                        newThread.start();
-                        gameThreads.add(t);
-                    }
+
+        Iterator<Thread> iterator = gameThreads.iterator();
+        while (iterator.hasNext()) {
+            Thread t = iterator.next();
+            if (t instanceof GhostThread) {
+                if (((GhostThread) t).getGhost() == e) {
+                    ((GhostThread) t).stopThread();
+                    iterator.remove();
+                    GhostThread newThread = new GhostThread(gamePanel, (Ghost) e, pacman, AI);
+                    newThread.start();
+                    gameThreads.add(newThread);
                 }
             }
         }
+
     }
 
     public PanelGame getGamePanel() {

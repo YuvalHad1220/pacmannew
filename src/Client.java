@@ -78,7 +78,7 @@ public class Client extends Thread implements Connectable {
                 clientSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
                 System.out.println("SERVER CLOSED! DEFAULTING TO AI");
-                gameManager.AIFallback();
+                gameManager.AIFallback(null);
                 clientSocket.close();
                 return;
             }

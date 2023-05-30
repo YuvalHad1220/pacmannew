@@ -27,18 +27,16 @@ public class PacmanThread extends Thread implements Sleepable{
 
     }
 
-    public void selfLoop() {
+    synchronized public void selfLoop() {
         pacman.pollForFirstMovement();
         while (true) {
             if (gamePanel.getSuspend()) {
                 // Suspend the thread until it is resumed
-                synchronized (Thread.currentThread()) {
                     try {
                         Thread.currentThread().wait();
                     } catch (InterruptedException e) {
                         // Handle interruption if needed
                     }
-                }
                 continue;
             }
             sleep(1000 / FPS);
@@ -90,15 +88,11 @@ public class PacmanThread extends Thread implements Sleepable{
                 pacman.setYinPanel(newLocation[1] * scale);
             }
 
-            synchronized (ghosts){
                 for (Ghost g : this.ghosts){
                     if (g.getX() == pacman.getX() && pacman.getY() == g.getY()){
                         System.out.println("collision");
-                        synchronized (pacman){
                             this.pacman.setXinPanel(this.pacmanStartX);
                             this.pacman.setYinPanel(this.pacmanStartY);
-
-                        }
 
                         if (this.pacman.getLives() == 0){
                             PacmanJPanel gameOver = new PacmanJPanel();
@@ -117,12 +111,8 @@ public class PacmanThread extends Thread implements Sleepable{
                         this.pacman.setLives(this.pacman.getLives() - 1);
                         gamePanel.updateLive();
                         this.gamePanel.gameData.sendPacmanDeath();
-
                     }
                 }
-            }
-
-
 
             this.gamePanel.gameData.updateLocation(pacman);
 
@@ -130,6 +120,10 @@ public class PacmanThread extends Thread implements Sleepable{
     }
 
     public void remoteLoop() {
+        int loopTimes = 0;
+        int currentX = pacman.getXInPanel();
+        int currentY = pacman.getYinPanel();
+
         while (true) {
             if (gamePanel.getSuspend()) {
                 // Suspend the thread until it is resumed
@@ -143,6 +137,15 @@ public class PacmanThread extends Thread implements Sleepable{
             }
 
             sleep(1000 / FPS);
+
+//            if (pacman.getXInPanel() == currentX && pacman.getYinPanel() == currentY){
+//                loopTimes++;
+//
+//                if (loopTimes > 5000 * (FPS / 1000)){
+//                    System.out.println("5 seconds with no movement");
+//                    gamePanel.gameData.AIFallback("Pacman");
+//                }
+//            }
 
             int[] pacmanDir = pacman.getDir();
             pacman.updateXInPanel(pacmanDir[0]);
