@@ -513,18 +513,28 @@ public class ManagerGame {
         }
 
 
-        Iterator<Thread> iterator = gameThreads.iterator();
-        while (iterator.hasNext()) {
-            Thread t = iterator.next();
+        GhostThread newThread = null;
+        GhostThread toRemove = null;
+
+
+        for (Thread t : gameThreads) {
             if (t instanceof GhostThread) {
                 if (((GhostThread) t).getGhost() == e) {
-                    ((GhostThread) t).stopThread();
-                    iterator.remove();
-                    GhostThread newThread = new GhostThread(gamePanel, (Ghost) e, pacman, AI);
-                    newThread.start();
-                    gameThreads.add(newThread);
+                    toRemove = (GhostThread)t;
+                    newThread = new GhostThread(gamePanel, (Ghost) e, pacman, AI);
+                    break;
                 }
             }
+        }
+
+        if (toRemove != null){
+            toRemove.stopThread();
+            gameThreads.remove(toRemove);
+        }
+
+        if (newThread != null){
+            newThread.start();
+            gameThreads.add(newThread);
         }
 
     }

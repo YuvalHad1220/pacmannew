@@ -70,7 +70,6 @@ public class Server extends Thread implements Connectable {
     }
 
     private void checkResponses(){
-
         for (Map.Entry<String, Integer> item : connectionsResponses.entrySet()){
             System.out.println(item.getKey() +": " +item.getValue());
             if (serverLoops - item.getValue() > 5){
@@ -124,7 +123,8 @@ public class Server extends Thread implements Connectable {
             try {
                 serverSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
-                checkResponses();
+                if (gameManager != null)
+                    checkResponses();
                 continue;
             }
 

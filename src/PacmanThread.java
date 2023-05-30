@@ -120,9 +120,9 @@ public class PacmanThread extends Thread implements Sleepable{
     }
 
     public void remoteLoop() {
-        int loopTimes = 0;
-        int currentX = pacman.getXInPanel();
-        int currentY = pacman.getYinPanel();
+//        int loopTimes = 0;
+//        int currentX = pacman.getXInPanel();
+//        int currentY = pacman.getYinPanel();
 
         while (true) {
             if (gamePanel.getSuspend()) {
