@@ -117,13 +117,12 @@ public class Server extends Thread implements Connectable {
             e.printStackTrace();
         }
 
-
         while (true) {
             serverLoops++;
             try {
                 serverSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
-                if (gameManager != null)
+                if (gameManager != null && !gameManager.getGamePanel().getSuspend())
                     checkResponses();
                 continue;
             }
@@ -214,6 +213,8 @@ public class Server extends Thread implements Connectable {
         try {
             serverSocket.send(new DatagramPacket(msg, msg.length, addr, port));
         } catch (IOException e) {
+            String fullAddr = addr.getHostAddress() +":" +port;
+            gameManager.AIFallback(connectionsAndChoice.get(fullAddr));
             System.out.println(e.getMessage());
         }
 

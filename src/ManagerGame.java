@@ -480,8 +480,9 @@ public class ManagerGame {
     }
 
     public void AIFallback(String fallenEntityName) {
-        Entity fallenEntity = getEntityByName(fallenEntityName);
-
+        Entity fallenEntity = null;
+        if (fallenEntityName != null)
+            fallenEntity = getEntityByName(fallenEntityName);
         // if null then we need to iterate over all because the server has fallen
         if (fallenEntity == null)
             for (Entity e : remoteControlledEntities)

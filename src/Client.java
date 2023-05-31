@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
@@ -80,6 +81,7 @@ public class Client extends Thread implements Connectable {
                 System.out.println("SERVER CLOSED! DEFAULTING TO AI");
                 gameManager.AIFallback(null);
                 clientSocket.close();
+                this.gameManager.setClient(null);
                 return;
             }
 
@@ -122,6 +124,18 @@ public class Client extends Thread implements Connectable {
 
     }
 
+    public void sendMsg(byte[] msg){
+        try {
+            clientSocket.send(new DatagramPacket(msg, msg.length));
+        }
+        catch (IOException e){
+            System.out.println("SERVER CLOSED! DEFAULTING TO AI");
+            gameManager.AIFallback(null);
+            clientSocket.close();
+            this.gameManager.setClient(null);
+        }
+    }
+
 //    public void sendUpdateDir(int[] dir, String entityName) {
 //        byte[] msg = construct_direction_msg(entityName, dir);
 //        System.out.println("need to send to server the new dir: " + Arrays.toString(msg));
@@ -139,37 +153,22 @@ public class Client extends Thread implements Connectable {
     }
     public void sendUpdateLocation(Entity e) {
         byte[] msg = construct_location_msg(e);
-        try {
-            clientSocket.send(new DatagramPacket(msg, msg.length));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        sendMsg(msg);
+
     }
 
     public void sendDeath() {
         byte[] msg = construct_pacman_death();
-        try {
-            clientSocket.send(new DatagramPacket(msg, msg.length));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    sendMsg(msg);
     }
 
     public void sendPause() {
         byte[] msg = construct_pause_msg();
-        try {
-            clientSocket.send(new DatagramPacket(msg, msg.length));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    sendMsg(msg);
     }
 
     public void sendResume() {
         byte[] msg = construct_resume_msg();
-        try {
-            clientSocket.send(new DatagramPacket(msg, msg.length));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    sendMsg(msg);
     }
 }
