@@ -29,10 +29,8 @@ public class PowerUp extends Thread implements Sleepable{
         return null;
     }
 
-    protected boolean collision(Pacman p){
-        if (p.getY() == powerUpLocation[0] && p.getX() == powerUpLocation[1])
-            return true;
-        return false;
+    synchronized protected boolean collision(Pacman p){
+        return p.getY() == powerUpLocation[0] && p.getX() == powerUpLocation[1];
 
     }
 
@@ -47,6 +45,17 @@ public class PowerUp extends Thread implements Sleepable{
 
     public void run(){
         while (true) {
+            if (gamePanel.getSuspend()) {
+                // Suspend the thread until it is resumed
+                synchronized (Thread.currentThread()) {
+                    try {
+                        Thread.currentThread().wait();
+                    } catch (InterruptedException e) {
+                        // Handle interruption if needed
+                    }
+                }
+            }
+
             sleep(1000 / gamePanel.getFPS());
             if (collision(gamePanel.gameData.getPacman())) {
                 System.out.println("POWER UP COLL");

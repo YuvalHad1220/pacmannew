@@ -104,9 +104,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
         pwm.start();
         gameData.startThreadsWhereNeeded(this);
 
-
     }
-
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -117,29 +115,12 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         int[] controlledEntityDir = null;
-        switch(keyCode) {
-            case KeyEvent.VK_W:
-            case KeyEvent.VK_UP:
-                controlledEntityDir = new int[]{0,-1};
-                break;
-
-            case KeyEvent.VK_A:
-            case KeyEvent.VK_LEFT:
-                controlledEntityDir = new int[]{-1,0};
-                break;
-
-            case KeyEvent.VK_S:
-            case KeyEvent.VK_DOWN:
-                controlledEntityDir = new int[]{0,1};
-                break;
-
-            case KeyEvent.VK_D:
-            case KeyEvent.VK_RIGHT:
-                controlledEntityDir = new int[]{1,0};
-                break;
-
-            case KeyEvent.VK_ESCAPE:
-            {
+        switch (keyCode) {
+            case KeyEvent.VK_W, KeyEvent.VK_UP -> controlledEntityDir = Entity.DIRECTION_VECTORS[Entity.UP];
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> controlledEntityDir = Entity.DIRECTION_VECTORS[Entity.LEFT];
+            case KeyEvent.VK_S, KeyEvent.VK_DOWN -> controlledEntityDir = Entity.DIRECTION_VECTORS[Entity.DOWN];
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> controlledEntityDir = Entity.DIRECTION_VECTORS[Entity.RIGHT];
+            case KeyEvent.VK_ESCAPE -> {
                 setSuspend(true);
                 if (pausePanel == null) {
                     pausePanel = new PanelPause(mainFrame, this);
@@ -148,7 +129,6 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
                 }
                 mainFrame.showPanel("pausePanel");
             }
-
         }
         if (controlledEntityDir != null){
             gameData.addControlledEntityDir(controlledEntityDir);
@@ -171,7 +151,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
     }
 
     private void resumeThread(Thread thread) {
-        synchronized (thread) {
+        synchronized (thread){
             thread.notify();
         }
     }
@@ -195,15 +175,7 @@ public class PanelGame extends PacmanJPanel implements KeyListener{
 
     }
 
-    public boolean isInGame() {
-        return isInGame;
-    }
-
     public void updateLive(){
         livesLabel.setText("Lives Left: " + gameData.getPacman().getLives());
-    }
-
-    public ArrayList<Thread> getGameThreads() {
-        return gameThreads;
     }
 }

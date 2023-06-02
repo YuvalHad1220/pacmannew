@@ -14,7 +14,6 @@ public class ManagerGame {
     public final static int AI = 0;
     public final static int REMOTE = 1;
     public final static int LOCAL = 2;
-
     private Entity controlledEntity;
     private Entity[] remoteControlledEntities;
     private Entity[] AIControlledEntities;
@@ -435,12 +434,6 @@ public class ManagerGame {
     public void addControlledEntityDir(int[] controlledEntityDir) {
         this.controlledEntity.addDir(controlledEntityDir);
     }
-//
-//    public void setOtherDir(String entityName, int[] parsed_direction) {
-//        Entity e = getEntityByName(entityName);
-//        assert e != null;
-//        e.setDir(parsed_direction);
-//    }
 
     public void updateLocation(Entity e) {
         // that means that user sent us its new location, so we must update it and relay the data

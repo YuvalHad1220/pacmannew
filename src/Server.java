@@ -122,8 +122,9 @@ public class Server extends Thread implements Connectable {
             try {
                 serverSocket.receive(packet); // Receive incoming datagram
             } catch (IOException e) {
-                if (gameManager != null && !gameManager.getGamePanel().getSuspend())
+                if (gameManager != null && !gameManager.getGamePanel().getSuspend()){
                     checkResponses();
+                }
                 continue;
             }
 
@@ -136,12 +137,11 @@ public class Server extends Thread implements Connectable {
 
             switch (msg_id) {
                 case CONNECT -> {
-                    if (!onConnect(address, port))
-                        continue;
-                    byte[] msg = construct_connect_msg();
-                    sendMsg(msg, packet.getAddress(), port);
-                    gameLobby.enableButtons();
-
+                    if (onConnect(address, port)){
+                        byte[] msg = construct_connect_msg();
+                        sendMsg(msg, packet.getAddress(), port);
+                        gameLobby.enableButtons();
+                    }
                 }
                 case SELECTENTITIES -> {
                     onSelectEntity(receivedData, address, port);
@@ -177,28 +177,6 @@ public class Server extends Thread implements Connectable {
             }
         }
     }
-
-
-//    public void onDir(byte[] msg, String address, int port){
-//        address = address +":" +port;
-//        Object[] items = parse_direction_msg(msg);
-//        String entityName = (String) items[0];
-//        int[] dir = (int[])items[1];
-//
-//        System.out.println("EntityName: " +entityName);
-//
-//        for (String conn : connectionsAndChoice.keySet()) {
-//            String[] IPAndPort = conn.split(":");
-//            try {
-//                InetAddress inetAddress = InetAddress.getByName(IPAndPort[0]);
-//                serverSocket.send(new DatagramPacket(msg, msg.length, inetAddress, Integer.parseInt(IPAndPort[1])));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        gameManager.setOtherDir(entityName, dir);
-//    }
     @Override
     public void kill() {
         this.serverSocket.close();
